@@ -1,0 +1,29 @@
+
+  # files extensions
+
+# classes de java
+*.class
+# executaveis em geral
+*.exe
+*.out
+*.o
+*.a
+*.obj
+# instancias do vim
+*.swp
+*.log
+
+# folders
+
+# gerada com o usa do npm
+node_modules/
+# gerada com o uso do vscode
+.vscode/
+# gerada com o vim
+.ccls-cache/
+# gerada com o uso do intelij
+.idea/
+# folder de build
+.Build/
+.build/
+.BUILD/
