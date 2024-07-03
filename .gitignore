@@ -12,7 +12,7 @@
 # instancias do vim
 *.swp
 *.log
-
+./src/setup.cpp
 # folders
 
 # gerada com o usa do npm
@@ -28,3 +28,5 @@ node_modules/
 .Build/
 .build/
 .BUILD/
+# para arquivos sem extensão(inclui makefile então ficar atento)
+**/* 
