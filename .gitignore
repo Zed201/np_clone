@@ -1,5 +1,5 @@
 
-  # files extensions
+# files extensions
 
 # classes de java
 *.class
@@ -19,6 +19,7 @@
 node_modules/
 # gerada com o uso do vscode
 .vscode/
+.venv/
 # gerada com o vim
 .ccls-cache/
 # gerada com o uso do intelij
