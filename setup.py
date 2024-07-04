@@ -7,17 +7,15 @@ source_files = []
 for root, dirs, files in os.walk("./src"):
     for i in files:
         source_files.append("./src/" + i)
-print(source_files)
+
 module = [
     Extension(
-        "npc",
-        sources=source_files,
-        language="c++"
+        name="npc",
+        sources=source_files
     )
 ]
 
 setup(
     name='npc',
-    description='Clone de numpy',
     ext_modules=cythonize(module)
 )

@@ -8,6 +8,5 @@ build_:
 
 all: build_
 	$(call find_lib)
-	@echo $(LIB_FILE)
-	mv $(LIB_FILE) ./npc.so
+	#mv $(LIB_FILE) ./npc.so
 	rm -rf ./build

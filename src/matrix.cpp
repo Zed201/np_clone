@@ -104,8 +104,8 @@ class matrix{
         d_type *elem = nullptr;
 };
 
-int main() {
-    matrix m(std::make_tuple(2,5), {1,2,3,4,6,7,8,6,9, 10});
-    m.print();
-    return 0;
-}
+// int main() {
+//     matrix m(std::make_tuple(2,5), {1,2,3,4,6,7,8,6,9, 10});
+//     m.print();
+//     return 0;
+// }
