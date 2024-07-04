@@ -4,10 +4,10 @@ import os
 
 # para pegar todos os .c, .cpp do ./src mais facilmente
 source_files = []
-for root, dirs, files in os.walk("./"):
+for root, dirs, files in os.walk("./src"):
     for i in files:
-        source_files.append(i)
-
+        source_files.append("./src/" + i)
+print(source_files)
 module = [
     Extension(
         "npc",
@@ -18,7 +18,6 @@ module = [
 
 setup(
     name='npc',
-    version='1.0',
     description='Clone de numpy',
     ext_modules=cythonize(module)
 )

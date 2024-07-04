@@ -1,6 +1,12 @@
 #include <python3.12/Python.h>
 
+static PyObject* print(PyObject *self, PyObject *ptr){
+    printf("eoiqbfwqef\n");
+    return Py_BuildValue("");
+}
+
 static PyMethodDef methods[] = {
+    {"print", print, METH_VARARGS, "func"},
     {NULL, NULL, 0, NULL}
 };
 
