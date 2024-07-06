@@ -6,6 +6,8 @@
 #define d_type int
 #define tab_size 2
 
+// reestruturar para ficar mais fácil de chamar no pyx
+// trocar para coisas como vector, ou criar sobrecarga para gerar compatibilidade
 class matrix{
     public:
         matrix(std::tuple<int, int, int> dim, std::initializer_list<d_type> elementos) : n_dim(3){
@@ -104,6 +106,20 @@ class matrix{
         d_type *elem = nullptr;
 };
 
+/* TODO:
+ * -Fazer primeiro toda implementação em cpp para depois portar para .pyx usando os tutotiais de cython
+ * -Criar print para 3 dimensões
+ * -Criar outros construtores para ter outras formas de criar, principalmente facilitando a parte do python(tirando tuple, initializer_list...)
+ * -Criar o .h referente a isso
+ * -Fazer sobre carga para +, -, ==, *(com int,long...), /, 
+ * -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar)
+ * -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)
+ * -Fazer coisas como matriz transposta
+ * -Fazer o slice por index
+ * -Fazer operações como as de allsum, média 
+ * -Criar outras funções de auxiliar, como arange...
+ *
+ * */
 // int main() {
 //     matrix m(std::make_tuple(2,5), {1,2,3,4,6,7,8,6,9, 10});
 //     m.print();
