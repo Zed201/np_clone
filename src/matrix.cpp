@@ -10,11 +10,10 @@
 // reestruturar para ficar mais fácil de chamar no pyx
 // trocar para coisas como vector, ou criar sobrecarga para gerar compatibilidade
 class matrix{
-private:
+public:
         int n_dim, *dim = nullptr, el_qdt = 0; 
         d_type *elem = nullptr;
 
-public: 
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos){
                 std::vector<int> sh(shapes);
                 std::vector<d_type> el(elementos);
@@ -46,8 +45,36 @@ public:
                 }
         } 
 
+        matrix(std::vector<int> sh, std::vector<d_type> el){
+                int tmp = 1, a = 0;
+                this->dim = (int *) malloc(sizeof(int) * sh.size()); 
+                for(int i : sh){
+                        this->dim[a++] = i;
+                        tmp *= i;
+                }
+                if(tmp < el.size()){
+                        free(this->dim);
+                        error_print("Tamanho errado");
+                } 
+
+                this->n_dim = a;
+                a = 0;
+                this->el_qdt = tmp;
+                this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
+
+                for(d_type i : el){
+                        this->elem[a++] = i;
+                }
+                if(a < tmp){
+                        for(; a < tmp; a++){
+                                this->elem[a] = 0;
+                        }
+                }
+        } 
 
         matrix(std::initializer_list<d_type> elementos) : n_dim(1){
+                this->dim = (int *) malloc(sizeof(int));
+                this->dim[0] = elementos.size();
                 this->elem = (d_type *) malloc(sizeof(d_type) * elementos.size());
                 for (d_type i : elementos)
                 {
@@ -56,7 +83,9 @@ public:
         }
 
         ~matrix(){
-                free(this->dim);
+                printf("n1\n");
+                free(this->dim); // dando erro de double free ao operator+ com matrix
+                printf("n2\n");
                 free(this->elem);
                 
         }
@@ -64,7 +93,7 @@ public:
         std::vector<int> shape(){
                 std::vector<int> tmp(this->n_dim);
                 for(int i = 0; i < this->n_dim; i++){
-                        tmp.push_back(this->dim[i]);
+                        tmp[i] = this->dim[i];
                 }
                 return tmp;
         } 
@@ -94,9 +123,38 @@ public:
 
 
         }
+
+        matrix operator+(int y){
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] + y;
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+        matrix operator+(matrix y){
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] + y.elem[i];
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
         // TODO: print para 3 dimensoes
         // print para 2 dimensões ta de boa
         void print(){
+                // como gerar um for iterativo?
+                // por enuquanto só printar os numeros
+                printf("Shape: ");
+                for(int i = 0; i < this->n_dim; i++){
+                        printf("%d ", this->dim[i]);
+                }
+                printf("->");
+                for(int i = 0; i < this->el_qdt; i++){
+                        print_(this->elem[i]);
+                        printf(", ");
+                }
+                printf("\n");
                 // printf("[ ");
                 // for (int i = 0; i < this->el_qdt; i++)
                 // {
@@ -133,6 +191,10 @@ public:
 
 int main() {
         matrix m({3,3}, {1,2,3,4,6,7,8,6,9});
-        // m.print();
+        m.print();
+        matrix x({3,3}, {1,2,3,4,6,7,8,6,9});
+        x.print();
+        matrix y = m + x;
+        y.print();
         return 0;
 }
