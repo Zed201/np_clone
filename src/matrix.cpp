@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <tuple>
 #include <vector>
+#include <algorithm>
 #include "aux.h"
 
 #define d_type int
@@ -11,9 +12,10 @@
 // trocar para coisas como vector, ou criar sobrecarga para gerar compatibilidade
 class matrix{
 public:
-        int n_dim, *dim = nullptr, el_qdt = 0; 
+        int n_dim = 0, *dim = nullptr, el_qdt = 0; 
         d_type *elem = nullptr;
-
+         
+        // ver de reduzir isso para apenas 1 construtor, apenas outros para converter (aí implementar o max, min...)
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos){
                 std::vector<int> sh(shapes);
                 std::vector<d_type> el(elementos);
@@ -72,6 +74,18 @@ public:
                 }
         } 
 
+        matrix(matrix &n){
+                this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+                for(; this->el_qdt < n.el_qdt;){
+                        this->elem[this->el_qdt] = n.elem[this->el_qdt++];
+                }
+
+                this->dim = (int *) malloc(sizeof(int) * n.n_dim);
+                for(; this->n_dim < n.n_dim;){
+                        this->dim[this->n_dim] = n.dim[this->n_dim++];
+                }
+        }
+
         matrix(std::initializer_list<d_type> elementos) : n_dim(1){
                 this->dim = (int *) malloc(sizeof(int));
                 this->dim[0] = elementos.size();
@@ -127,8 +141,7 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] + y;
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
 
         matrix operator-(int y){
@@ -136,8 +149,7 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] - y;
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
 
         matrix operator*(int y){
@@ -145,8 +157,7 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] * y;
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
 
         matrix operator/(int y){
@@ -154,8 +165,7 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] / y;
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
 
         bool operator==(matrix &y){
@@ -170,8 +180,6 @@ public:
                 return true;
         }
 
-        // TODO:
-        // problemas com isso ent dx quieto
         matrix operator+(matrix &y){// tem que ter referencia se não ele da erro nos construtores
                 if(this->shape() != y.shape()){
                         error_print("Erro de formato");
@@ -180,8 +188,7 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] + y.elem[i];
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
 
         matrix operator-(matrix &y){// tem que ter referencia se não ele da erro nos construtores
@@ -192,21 +199,13 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] - y.elem[i];
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
-
-        matrix operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
-                if(this->shape() != y.shape()){
-                        error_print("Erro de formato");
-                }
-                std::vector<int> x(this->el_qdt);
-                for(int i = 0; i < this->el_qdt; i++) {
-                        x[i] = this->elem[i] * y.elem[i];
-                }
-                matrix n(this->shape(), x);
-                return n;
-        }
+        // TODO: 
+        // multiplicação de matrizes normal
+        // matrix operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
+        //         return nullptr;
+        // }
 
         matrix operator/(matrix &y){// tem que ter referencia se não ele da erro nos construtores
                 if(this->shape() != y.shape()){
@@ -216,8 +215,7 @@ public:
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] / y.elem[i];
                 }
-                matrix n(this->shape(), x);
-                return n;
+                return matrix(this->shape(), x);
         }
 
         void rec_print(int c, int &c_el){
@@ -240,11 +238,33 @@ public:
                 // acertar onde printar o \n, nao consegui decidir bem
 
         }
+        
         void print(){
                 int a = 0;
                 rec_print(0, a);
                 printf("\n");
         }
+
+        // basicamente so inverte os eixos, se for 1D ele retorna ela mesmo
+        matrix transpose(){
+                std::vector<int> d(this->n_dim);
+                std::vector<d_type> e(this->el_qdt);
+                for(int i = 0; i < this->n_dim; i++){
+                        d[i] = this->dim[i];
+                }
+                for(int i = 0; i < this->el_qdt; i++){
+                        e[i] = this->elem[i];
+                }
+        
+                if(this->n_dim == 1){ // se for 1D
+                       return matrix(d, e) ;
+                } else { // se for diferente de 2d, inverte o shape e os elementos                        
+                        std::reverse(d.begin(), d.end());
+                        std::reverse(e.begin(), e.end()); 
+                        return matrix(d, e);
+                }
+        }
+        
 };
 
 /* TODO:
@@ -252,7 +272,7 @@ public:
  * -Criar print para 3 dimensões(+-)
  * -Criar outros construtores para ter outras formas de criar, principalmente facilitando a parte do python(tirando tuple, initializer_list...)
  * -Criar o .h referente a isso
- * -Fazer sobre carga para +, -, ==, *(com int,long...), /, 
+ * -Fazer sobre carga para +, -, ==, *(com int,long...), /,(X) 
  * -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar)
  * -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)
  * -Fazer coisas como matriz transposta
@@ -265,11 +285,6 @@ public:
 int main() {
         matrix m({3,3}, {1,2,3,4,6,7,8,6,9});
         m.print();
-        // matrix a({3,3}, {1,2,3,4,6,7,8,6,9});
-        matrix a = m * 2;
-        a.print();
-        matrix b = m + a;
-        b.print();
-        // std::cout << (a == m) << std::endl;
+        (m.transpose()).print();
         return 0;
 }
