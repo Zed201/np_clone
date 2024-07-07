@@ -17,7 +17,7 @@ public:
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos){
                 std::vector<int> sh(shapes);
                 std::vector<d_type> el(elementos);
-        
+
                 int tmp = 1, a = 0;
                 this->dim = (int *) malloc(sizeof(int) * sh.size()); 
                 for(int i : sh){
@@ -83,11 +83,9 @@ public:
         }
 
         ~matrix(){
-                printf("n1\n");
-                free(this->dim); // dando erro de double free ao operator+ com matrix
-                printf("n2\n");
+                free(this->dim); 
                 free(this->elem);
-                
+
         }
 
         std::vector<int> shape(){
@@ -110,12 +108,12 @@ public:
                 if(tmp != this->el_qdt){
                         error_print("Erro ao trocar shape");
                 }
-        
+
                 if(n.size() != this->n_dim){
                         this->n_dim = n.size();
                         this->dim = (int *) std::realloc(this->dim, sizeof(int) * this->n_dim);
                 }
-        
+
                 tmp = 0;
                 for(int i : n){
                         this->dim[tmp++] = i;
@@ -132,7 +130,52 @@ public:
                 matrix n(this->shape(), x);
                 return n;
         }
-        matrix operator+(matrix y){
+
+        matrix operator-(int y){
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] - y;
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+
+        matrix operator*(int y){
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] * y;
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+
+        matrix operator/(int y){
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] / y;
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+
+        bool operator==(matrix &y){
+                if(this->el_qdt != y.el_qdt) {
+                        return false;
+                }
+                for(int i = 0; i < this->el_qdt; i++){
+                        if(this->elem[i] != y.elem[i]){
+                                return false;
+                        }
+                }
+                return true;
+        }
+
+        // TODO:
+        // problemas com isso ent dx quieto
+        matrix operator+(matrix &y){// tem que ter referencia se não ele da erro nos construtores
+                if(this->shape() != y.shape()){
+                        error_print("Erro de formato");
+                }
                 std::vector<int> x(this->el_qdt);
                 for(int i = 0; i < this->el_qdt; i++) {
                         x[i] = this->elem[i] + y.elem[i];
@@ -140,43 +183,71 @@ public:
                 matrix n(this->shape(), x);
                 return n;
         }
-        // TODO: print para 3 dimensoes
-        // print para 2 dimensões ta de boa
-        void print(){
-                // como gerar um for iterativo?
-                // por enuquanto só printar os numeros
-                printf("Shape: ");
-                for(int i = 0; i < this->n_dim; i++){
-                        printf("%d ", this->dim[i]);
-                }
-                printf("->");
-                for(int i = 0; i < this->el_qdt; i++){
-                        print_(this->elem[i]);
-                        printf(", ");
-                }
-                printf("\n");
-                // printf("[ ");
-                // for (int i = 0; i < this->el_qdt; i++)
-                // {
-                //         // print de espaço se nao tiver na primeira linha(o 2 é arbitrario para tirar o espaço do [)
-                //         int s_jump = (i == 0)? tab_size - 2 : tab_size;
 
-                //         for (int s = 0; s < s_jump; s++)
-                //         {
-                //                 printf(" ");
-                //         }
-                //         printf("%d, ", this->elem[i]);
-                //         if(this->dim[0] != 0  && (i + 1) % this->dim[0] == 0 && i != this->el_qdt - 1){
-                //                 printf("\n");
-                //         }
-                // }
-                // printf("]");
+        matrix operator-(matrix &y){// tem que ter referencia se não ele da erro nos construtores
+                if(this->shape() != y.shape()){
+                        error_print("Erro de formato");
+                }
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] - y.elem[i];
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+
+        matrix operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
+                if(this->shape() != y.shape()){
+                        error_print("Erro de formato");
+                }
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] * y.elem[i];
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+
+        matrix operator/(matrix &y){// tem que ter referencia se não ele da erro nos construtores
+                if(this->shape() != y.shape()){
+                        error_print("Erro de formato");
+                }
+                std::vector<int> x(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++) {
+                        x[i] = this->elem[i] / y.elem[i];
+                }
+                matrix n(this->shape(), x);
+                return n;
+        }
+
+        void rec_print(int c, int &c_el){
+                if(c >= this->n_dim){
+                        return;
+                }
+                printf("[");
+
+                for(int i = 0; i < this->dim[c]; i++){
+                        if(c == this->n_dim - 1){// dimensão mais interna
+                                printf("%d,", this->elem[c_el++]);
+                        } else {// recursao para dimensão mais interna
+                                rec_print(c + 1, c_el);
+                        }
+                }
+                printf("]");
+                // TODO:
+                // acertar onde printar o \n, nao consegui decidir bem
+
+        }
+        void print(){
+                int a = 0;
+                rec_print(0, a);
+                printf("\n");
         }
 };
 
 /* TODO:
  * -Fazer primeiro toda implementação em cpp para depois portar para .pyx usando os tutotiais de cython
- * -Criar print para 3 dimensões
+ * -Criar print para 3 dimensões(+-)
  * -Criar outros construtores para ter outras formas de criar, principalmente facilitando a parte do python(tirando tuple, initializer_list...)
  * -Criar o .h referente a isso
  * -Fazer sobre carga para +, -, ==, *(com int,long...), /, 
@@ -192,9 +263,11 @@ public:
 int main() {
         matrix m({3,3}, {1,2,3,4,6,7,8,6,9});
         m.print();
-        matrix x({3,3}, {1,2,3,4,6,7,8,6,9});
-        x.print();
-        matrix y = m + x;
-        y.print();
+        // matrix a({3,3}, {1,2,3,4,6,7,8,6,9});
+        matrix a = m * 2;
+        a.print();
+        matrix b = m + a;
+        b.print();
+        // std::cout << (a == m) << std::endl;
         return 0;
 }
