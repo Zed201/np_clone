@@ -25,10 +25,10 @@ float pow(float x, int y){
         }
         return tmp;
 }
-
+// ajeitar formatação
 void print_(int x){
-        printf("%d", x);
+        printf("%d,", x);
 }
 void print_(float x){
-        printf("%f", x);
+        printf("%f,", x);
 }

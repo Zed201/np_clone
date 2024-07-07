@@ -228,7 +228,9 @@ public:
 
                 for(int i = 0; i < this->dim[c]; i++){
                         if(c == this->n_dim - 1){// dimensão mais interna
-                                printf("%d,", this->elem[c_el++]);
+                                // printf("%d,", this->elem[c_el++]);
+                                // ajeitar questão de espaçamento no print dos numeros, para ficar padronizado
+                                print_(this->elem[c_el++]);
                         } else {// recursao para dimensão mais interna
                                 rec_print(c + 1, c_el);
                         }
