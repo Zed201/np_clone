@@ -26,9 +26,14 @@ float pow(float x, int y){
         return tmp;
 }
 // ajeitar formatação
-void print_(int x){
-        printf("%d,", x);
+std::string print_(int x){
+        // fazer alguma conta de espaços e formatação para o tamanho do buffer
+        std::string tmp;
+        tmp.append(std::to_string(x) + ','); 
+        return tmp;
 }
-void print_(float x){
-        printf("%f,", x);
+std::string print_(float x){
+        std::string tmp;
+        tmp.append(std::to_string(x) + ','); 
+        return tmp;       
 }

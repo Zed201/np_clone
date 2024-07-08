@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <vector>
 #include <algorithm>
+#include <regex>
 #include "aux.h"
 
 #define d_type int
@@ -43,59 +44,14 @@ public:
 
          
         // ver de reduzir isso para apenas 1 construtor, apenas outros para converter (aí implementar o max, min...)
-        matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos) : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)){
-                // std::vector<int> sh(shapes);
-                // std::vector<d_type> el(elementos);
-
-                // int tmp = 1, a = 0;
-                // this->dim = (int *) malloc(sizeof(int) * sh.size()); 
-                // for(int i : sh){
-                //         this->dim[a++] = i;
-                //         tmp *= i;
-                // }
-
-                // if(tmp < elementos.size()){
-                //         free(this->dim);
-                //         error_print("Tamanho errado");
-                // } 
-
-                // this->n_dim = a;
-                // a = 0;
-                // this->el_qdt = tmp;
-                // this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
-
-                // for(d_type i : el){
-                //         this->elem[a++] = i;
-                // }
-                // if(a < tmp){
-                //         for(; a < tmp; a++){
-                //                 this->elem[a] = 0;
-                //         }
-                // }
-        } 
+        matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos) 
+        : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)){} 
 
 
-        matrix(matrix &n) : matrix(n.shape(), n.flatten()){
-                // this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
-                // for(; this->el_qdt < n.el_qdt;){
-                //         this->elem[this->el_qdt] = n.elem[this->el_qdt++];
-                // }
+        matrix(matrix &n) : matrix(n.shape(), n.flatten()){}
 
-                // this->dim = (int *) malloc(sizeof(int) * n.n_dim);
-                // for(; this->n_dim < n.n_dim;){
-                //         this->dim[this->n_dim] = n.dim[this->n_dim++];
-                // }
-        }
-
-        matrix(std::initializer_list<d_type> elementos) : matrix(std::vector<int>({elementos.size()}), std::vector<d_type>(elementos)){
-                // this->dim = (int *) malloc(sizeof(int));
-                // this->dim[0] = elementos.size();
-                // this->elem = (d_type *) malloc(sizeof(d_type) * elementos.size());
-                // for (d_type i : elementos)
-                // {
-                //         this->elem[this->el_qdt++] = i;
-                // }
-        }
+        matrix(std::initializer_list<d_type> elementos) 
+        : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos)){}
 
         ~matrix(){
                 free(this->dim); 
@@ -217,32 +173,48 @@ public:
                 }
                 return matrix(this->shape(), x);
         }
-
-        void rec_print(int c, int &c_el){
+        // o const basicamente serve para funcionar junto com o << do cout, basicamente ele indica que a função
+        // nao vai modificar o estado da classe, como o operator<< ele é const também, mas ele é de fora, ele deveria ser definido
+        // fora da classe, mas usando o friend, basicamente podemos definir funções de fora dentro da classe, como não ta usando this ele
+        // poderia ser colocada facilmente fora, mas fica mais de boa assim
+        void rec_print(int c, int &c_el, std::string &str) const {
                 if(c >= this->n_dim){
                         return;
                 }
-                printf("[");
+                //printf("[");
+                str.append("[");
 
                 for(int i = 0; i < this->dim[c]; i++){
-                        if(c == this->n_dim - 1){// dimensão mais interna
-                                // printf("%d,", this->elem[c_el++]);
-                                // ajeitar questão de espaçamento no print dos numeros, para ficar padronizado
-                                print_(this->elem[c_el++]);
+                        if(c == this->n_dim - 1){// dimensão mais interna 
+                                str.append(print_(this->elem[c_el++]));
                         } else {// recursao para dimensão mais interna
-                                rec_print(c + 1, c_el);
+                                rec_print(c + 1, c_el, str);
                         }
                 }
-                printf("]");
+                str.append("]");
                 // TODO:
                 // acertar onde printar o \n, nao consegui decidir bem
 
         }
         
-        void print(){
+        friend std::ostream& operator<<(std::ostream& os, const matrix& m){ 
+                os << m.print();
+                return os;
+        }
+        std::string print() const {
                 int a = 0;
-                rec_print(0, a);
-                printf("\n");
+                std::string buffer;
+                rec_print(0, a, buffer);
+                buffer.append("\n");
+                // resolver parcialmente, mas nao fica 100%
+                std::regex pattern("\\]\\[");
+                std::string sub = "]\n [";
+
+                // std::regex pattern2(" \\[\\[");
+                // std::string sub2 = "[[";
+                buffer = std::regex_replace(buffer, pattern, sub);
+                // buffer = std::regex_replace(buffer, pattern2, sub2);
+                return buffer;
         }
         // TODO: Acertar a mudança de eixos
         // basicamente so inverte os eixos, se for 1D ele retorna ela mesmo
@@ -259,8 +231,8 @@ public:
                 if(this->n_dim == 1){ // se for 1D
                        return matrix(d, e) ;
                 } else { // se for diferente de 2d, inverte o shape e os elementos                        
-                        std::reverse(d.begin(), d.end());
-                        std::reverse(e.begin(), e.end()); 
+                        // std::reverse(d.begin(), d.end());
+                        // std::reverse(e.begin(), e.end()); 
                         return matrix(d, e);
                 }
         }
@@ -291,8 +263,8 @@ public:
  * */
 
 int main() {
-        matrix m({3,3}, {1,2,3,4,6,7,8,6,9});
-        m.print();
-        (m.transpose()).print();
+        matrix m({3,2,2}, {1,2,3,4,5,6,7,8,9,10,11,12});
+        // m.print();
+        std::cout << m; 
         return 0;
 }
