@@ -1,6 +1,5 @@
-#include <iostream>
 #include <initializer_list>
-#include <tuple>
+#include <stdio.h>
 #include <vector>
 #include <algorithm>
 #include "aux.h"
@@ -14,38 +13,6 @@ class matrix{
 public:
         int n_dim = 0, *dim = nullptr, el_qdt = 0; 
         d_type *elem = nullptr;
-         
-        // ver de reduzir isso para apenas 1 construtor, apenas outros para converter (aí implementar o max, min...)
-        matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos){
-                std::vector<int> sh(shapes);
-                std::vector<d_type> el(elementos);
-
-                int tmp = 1, a = 0;
-                this->dim = (int *) malloc(sizeof(int) * sh.size()); 
-                for(int i : sh){
-                        this->dim[a++] = i;
-                        tmp *= i;
-                }
-
-                if(tmp < elementos.size()){
-                        free(this->dim);
-                        error_print("Tamanho errado");
-                } 
-
-                this->n_dim = a;
-                a = 0;
-                this->el_qdt = tmp;
-                this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
-
-                for(d_type i : el){
-                        this->elem[a++] = i;
-                }
-                if(a < tmp){
-                        for(; a < tmp; a++){
-                                this->elem[a] = 0;
-                        }
-                }
-        } 
 
         matrix(std::vector<int> sh, std::vector<d_type> el){
                 int tmp = 1, a = 0;
@@ -74,32 +41,65 @@ public:
                 }
         } 
 
-        matrix(matrix &n){
-                this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
-                for(; this->el_qdt < n.el_qdt;){
-                        this->elem[this->el_qdt] = n.elem[this->el_qdt++];
-                }
+         
+        // ver de reduzir isso para apenas 1 construtor, apenas outros para converter (aí implementar o max, min...)
+        matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos) : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)){
+                // std::vector<int> sh(shapes);
+                // std::vector<d_type> el(elementos);
 
-                this->dim = (int *) malloc(sizeof(int) * n.n_dim);
-                for(; this->n_dim < n.n_dim;){
-                        this->dim[this->n_dim] = n.dim[this->n_dim++];
-                }
+                // int tmp = 1, a = 0;
+                // this->dim = (int *) malloc(sizeof(int) * sh.size()); 
+                // for(int i : sh){
+                //         this->dim[a++] = i;
+                //         tmp *= i;
+                // }
+
+                // if(tmp < elementos.size()){
+                //         free(this->dim);
+                //         error_print("Tamanho errado");
+                // } 
+
+                // this->n_dim = a;
+                // a = 0;
+                // this->el_qdt = tmp;
+                // this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
+
+                // for(d_type i : el){
+                //         this->elem[a++] = i;
+                // }
+                // if(a < tmp){
+                //         for(; a < tmp; a++){
+                //                 this->elem[a] = 0;
+                //         }
+                // }
+        } 
+
+
+        matrix(matrix &n) : matrix(n.shape(), n.flatten()){
+                // this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+                // for(; this->el_qdt < n.el_qdt;){
+                //         this->elem[this->el_qdt] = n.elem[this->el_qdt++];
+                // }
+
+                // this->dim = (int *) malloc(sizeof(int) * n.n_dim);
+                // for(; this->n_dim < n.n_dim;){
+                //         this->dim[this->n_dim] = n.dim[this->n_dim++];
+                // }
         }
 
-        matrix(std::initializer_list<d_type> elementos) : n_dim(1){
-                this->dim = (int *) malloc(sizeof(int));
-                this->dim[0] = elementos.size();
-                this->elem = (d_type *) malloc(sizeof(d_type) * elementos.size());
-                for (d_type i : elementos)
-                {
-                        this->elem[this->el_qdt++] = i;
-                }
+        matrix(std::initializer_list<d_type> elementos) : matrix(std::vector<int>({elementos.size()}), std::vector<d_type>(elementos)){
+                // this->dim = (int *) malloc(sizeof(int));
+                // this->dim[0] = elementos.size();
+                // this->elem = (d_type *) malloc(sizeof(d_type) * elementos.size());
+                // for (d_type i : elementos)
+                // {
+                //         this->elem[this->el_qdt++] = i;
+                // }
         }
 
         ~matrix(){
                 free(this->dim); 
                 free(this->elem);
-
         }
 
         std::vector<int> shape(){
@@ -244,7 +244,7 @@ public:
                 rec_print(0, a);
                 printf("\n");
         }
-
+        // TODO: Acertar a mudança de eixos
         // basicamente so inverte os eixos, se for 1D ele retorna ela mesmo
         matrix transpose(){
                 std::vector<int> d(this->n_dim);
@@ -263,6 +263,14 @@ public:
                         std::reverse(e.begin(), e.end()); 
                         return matrix(d, e);
                 }
+        }
+
+        std::vector<int> flatten(){
+                std::vector<int> t(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++){
+                        t[i] = this->elem[i];
+                }
+                return t;
         }
         
 };
