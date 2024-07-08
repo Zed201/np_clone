@@ -13,7 +13,7 @@
 class matrix{
 public:
         int n_dim = 0, *dim = nullptr, el_qdt = 0; 
-        d_type *elem = nullptr;
+        d_type *elem = nullptr, max = 0, min = 0;
 
         matrix(std::vector<int> sh, std::vector<d_type> el){
                 int tmp = 1, a = 0;
@@ -31,14 +31,19 @@ public:
                 a = 0;
                 this->el_qdt = tmp;
                 this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
-
+                this->max = el[0];
+                this->min = el[0];
                 for(d_type i : el){
                         this->elem[a++] = i;
+                        this->max = max_<d_type>(this->max, i);
+                        this->min = min_<d_type>(this->min, i);
                 }
                 if(a < tmp){
                         for(; a < tmp; a++){
                                 this->elem[a] = 0;
                         }
+                        this->max = max_(this->max, 0);
+                        this->min = min_(this->max, 0);
                 }
         } 
 
@@ -244,27 +249,45 @@ public:
                 }
                 return t;
         }
-        
+
+        d_type allSum(){
+                d_type t = 0;
+                for(int i = 0; i < this->el_qdt; i++){
+                        t += this->elem[i];
+                }
+                return t;
+        }
+ 
+        d_type average(){
+                return (this->allSum()/this->el_qdt);
+        } 
 };
 
 /* TODO:
  * -Fazer primeiro toda implementação em cpp para depois portar para .pyx usando os tutotiais de cython
  * -Criar print para 3 dimensões(+-)
  * -Criar outros construtores para ter outras formas de criar, principalmente facilitando a parte do python(tirando tuple, initializer_list...)
- * -Criar o .h referente a isso
+ * -Criar o .h referente a isso(O)
  * -Fazer sobre carga para +, -, ==, *(com int,long...), /,(X) 
  * -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar)
  * -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)
- * -Fazer coisas como matriz transposta
+ * -Fazer coisas como matriz transposta(+-)
  * -Fazer o slice por index
- * -Fazer operações como as de allsum, média 
- * -Criar outras funções de auxiliar, como arange...
+ * -Fazer operações como as de allsum, média(X) 
+ * -Criar outras funções de auxiliar, como arange...(X)
  *
  * */
 
 int main() {
-        matrix m({3,2,2}, {1,2,3,4,5,6,7,8,9,10,11,12});
+        // matrix m({3,2,2}, {1,2,3,4,5,6,7,8,9,10,11,12});
         // m.print();
-        std::cout << m; 
+        // std::cout << m.max << std::endl; 
+        // std::cout << m.min;
+
+        // std::cout << min_<int>(4,3);
+        // std::vector<int> a = range(10, 0, 11);
+        // for(int i : a){
+                // std::cout << i << std::endl;
+        // }
         return 0;
 }
