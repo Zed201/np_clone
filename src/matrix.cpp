@@ -12,6 +12,48 @@
 // trocar para coisas como vector, ou criar sobrecarga para gerar compatibilidade
 class matrix{
 public:
+    // funções para ajudar a mexer com coordenadas
+    std::vector<int> uni_multi(int i){
+        std::vector<int> tmp(this->n_dim);
+        for(int j = this->n_dim - 1; j >= 0; j--){
+            tmp[j] = i % this->dim[j];
+            i /= this->dim[j];
+        }
+        return tmp;
+    }
+    int multi_uni(std::vector<int> i){
+        int tmp = 0;
+        for(int j = 0; j < this->n_dim - 1; j++){
+            tmp += i[j] * this->dim[j];
+        }
+        return tmp + i[this->n_dim - 1];
+    }
+
+    // funçoes para ver se ta ou noa no triangulo superior ou no inferior da matriz
+    bool is_upper_tri(std::vector<int> i){
+        if(this->n_dim > 2){
+            error_print("Erro de dimensão, só pode ser chamado para matrizes 2D");
+        }
+        if(this->multi_uni(i) > this->multi_uni({i[0], i[0]})){
+            return true;
+        }
+        return false;
+    }
+
+    bool is_lower_tri(std::vector<int> i){
+        return !this->is_upper_tri(i);
+    }
+
+    bool diagonal_pri(std::vector<int> i){
+        if(this->n_dim > 2){
+            error_print("Erro de dimensão, só pode ser chamado para matrizes 2D");
+        }
+        if(i[0] == i[1]){
+            return true;
+        }
+        return false;
+    }
+
         int n_dim = 0, *dim = nullptr, el_qdt = 0; 
         d_type *elem = nullptr, max = 0, min = 0;
 
@@ -226,19 +268,33 @@ public:
         matrix transpose(){
                 std::vector<int> d(this->n_dim);
                 std::vector<d_type> e(this->el_qdt);
-                for(int i = 0; i < this->n_dim; i++){
-                        d[i] = this->dim[i];
-                }
-                for(int i = 0; i < this->el_qdt; i++){
-                        e[i] = this->elem[i];
-                }
-        
+
                 if(this->n_dim == 1){ // se for 1D
-                       return matrix(d, e) ;
-                } else { // se for diferente de 2d, inverte o shape e os elementos                        
-                        // std::reverse(d.begin(), d.end());
-                        // std::reverse(e.begin(), e.end()); 
+                        for(int i = 0; i < this->n_dim; i++){
+                                d[i] = this->dim[i];
+                        }
+                        for(int i = 0; i < this->el_qdt; i++){
+                                e[i] = this->elem[i];
+                        }
+                        return matrix(d, e) ;
+                } else if(this->n_dim == 2){ // se for diferente de 2d, inverte o shape e os elementos                        
+                        // supondo matrizes quadradas por enquanto
+                        // TODO: Fazer para matrizes de dimensões diferentes, complementar com algum elemento, partir para matriz quadrada inverter e depois cortar(fazer o slice de matriz, para facilitar)
+                        d[0] = this->dim[1];
+                        d[1] = this->dim[0];
+                        std::vector<int> tmp(2);
+
+                        for(int i = 0; i < this->el_qdt; i++){
+                                tmp = this->uni_multi(i);
+                                if(tmp[0] != tmp[1]){
+                                        // na diagonal principal nao muda nada
+                                        std::swap(tmp[0], tmp[1]);
+                                }
+                                e[this->multi_uni(tmp)] = this->elem[i];
+                        }
                         return matrix(d, e);
+                } else {
+                        error_print("Erro de dimensão");       
                 }
         }
 
@@ -279,15 +335,8 @@ public:
  * */
 
 int main() {
-        // matrix m({3,2,2}, {1,2,3,4,5,6,7,8,9,10,11,12});
-        // m.print();
-        // std::cout << m.max << std::endl; 
-        // std::cout << m.min;
-
-        // std::cout << min_<int>(4,3);
-        // std::vector<int> a = range(10, 0, 11);
-        // for(int i : a){
-                // std::cout << i << std::endl;
-        // }
+        matrix m({3,3}, {15,2,3,4,5,6,7,8,9});
+        std::cout << m << std::endl;
+        std::cout << m.transpose() << std::endl;
         return 0;
 }
