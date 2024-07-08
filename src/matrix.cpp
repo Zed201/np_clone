@@ -328,7 +328,7 @@ public:
  * -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar)
  * -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)
  * -Fazer coisas como matriz transposta(+-)
- * -Fazer o slice por index
+ * -Fazer o slice por index(fazer slice com vector e depois no python usar a warper para fazer o slice com o slice do proprio python)
  * -Fazer operações como as de allsum, média(X) 
  * -Criar outras funções de auxiliar, como arange...(X)
  *
