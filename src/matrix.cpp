@@ -12,47 +12,64 @@
 // trocar para coisas como vector, ou criar sobrecarga para gerar compatibilidade
 class matrix{
 public:
-    // funções para ajudar a mexer com coordenadas
-    std::vector<int> uni_multi(int i){
-        std::vector<int> tmp(this->n_dim);
-        for(int j = this->n_dim - 1; j >= 0; j--){
-            tmp[j] = i % this->dim[j];
-            i /= this->dim[j];
+        // funções para ajudar a mexer com coordenadas
+        std::vector<int> uni_multi(int i){
+                std::vector<int> tmp(this->n_dim);
+                for(int j = this->n_dim - 1; j >= 0; j--){
+                        tmp[j] = i % this->dim[j];
+                        i /= this->dim[j];
+                }
+                return tmp;
         }
-        return tmp;
-    }
-    int multi_uni(std::vector<int> i){
-        int tmp = 0;
-        for(int j = 0; j < this->n_dim - 1; j++){
-            tmp += i[j] * this->dim[j];
+        int multi_uni(std::vector<int> i){
+                int tmp = 0;
+                for(int j = 0; j < this->n_dim - 1; j++){
+                        tmp += i[j] * this->dim[j];
+                }
+                return tmp + i[this->n_dim - 1];
         }
-        return tmp + i[this->n_dim - 1];
-    }
+        // sobrecarfas para trabalhar com matrizes diferentes
+        int multi_uni(matrix &m, std::vector<int> i){
+                int tmp = 0;
+                for(int j = 0; j < m.n_dim - 1; j++){
+                        tmp += i[j] * m.dim[j];
+                }
+                return tmp + i[m.n_dim - 1];
+        }
 
-    // funçoes para ver se ta ou noa no triangulo superior ou no inferior da matriz
-    bool is_upper_tri(std::vector<int> i){
-        if(this->n_dim > 2){
-            error_print("Erro de dimensão, só pode ser chamado para matrizes 2D");
+        std::vector<int> uni_multi(matrix &m, int i){
+                std::vector<int> tmp(m.n_dim);
+                for(int j = m.n_dim - 1; j >= 0; j--){
+                        tmp[j] = i % m.dim[j];
+                        i /= m.dim[j];
+                }
+                return tmp;
         }
-        if(this->multi_uni(i) > this->multi_uni({i[0], i[0]})){
-            return true;
-        }
-        return false;
-    }
 
-    bool is_lower_tri(std::vector<int> i){
-        return !this->is_upper_tri(i);
-    }
+        // funçoes para ver se ta ou noa no triangulo superior ou no inferior da matriz
+        bool is_upper_tri(std::vector<int> i){
+                if(this->n_dim > 2){
+                        error_print("Erro de dimensão, só pode ser chamado para matrizes 2D");
+                }
+                if(this->multi_uni(i) > this->multi_uni({i[0], i[0]})){
+                        return true;
+                }
+                return false;
+        }
 
-    bool diagonal_pri(std::vector<int> i){
-        if(this->n_dim > 2){
-            error_print("Erro de dimensão, só pode ser chamado para matrizes 2D");
+        bool is_lower_tri(std::vector<int> i){
+                return !this->is_upper_tri(i);
         }
-        if(i[0] == i[1]){
-            return true;
+
+        bool diagonal_pri(std::vector<int> i){
+                if(this->n_dim > 2){
+                        error_print("Erro de dimensão, só pode ser chamado para matrizes 2D");
+                }
+                if(i[0] == i[1]){
+                        return true;
+                }
+                return false;
         }
-        return false;
-    }
 
         int n_dim = 0, *dim = nullptr, el_qdt = 0; 
         d_type *elem = nullptr, max = 0, min = 0;
@@ -89,7 +106,7 @@ public:
                 }
         } 
 
-         
+
         // ver de reduzir isso para apenas 1 construtor, apenas outros para converter (aí implementar o max, min...)
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos) 
         : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)){} 
@@ -243,7 +260,7 @@ public:
                 // acertar onde printar o \n, nao consegui decidir bem
 
         }
-        
+
         friend std::ostream& operator<<(std::ostream& os, const matrix& m){ 
                 os << m.print();
                 return os;
@@ -263,39 +280,51 @@ public:
                 // buffer = std::regex_replace(buffer, pattern2, sub2);
                 return buffer;
         }
-        // TODO: Acertar a mudança de eixos
-        // basicamente so inverte os eixos, se for 1D ele retorna ela mesmo
         matrix transpose(){
                 std::vector<int> d(this->n_dim);
                 std::vector<d_type> e(this->el_qdt);
 
-                if(this->n_dim == 1){ // se for 1D
+                if(this->n_dim == 1){ // se for 1D, so vai retornar ela mesma
                         for(int i = 0; i < this->n_dim; i++){
                                 d[i] = this->dim[i];
                         }
                         for(int i = 0; i < this->el_qdt; i++){
                                 e[i] = this->elem[i];
                         }
-                        return matrix(d, e) ;
                 } else if(this->n_dim == 2){ // se for diferente de 2d, inverte o shape e os elementos                        
                         // supondo matrizes quadradas por enquanto
                         // TODO: Fazer para matrizes de dimensões diferentes, complementar com algum elemento, partir para matriz quadrada inverter e depois cortar(fazer o slice de matriz, para facilitar)
-                        d[0] = this->dim[1];
-                        d[1] = this->dim[0];
-                        std::vector<int> tmp(2);
+                        if(this->dim[0] == this->dim[1]){ // para matrizes quadradas
+                                d[0] = this->dim[1];
+                                d[1] = this->dim[0];
+                                std::vector<int> tmp(2);
 
-                        for(int i = 0; i < this->el_qdt; i++){
-                                tmp = this->uni_multi(i);
-                                if(tmp[0] != tmp[1]){
-                                        // na diagonal principal nao muda nada
-                                        std::swap(tmp[0], tmp[1]);
+                                for(int i = 0; i < this->el_qdt; i++){
+                                        tmp = this->uni_multi(i);
+                                        if(tmp[0] != tmp[1]){
+                                                // na diagonal principal nao muda nada
+                                                std::swap(tmp[0], tmp[1]);
+                                        }
+                                        e[this->multi_uni(tmp)] = this->elem[i];
                                 }
-                                e[this->multi_uni(tmp)] = this->elem[i];
+                        } else { // para matrizes nao quadradas TODO
+                                int m_dim = max_<int>(this->dim[0], this->dim[1]);
+                                std::vector<int> t(m_dim * m_dim); // cria basicamente uma matriz quadrada da maior dimensão
+                                std::fill(t.begin(), t.end(), this->min - 1);
+                                matrix T({m_dim, m_dim}, t);
+                                for(int i = 0; i < this->el_qdt; i++){
+                                        T.elem[this->multi_uni(T, this->uni_multi(i))] = this->elem[i];
+                                        
+                                }
+                                // T basicamente é uma matriz quadrada que "contem" a matriz this
+                                // TODO: Ta feito agora so tirar os zeros e mudar o shape para o inverso nao quadrado
+                                return T.transpose();
+
                         }
-                        return matrix(d, e);
                 } else {
                         error_print("Erro de dimensão");       
                 }
+                return matrix(d,e);
         }
 
         std::vector<int> flatten(){
@@ -313,7 +342,7 @@ public:
                 }
                 return t;
         }
- 
+
         d_type average(){
                 return (this->allSum()/this->el_qdt);
         } 
@@ -335,7 +364,7 @@ public:
  * */
 
 int main() {
-        matrix m({3,3}, {15,2,3,4,5,6,7,8,9});
+        matrix m({3,2}, {1,2,3,4,5,6});
         std::cout << m << std::endl;
         std::cout << m.transpose() << std::endl;
         return 0;
