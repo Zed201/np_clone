@@ -3,6 +3,13 @@
 
 #include <iostream>
 #include <vector>
+#include <format>
+#include <initializer_list>
+#include <stdio.h>
+#include <vector>
+#include <algorithm>
+#include <regex>
+
 
 void error_print(const char* text);
 void error_print(std::string text);

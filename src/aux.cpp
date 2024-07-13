@@ -29,13 +29,13 @@ float pow(float x, int y){
 std::string print_(int x){
         // fazer alguma conta de espaços e formatação para o tamanho do buffer
         std::string tmp;
-        tmp.append(std::to_string(x) + ','); 
+        tmp.append(std::format(" {},", x)); 
         return tmp;
 }
 
 std::string print_(float x){
         std::string tmp;
-        tmp.append(std::to_string(x) + ','); 
+        tmp.append(std::format(" {0:.3f},", x)); 
         return tmp;       
 }
 

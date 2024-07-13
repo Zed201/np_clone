@@ -1,17 +1,26 @@
-#include <initializer_list>
-#include <stdio.h>
-#include <vector>
-#include <algorithm>
-#include <regex>
 #include "aux.h"
-
+// TODO:
+// concertar para poder trocar para float, dando erro em alguns conversões
 #define d_type int
-#define tab_size 2
+
+struct search_replace{
+        std::regex pattern;
+        std::string sub_s;
+};
+
+static const struct search_replace rep[] = {
+        {std::regex("\\]\\["), std::string("]\n [")},
+        {std::regex("\\[\\["), std::string("[[")},
+};
 
 // reestruturar para ficar mais fácil de chamar no pyx
-// trocar para coisas como vector, ou criar sobrecarga para gerar compatibilidade
+
 class matrix{
 public:
+
+        int n_dim = 0, *dim = nullptr, el_qdt = 0; 
+        d_type *elem = nullptr, max = 0, min = 0;
+
         // funções para ajudar a mexer com coordenadas
         std::vector<int> uni_multi(int i){
                 std::vector<int> tmp(this->n_dim);
@@ -71,9 +80,6 @@ public:
                 return false;
         }
 
-        int n_dim = 0, *dim = nullptr, el_qdt = 0; 
-        d_type *elem = nullptr, max = 0, min = 0;
-
         matrix(std::vector<int> sh, std::vector<d_type> el){
                 int tmp = 1, a = 0;
                 this->dim = (int *) malloc(sizeof(int) * sh.size()); 
@@ -107,7 +113,6 @@ public:
         } 
 
 
-        // ver de reduzir isso para apenas 1 construtor, apenas outros para converter (aí implementar o max, min...)
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos) 
         : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)){} 
 
@@ -237,6 +242,7 @@ public:
                 }
                 return matrix(this->shape(), x);
         }
+
         // o const basicamente serve para funcionar junto com o << do cout, basicamente ele indica que a função
         // nao vai modificar o estado da classe, como o operator<< ele é const também, mas ele é de fora, ele deveria ser definido
         // fora da classe, mas usando o friend, basicamente podemos definir funções de fora dentro da classe, como não ta usando this ele
@@ -245,7 +251,6 @@ public:
                 if(c >= this->n_dim){
                         return;
                 }
-                //printf("[");
                 str.append("[");
 
                 for(int i = 0; i < this->dim[c]; i++){
@@ -255,29 +260,23 @@ public:
                                 rec_print(c + 1, c_el, str);
                         }
                 }
-                str.append("]");
-                // TODO:
-                // acertar onde printar o \n, nao consegui decidir bem
-
+                str.append("]"); 
         }
 
         friend std::ostream& operator<<(std::ostream& os, const matrix& m){ 
                 os << m.print();
                 return os;
         }
+
         std::string print() const {
                 int a = 0;
                 std::string buffer;
                 rec_print(0, a, buffer);
                 buffer.append("\n");
-                // resolver parcialmente, mas nao fica 100%
-                std::regex pattern("\\]\\[");
-                std::string sub = "]\n [";
-
-                // std::regex pattern2(" \\[\\[");
-                // std::string sub2 = "[[";
-                buffer = std::regex_replace(buffer, pattern, sub);
-                // buffer = std::regex_replace(buffer, pattern2, sub2);
+                const struct search_replace *t;
+                for(t = rep; t < rep + (sizeof(rep)/sizeof(*rep)); t++){
+                        buffer = std::regex_replace(buffer, t->pattern, t->sub_s);
+                }
                 return buffer;
         }
         matrix transpose(){
@@ -292,8 +291,6 @@ public:
                                 e[i] = this->elem[i];
                         }
                 } else if(this->n_dim == 2){ // se for diferente de 2d, inverte o shape e os elementos                        
-                        // supondo matrizes quadradas por enquanto
-                        // TODO: Fazer para matrizes de dimensões diferentes, complementar com algum elemento, partir para matriz quadrada inverter e depois cortar(fazer o slice de matriz, para facilitar)
                         if(this->dim[0] == this->dim[1]){ // para matrizes quadradas
                                 d[0] = this->dim[1];
                                 d[1] = this->dim[0];
@@ -316,13 +313,10 @@ public:
                                         T.elem[this->multi_uni(T, this->uni_multi(i))] = this->elem[i];
                                         
                                 }
-                                // T basicamente é uma matriz quadrada que "contem" a matriz this
-                                // TODO: Ta feito agora so tirar os zeros e mudar o shape para o inverso nao quadrado
-                                // return T.transpose();
+
                                 for(int i = 0, j = 0; i < T.el_qdt; i++){
                                         if(T.elem[i] != this->min - 1){
                                                 e[j++] = T.elem[i];
-                                                // printf("%d ", e[j - 1]);
                                         }
                                 }
                                 d[0] = this->dim[1];
@@ -355,6 +349,10 @@ public:
         } 
 };
 
+// std::regex pattern2(" \\[\\[");
+// std::string sub2 = "[[";
+
+
 /* TODO:
  * -Fazer primeiro toda implementação em cpp para depois portar para .pyx usando os tutotiais de cython
  * -Criar print para 3 dimensões(+-)
@@ -363,7 +361,7 @@ public:
  * -Fazer sobre carga para +, -, ==, *(com int,long...), /,(X) 
  * -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar)
  * -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)
- * -Fazer coisas como matriz transposta(+-)
+ * -Fazer coisas como matriz transposta(X)
  * -Fazer o slice por index(fazer slice com vector e depois no python usar a warper para fazer o slice com o slice do proprio python)
  * -Fazer operações como as de allsum, média(X) 
  * -Criar outras funções de auxiliar, como arange...(X)
@@ -371,7 +369,7 @@ public:
  * */
 
 int main() {
-        matrix m({2,2}, {1,2,3,0});
+        matrix m({2,2,1}, {1,2,3,0});
         std::cout << m << std::endl;
         // std::cout << m.transpose() << std::endl;
         return 0;
