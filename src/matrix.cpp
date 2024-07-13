@@ -318,11 +318,18 @@ public:
                                 }
                                 // T basicamente é uma matriz quadrada que "contem" a matriz this
                                 // TODO: Ta feito agora so tirar os zeros e mudar o shape para o inverso nao quadrado
-                                return T.transpose();
-
+                                // return T.transpose();
+                                for(int i = 0, j = 0; i < T.el_qdt; i++){
+                                        if(T.elem[i] != this->min - 1){
+                                                e[j++] = T.elem[i];
+                                                // printf("%d ", e[j - 1]);
+                                        }
+                                }
+                                d[0] = this->dim[1];
+                                d[1] = this->dim[0];
                         }
                 } else {
-                        error_print("Erro de dimensão");       
+                        error_print("Número de dimensões maior que 2, não suportado");       
                 }
                 return matrix(d,e);
         }
@@ -364,8 +371,8 @@ public:
  * */
 
 int main() {
-        matrix m({3,2}, {1,2,3,4,5,6});
+        matrix m({2,2}, {1,2,3,0});
         std::cout << m << std::endl;
-        std::cout << m.transpose() << std::endl;
+        // std::cout << m.transpose() << std::endl;
         return 0;
 }
