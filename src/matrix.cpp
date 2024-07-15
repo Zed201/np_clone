@@ -1,11 +1,8 @@
 #include "aux.h"
-// TODO:
-// concertar para poder trocar para float, dando erro em alguns conversões
+
+// TODO: Concertar para pegar com template
 #define d_type int
 
-// reestruturar para ficar mais fácil de chamar no pyx
-
-class matrix{
 public:
 
         int n_dim = 0, *dim = nullptr, el_qdt = 0; 
@@ -216,6 +213,7 @@ public:
                 }
                 return matrix(this->shape(), x);
         }
+
         // TODO: 
         // multiplicação de matrizes normal
         // matrix operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
@@ -351,24 +349,6 @@ public:
         } 
 };
 
-// std::regex pattern2(" \\[\\[");
-// std::string sub2 = "[[";
-
-
-/* TODO:
- * -Fazer primeiro toda implementação em cpp para depois portar para .pyx usando os tutotiais de cython
- * -Criar print para 3 dimensões(+-)
- * -Criar outros construtores para ter outras formas de criar, principalmente facilitando a parte do python(tirando tuple, initializer_list...)
- * -Criar o .h referente a isso(O)
- * -Fazer sobre carga para +, -, ==, *(com int,long...), /,(X) 
- * -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar)
- * -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)
- * -Fazer coisas como matriz transposta(X)
- * -Fazer o slice por index(fazer slice com vector e depois no python usar a warper para fazer o slice com o slice do proprio python)
- * -Fazer operações como as de allsum, média(X) 
- * -Criar outras funções de auxiliar, como arange...(X)
- *
- * */
 
 int main() {
         matrix m({3,3,1}, {1,2,3,4,5,6,7,8,9});
