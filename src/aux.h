@@ -10,6 +10,15 @@
 #include <algorithm>
 #include <regex>
 
+struct search_replace{
+        std::regex pattern;
+        std::string sub_s;
+};
+
+static const struct search_replace rep[] = {
+        {std::regex("\\]\\["), std::string("]\n [")},
+        // {std::regex("]+"), std::string("]")},
+};
 
 void error_print(const char* text);
 void error_print(std::string text);

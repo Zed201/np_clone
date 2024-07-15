@@ -3,16 +3,6 @@
 // concertar para poder trocar para float, dando erro em alguns conversões
 #define d_type int
 
-struct search_replace{
-        std::regex pattern;
-        std::string sub_s;
-};
-
-static const struct search_replace rep[] = {
-        {std::regex("\\]\\["), std::string("]\n [")},
-        {std::regex("\\[\\["), std::string("[[")},
-};
-
 // reestruturar para ficar mais fácil de chamar no pyx
 
 class matrix{
@@ -268,15 +258,27 @@ public:
                 return os;
         }
 
+        void format_print(std::string& str) const {
+                // TODO: usar regex_iterator para printar bonitinho
+                str.append("\n");
+                const struct search_replace *t;
+                for(t = rep; t < rep + (sizeof(rep)/sizeof(*rep)); t++){
+                        str = std::regex_replace(str, t->pattern, t->sub_s);
+                }
+                std::regex pat("\n ");
+                std::string tmp = "\n";
+                for(int i = 0; i < this->n_dim - 1; i++){
+                        tmp += " ";
+                }
+                str = std::regex_replace(str, pat, tmp);
+
+        }
+
         std::string print() const {
                 int a = 0;
                 std::string buffer;
                 rec_print(0, a, buffer);
-                buffer.append("\n");
-                const struct search_replace *t;
-                for(t = rep; t < rep + (sizeof(rep)/sizeof(*rep)); t++){
-                        buffer = std::regex_replace(buffer, t->pattern, t->sub_s);
-                }
+                format_print(buffer);
                 return buffer;
         }
         matrix transpose(){
@@ -369,7 +371,7 @@ public:
  * */
 
 int main() {
-        matrix m({2,2,1}, {1,2,3,0});
+        matrix m({3,3,1}, {1,2,3,4,5,6,7,8,9});
         std::cout << m << std::endl;
         // std::cout << m.transpose() << std::endl;
         return 0;
