@@ -44,11 +44,9 @@ class matrix{
         bool diagonal_pri(std::vector<int> i);
 
         matrix(std::vector<int> sh, std::vector<d_type> el);
-        matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos) 
-        : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos));
-        matrix(matrix &n) : matrix(n.shape(), n.flatten());
-        matrix(std::initializer_list<d_type> elementos) 
-        : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos));
+        matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos);
+        matrix(matrix &n);
+        matrix(std::initializer_list<d_type> elementos);
 
         ~matrix();
 
@@ -67,7 +65,6 @@ class matrix{
         // operator de multiplicação de matrizes
 
         void rec_print(int c, int &c_el, std::string &str) const;
-        friend std::ostream& operator<<(std::ostream& os, const matrix& m);
         void format_print(std::string& str) const;
         std::string print() const;
 
@@ -80,6 +77,7 @@ class matrix{
 
 };
 
+std::ostream& operator<<(std::ostream& os, matrix& m);
 // range inclusivo de ambos os lados, podendo passar o step
 template<typename T>
 std::vector<T> range(T start, T end, T step = 1){
