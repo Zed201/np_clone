@@ -380,7 +380,7 @@ d_type matrix::average(){
 
 
 int main() {
-        matrix m({3,3,1}, {1,2,3,4,5,6,7,8,9});
+        matrix m({3,4}, {1,2,3,4,5,6,7,8,9,10,11,12});
         std::cout << m << std::endl;
         // std::cout << m.transpose() << std::endl;
         return 0;

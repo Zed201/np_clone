@@ -8,4 +8,9 @@
 -Fazer coisas como matriz transposta(X)
 -Fazer o slice por index(fazer slice com vector e depois no python usar a warper para fazer o slice com o slice do proprio python)( )
 -Fazer operações como as de allsum, média(X) 
+-Fazer print com alinhado de com o tamanho dos numeros(0)
+array([[     1,      2,      3,      4],
+       [     5,      6,      7,      8],
+       [     9,     10,     11, 120000]])
+por exemplo dar um jeito do 12000 ficar alinhado(alguma ideia de calcular o numero com a maior quantidade de digitos e colocar isso no print dos numeros)
 -Criar outras funções de auxiliar, como arange...(X)
