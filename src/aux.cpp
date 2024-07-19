@@ -35,8 +35,24 @@ std::string print_(int x){
 
 std::string print_(float x){
         std::string tmp;
-        tmp.append(std::format("{0:.3f},", x)); 
+        tmp.append(std::format("{0:." t_str(f_precision) "f},", x)); 
         return tmp;       
 }
 
+std::string print_(double x){
+        std::string tmp;
+        tmp.append(std::format("{0:." t_str(f_precision) "f},", x)); 
+        return tmp;       
+}
 
+int dig_qtd(int x){
+        return static_cast<int>(log10(x)) + 1;
+}       
+
+int dig_qtd(float x){
+        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
+}
+
+int dig_qtd(double x){
+        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
+}

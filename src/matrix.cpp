@@ -1,7 +1,5 @@
 #include "aux.h"
 
-// TODO: Concertar para pegar com template
-
 std::vector<int> matrix::uni_multi(int i){
         std::vector<int> tmp(this->n_dim);
         for(int j = this->n_dim - 1; j >= 0; j--){
@@ -60,7 +58,38 @@ bool matrix::diagonal_pri(std::vector<int> i){
         return false;
 }
 
-matrix::matrix(std::vector<int> sh, std::vector<d_type> el){
+// matrix::matrix(std::vector<int> sh, std::vector<int> el) : max_digs_space(0) {
+//         int tmp = 1, a = 0;
+//         this->dim = (int *) malloc(sizeof(int) * sh.size()); 
+//         for(int i : sh){
+//                 this->dim[a++] = i;
+//                 tmp *= i;
+//         }
+//         if(tmp < el.size()){
+//                 free(this->dim);
+//                 error_print("Tamanho errado");
+//         } 
+
+//         this->n_dim = a;
+//         a = 0;
+//         this->el_qdt = tmp;
+//         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
+//         this->max = el[0];
+//         this->min = el[0];
+//         for(d_type i : el){
+//                 this->elem[a++] = i;
+//                 this->max = max_<d_type>(this->max, i);
+//                 this->min = min_<d_type>(this->min, i);
+//         }
+//         if(a < tmp){
+//                 for(; a < tmp; a++){
+//                         this->elem[a] = 0;
+//                 }
+//                 this->max = max_(this->max, 0);
+//                 this->min = min_(this->max, 0);
+//         }
+// } 
+matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
         this->dim = (int *) malloc(sizeof(int) * sh.size()); 
         for(int i : sh){
@@ -142,7 +171,7 @@ void matrix::reshape(std::initializer_list<int> n_shape){
 }
 
 matrix matrix::operator+(int y){
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] + y;
         }
@@ -150,7 +179,7 @@ matrix matrix::operator+(int y){
 }
 
 matrix matrix::operator-(int y){
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] - y;
         }
@@ -158,7 +187,7 @@ matrix matrix::operator-(int y){
 }
 
 matrix matrix::operator*(int y){
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] * y;
         }
@@ -166,7 +195,7 @@ matrix matrix::operator*(int y){
 }
 
 matrix matrix::operator/(int y){
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] / y;
         }
@@ -189,7 +218,7 @@ matrix matrix::operator+(matrix &y){// tem que ter referencia se não ele da err
         if(this->shape() != y.shape()){
                 error_print("Erro de formato");
         }
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] + y.elem[i];
         }
@@ -200,7 +229,7 @@ matrix matrix::operator-(matrix &y){// tem que ter referencia se não ele da err
         if(this->shape() != y.shape()){
                 error_print("Erro de formato");
         }
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] - y.elem[i];
         }
@@ -217,7 +246,7 @@ matrix matrix::operator/(matrix &y){// tem que ter referencia se não ele da err
         if(this->shape() != y.shape()){
                 error_print("Erro de formato");
         }
-        std::vector<int> x(this->el_qdt);
+        std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->elem[i] / y.elem[i];
         }
@@ -267,7 +296,7 @@ void matrix::format_print(std::string& str) const {
         std::string::const_iterator last_pos = str.begin();
         std::string::const_iterator u = str.end();
         std::string result = "";
-
+        // optimizar isso daqui
         for(std::sregex_iterator i = beg; i != end; ++i){
                 std::smatch m = *i;
                 std::string s = m.str();
@@ -335,7 +364,7 @@ matrix matrix::transpose(){
                         }
                 } else { // para matrizes nao quadradas TODO
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
-                        std::vector<int> t(m_dim * m_dim); // cria basicamente uma matriz quadrada da maior dimensão
+                        std::vector<d_type> t(m_dim * m_dim); // cria basicamente uma matriz quadrada da maior dimensão
                         std::fill(t.begin(), t.end(), this->min - 1);
                         matrix T({m_dim, m_dim}, t);
                         for(int i = 0; i < this->el_qdt; i++){
@@ -357,10 +386,10 @@ matrix matrix::transpose(){
         return matrix(d,e);
 }
 
-std::vector<int> matrix::flatten(){
-        std::vector<int> t(this->el_qdt);
+std::vector<d_type> matrix::flatten(){
+        std::vector<d_type> t(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++){
-                t[i] = this->elem[i];
+                t[i] = static_cast<d_type>(this->elem[i]);
         }
         return t;
 }
@@ -383,5 +412,6 @@ int main() {
         matrix m({3,4}, {1,2,3,4,5,6,7,8,9,10,11,12});
         std::cout << m << std::endl;
         // std::cout << m.transpose() << std::endl;
+        // printf("%d ", dig_qtd(12.12));
         return 0;
 }

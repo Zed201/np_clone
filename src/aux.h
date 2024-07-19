@@ -9,6 +9,12 @@
 #include <vector>
 #include <algorithm>
 #include <regex>
+#include <cmath>
+
+#define d_type int
+#define f_precision 3
+#define string_lizer(x) #x
+#define t_str(x) string_lizer(x)
 
 struct search_replace{
         std::regex pattern;
@@ -26,12 +32,15 @@ int pow(int x, int y);
 float pow(float x, int y);
 std::string print_(int x);
 std::string print_(float x);
+std::string print_(double x);
+int dig_qtd(int x);
+int dig_qtd(float x);
+int dig_qtd(double x);
 
-#define d_type int
 // verificar se ta pegando(tem que ter g++ versão 13.1)
 class matrix{
         public:
-        int n_dim, *dim, el_qdt; 
+        int n_dim, *dim, el_qdt, max_digs_space; 
         d_type *elem, max, min;
 
         std::vector<int> uni_multi(int i);
@@ -43,6 +52,7 @@ class matrix{
         bool is_lower_tri(std::vector<int> i);
         bool diagonal_pri(std::vector<int> i);
 
+        // matrix(std::vector<int> sh, std::vector<int> el);
         matrix(std::vector<int> sh, std::vector<d_type> el);
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos);
         matrix(matrix &n);
@@ -62,7 +72,7 @@ class matrix{
         bool operator==(matrix &y);
         matrix operator+(matrix &y);
         matrix operator-(matrix &y);
-        // operator de multiplicação de matrizes
+        // matrix operator*(matrix &y);
 
         void rec_print(int c, int &c_el, std::string &str) const;
         void format_print(std::string& str) const;
@@ -70,7 +80,7 @@ class matrix{
 
         matrix transpose();
           
-        std::vector<int> flatten();
+        std::vector<d_type> flatten();
 
         d_type allSum();
         d_type average();
@@ -94,13 +104,13 @@ std::vector<T> range(T start, T end, T step = 1){
         return tmp;
 }
 
-template<typename T>
-T max_(T x, T y){
+template<typename T, typename t>
+T max_(T x, t y){
         return (x > y) ? x : y;
 }
 
-template<typename T>
-T min_(T x, T y){
+template<typename T, typename t>
+T min_(T x, t y){
         return (x < y) ? x : y;
 }
 #endif
