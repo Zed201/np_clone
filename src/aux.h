@@ -11,8 +11,9 @@
 #include <regex>
 #include <cmath>
 
-#define d_type int
+#define d_type float
 #define f_precision 3
+#define tab_size 1
 #define string_lizer(x) #x
 #define t_str(x) string_lizer(x)
 
@@ -30,9 +31,9 @@ void error_print(const char* text);
 void error_print(std::string text);
 int pow(int x, int y);
 float pow(float x, int y);
-std::string print_(int x);
-std::string print_(float x);
-std::string print_(double x);
+std::string print_(int x, int max_digs_space);
+std::string print_(float x, int max_digs_space);
+std::string print_(double x, int max_digs_space);
 int dig_qtd(int x);
 int dig_qtd(float x);
 int dig_qtd(double x);

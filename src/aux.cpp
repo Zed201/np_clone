@@ -26,21 +26,30 @@ float pow(float x, int y){
         return tmp;
 }
 // ajeitar formatação
-std::string print_(int x){
+std::string print_(int x, int max_digs_space){
         // fazer alguma conta de espaços e formatação para o tamanho do buffer
         std::string tmp;
+        for(int i = 0; i < (max_digs_space - dig_qtd(x)) + tab_size; i++){
+               tmp.push_back(' ');
+        }
         tmp.append(std::format("{},", x)); 
         return tmp;
 }
 
-std::string print_(float x){
+std::string print_(float x, int max_digs_space){
         std::string tmp;
+        for(int i = 0; i < (max_digs_space - dig_qtd(x)) + tab_size; i++){
+               tmp.push_back(' ');
+        }
         tmp.append(std::format("{0:." t_str(f_precision) "f},", x)); 
         return tmp;       
 }
 
-std::string print_(double x){
+std::string print_(double x, int max_digs_space){
         std::string tmp;
+        for(int i = 0; i < (max_digs_space - dig_qtd(x)) + tab_size; i++){
+               tmp.push_back(' ');
+        }
         tmp.append(std::format("{0:." t_str(f_precision) "f},", x)); 
         return tmp;       
 }

@@ -58,37 +58,7 @@ bool matrix::diagonal_pri(std::vector<int> i){
         return false;
 }
 
-// matrix::matrix(std::vector<int> sh, std::vector<int> el) : max_digs_space(0) {
-//         int tmp = 1, a = 0;
-//         this->dim = (int *) malloc(sizeof(int) * sh.size()); 
-//         for(int i : sh){
-//                 this->dim[a++] = i;
-//                 tmp *= i;
-//         }
-//         if(tmp < el.size()){
-//                 free(this->dim);
-//                 error_print("Tamanho errado");
-//         } 
 
-//         this->n_dim = a;
-//         a = 0;
-//         this->el_qdt = tmp;
-//         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
-//         this->max = el[0];
-//         this->min = el[0];
-//         for(d_type i : el){
-//                 this->elem[a++] = i;
-//                 this->max = max_<d_type>(this->max, i);
-//                 this->min = min_<d_type>(this->min, i);
-//         }
-//         if(a < tmp){
-//                 for(; a < tmp; a++){
-//                         this->elem[a] = 0;
-//                 }
-//                 this->max = max_(this->max, 0);
-//                 this->min = min_(this->max, 0);
-//         }
-// } 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
         this->dim = (int *) malloc(sizeof(int) * sh.size()); 
@@ -109,15 +79,17 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
         this->min = el[0];
         for(d_type i : el){
                 this->elem[a++] = i;
-                this->max = max_<d_type>(this->max, i);
-                this->min = min_<d_type>(this->min, i);
+                this->max = max_(this->max, i);
+                this->min = min_(this->min, i);
+                this->max_digs_space = max_(this->max_digs_space, dig_qtd(i));
         }
+        this->max = max_(this->max, 0);
+        this->min = min_(this->max, 0);
         if(a < tmp){
                 for(; a < tmp; a++){
                         this->elem[a] = 0;
                 }
-                this->max = max_(this->max, 0);
-                this->min = min_(this->max, 0);
+
         }
 } 
 
@@ -264,7 +236,7 @@ void matrix::rec_print(int c, int &c_el, std::string &str) const {
 
         for(int i = 0; i < this->dim[c]; i++){
                 if(c == this->n_dim - 1){// dimensão mais interna 
-                        str.append(print_(this->elem[c_el++]));
+                        str.append(print_(this->elem[c_el++], this->max_digs_space));
                 } else {// recursao para dimensão mais interna
                         rec_print(c + 1, c_el, str);
                 }
@@ -409,7 +381,7 @@ d_type matrix::average(){
 
 
 int main() {
-        matrix m({3,4}, {1,2,3,4,5,6,7,8,9,10,11,12});
+        matrix m({3,4}, {1,2,3,4,5,6,7,8,9,10,11,112.12});
         std::cout << m << std::endl;
         // std::cout << m.transpose() << std::endl;
         // printf("%d ", dig_qtd(12.12));
