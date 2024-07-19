@@ -1,6 +1,6 @@
 #ifndef AUX_H
 #define AUX_H
-
+        
 #include <iostream>
 #include <vector>
 #include <format>
@@ -11,7 +11,7 @@
 #include <regex>
 #include <cmath>
 
-#define d_type float
+#define d_type int
 #define f_precision 3
 #define tab_size 1
 #define string_lizer(x) #x
@@ -45,9 +45,11 @@ class matrix{
         d_type *elem, max, min;
 
         std::vector<int> uni_multi(int i);
+        std::vector<int> uni_multi(matrix &m, int i);
+
         int multi_uni(std::vector<int> i);
         int multi_uni(matrix &m, std::vector<int> i);
-        std::vector<int> uni_multi(matrix &m, int i);
+        int multi_uni(matrix &m, std::initializer_list<int> i);
 
         bool is_upper_tri(std::vector<int> i);
         bool is_lower_tri(std::vector<int> i);
@@ -73,7 +75,12 @@ class matrix{
         bool operator==(matrix &y);
         matrix operator+(matrix &y);
         matrix operator-(matrix &y);
-        // matrix operator*(matrix &y);
+        matrix operator*(matrix &y);
+
+        d_type operator[](std::initializer_list<int> n);
+
+        // Por enquanto apenas 1 elemento
+        d_type get(std::vector<int> loc);
 
         void rec_print(int c, int &c_el, std::string &str) const;
         void format_print(std::string& str) const;
@@ -91,11 +98,11 @@ class matrix{
 std::ostream& operator<<(std::ostream& os, matrix& m);
 // range inclusivo de ambos os lados, podendo passar o step
 template<typename T>
-std::vector<T> range(T start, T end, T step = 1){
-        std::vector<T> tmp;
+std::vector<d_type> range(T start, T end, T step = 1){
+        std::vector<d_type> tmp;
         if(start > end){
                 for(; start > end; start -= step){
-                        tmp.push_back(start);
+                        tmp.push_back(static_cast<d_type>(start));
                 }
         } else {
                 for(; start < end; start += step){

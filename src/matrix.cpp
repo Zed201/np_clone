@@ -23,7 +23,9 @@ int matrix::multi_uni(matrix &m, std::vector<int> i){
         }
         return tmp + i[m.n_dim - 1];
 }
-
+int matrix::multi_uni(matrix &m, std::initializer_list<int> i){
+        return this->multi_uni(m, std::vector(i));
+}
 std::vector<int> matrix::uni_multi(matrix &m, int i){
         std::vector<int> tmp(m.n_dim);
         for(int j = m.n_dim - 1; j >= 0; j--){
@@ -207,12 +209,43 @@ matrix matrix::operator-(matrix &y){// tem que ter referencia se não ele da err
         }
         return matrix(this->shape(), x);
 }
+// TODO:
+// apenas para matrizes 2d
+matrix matrix::operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
+        if(this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 || this->dim[1] != y.dim[0]){
+                error_print("Erro de dimensões");
+        }
 
-// TODO: 
-// multiplicação de matrizes normal
-// matrix operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
-//         return nullptr;
-// }
+        std::vector<int> sh(2);
+        sh[0] = this->dim[0];
+        sh[1] = y.dim[1];
+        std::vector<d_type> el(this->dim[0] * y.dim[1]);
+        matrix m(sh, el);
+        for(int i = 0; i < this->dim[0]; i++){
+                for(int j = 0; j < y.dim[1]; j++){
+                        d_type soma = 0;
+                        for(int k = 0; k < this->dim[1]; k++){
+                                //ALGUM erro aqui, ta dando os valores errados
+                                soma += this->multi_uni({k,i}) * y[{j,k}]; 
+                        }
+                        m.elem[multi_uni(m, {i,j})] = soma;
+                }
+        }
+        return m;
+
+}
+
+d_type matrix::get(std::vector<int> loc){
+        if(loc.size() != this->n_dim){
+                error_print("Erro de dimensão");
+        }
+        return this->multi_uni(loc);
+}
+
+// TODO: faze slice para mais elementos nesse caso é apenas um get e fazer para sobrecrita poder ocorrer também
+d_type matrix::operator[](std::initializer_list<int> n){
+        return this->get(std::vector<int>(n));
+}
 
 matrix matrix::operator/(matrix &y){// tem que ter referencia se não ele da erro nos construtores
         if(this->shape() != y.shape()){
@@ -250,7 +283,6 @@ std::ostream& operator<<(std::ostream& os, matrix& m){
 }
 
 void matrix::format_print(std::string& str) const {
-        // TODO: usar regex_iterator para printar bonitinho
         str.append("\n");
         const struct search_replace *t;
         for(t = rep; t < rep + (sizeof(rep)/sizeof(*rep)); t++){
@@ -268,7 +300,7 @@ void matrix::format_print(std::string& str) const {
         std::string::const_iterator last_pos = str.begin();
         std::string::const_iterator u = str.end();
         std::string result = "";
-        // optimizar isso daqui
+        // TODO:optimizar isso daqui
         for(std::sregex_iterator i = beg; i != end; ++i){
                 std::smatch m = *i;
                 std::string s = m.str();
@@ -381,8 +413,16 @@ d_type matrix::average(){
 
 
 int main() {
-        matrix m({3,4}, {1,2,3,4,5,6,7,8,9,10,11,112.12});
-        std::cout << m << std::endl;
+        matrix a({3,4}, range(1,13));
+        matrix b({4,3}, range(1,13));
+        std::cout << a << std::endl;       
+        std::cout << b << std::endl;
+        // dando erro na hora de inicializar
+        matrix c = a * b;
+        // for(int i = 0; i < c.el_qdt; i++){
+        //         printf("%d ", c.elem[i]);
+        // }
+        std::cout << c << std::endl;
         // std::cout << m.transpose() << std::endl;
         // printf("%d ", dig_qtd(12.12));
         return 0;

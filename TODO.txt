@@ -1,16 +1,18 @@
 -Fazer primeiro toda implementação em cpp para depois portar para .pyx usando os tutotiais de cython( )
 -Criar print para 3 dimensões(+-)
 -Criar outros construtores para ter outras formas de criar, principalmente facilitando a parte do python(tirando tuple, initializer_list...)
--Criar o .h referente a isso(+-)
+-Criar o .h referente a isso(+)
 -Fazer sobre carga para +, -, ==, *(com int,long...), /,(X) 
 -Ver algoritmo de mutliplicação de matrizes flat(ou dar jeito de transformar) ( )
 -fazer formula de determinante funcionando para quaisquer dimensões(provavelmente algum algoritmo usando aquela ideia de 1's)( )
 -Fazer coisas como matriz transposta(X)
 -Fazer o slice por index(fazer slice com vector e depois no python usar a warper para fazer o slice com o slice do proprio python)( )
 -Fazer operações como as de allsum, média(X) 
--Fazer print com alinhado de com o tamanho dos numeros(0)
+-Fazer print com alinhado de com o tamanho dos numeros(X)
 array([[     1,      2,      3,      4],
        [     5,      6,      7,      8],
        [     9,     10,     11, 120000]])
 por exemplo dar um jeito do 12000 ficar alinhado(alguma ideia de calcular o numero com a maior quantidade de digitos e colocar isso no print dos numeros)
 -Criar outras funções de auxiliar, como arange...(X)
+
+-Dar um jeito de conversão para o tipo do define independente do tipo colocado na inicialização, se for tipo int no define e tiver passsando um float/double ele não trunca
