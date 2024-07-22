@@ -78,6 +78,7 @@ class matrix{
         matrix operator*(matrix &y);
 
         d_type operator[](std::initializer_list<int> n);
+        d_type operator[](std::vector<int> n);
 
         // Por enquanto apenas 1 elemento
         d_type get(std::vector<int> loc);

@@ -8,24 +8,25 @@ std::vector<int> matrix::uni_multi(int i){
         }
         return tmp;
 }
+
+// TODO: Acertar isso daqui, fazer as contas(ta errado o transpose e a multiplicação por causa disso, deixar ele começando no 0)
 int matrix::multi_uni(std::vector<int> i){
         int tmp = 0;
         for(int j = 0; j < this->n_dim - 1; j++){
                 tmp += i[j] * this->dim[j];
         }
-        return tmp + i[this->n_dim - 1];
+        //std::cout << tmp + i[this->n_dim - 1] << std::endl;
+        return tmp + i[this->n_dim - 1] - 1;
 }
+
 // sobrecarfas para trabalhar com matrizes diferentes
 int matrix::multi_uni(matrix &m, std::vector<int> i){
-        int tmp = 0;
-        for(int j = 0; j < m.n_dim - 1; j++){
-                tmp += i[j] * m.dim[j];
-        }
-        return tmp + i[m.n_dim - 1];
+        return m[i];
 }
 int matrix::multi_uni(matrix &m, std::initializer_list<int> i){
         return this->multi_uni(m, std::vector(i));
 }
+
 std::vector<int> matrix::uni_multi(matrix &m, int i){
         std::vector<int> tmp(m.n_dim);
         for(int j = m.n_dim - 1; j >= 0; j--){
@@ -239,12 +240,16 @@ d_type matrix::get(std::vector<int> loc){
         if(loc.size() != this->n_dim){
                 error_print("Erro de dimensão");
         }
-        return this->multi_uni(loc);
+        return this->elem[this->multi_uni(loc)];
 }
 
 // TODO: faze slice para mais elementos nesse caso é apenas um get e fazer para sobrecrita poder ocorrer também
 d_type matrix::operator[](std::initializer_list<int> n){
         return this->get(std::vector<int>(n));
+}
+
+d_type matrix::operator[](std::vector<int> n){
+        return this->get(n);
 }
 
 matrix matrix::operator/(matrix &y){// tem que ter referencia se não ele da erro nos construtores
@@ -341,6 +346,7 @@ std::string matrix::print() const {
         format_print(buffer);
         return buffer;
 }
+// concertar que agora tem o multi-uni certo
 matrix matrix::transpose(){
         std::vector<int> d(this->n_dim);
         std::vector<d_type> e(this->el_qdt);
@@ -409,21 +415,3 @@ d_type matrix::allSum(){
 d_type matrix::average(){
         return (this->allSum()/this->el_qdt);
 } 
-// };
-
-
-int main() {
-        matrix a({3,4}, range(1,13));
-        matrix b({4,3}, range(1,13));
-        std::cout << a << std::endl;       
-        std::cout << b << std::endl;
-        // dando erro na hora de inicializar
-        matrix c = a * b;
-        // for(int i = 0; i < c.el_qdt; i++){
-        //         printf("%d ", c.elem[i]);
-        // }
-        std::cout << c << std::endl;
-        // std::cout << m.transpose() << std::endl;
-        // printf("%d ", dig_qtd(12.12));
-        return 0;
-}
