@@ -16,4 +16,5 @@ por exemplo dar um jeito do 12000 ficar alinhado(alguma ideia de calcular o nume
 -Criar outras funções de auxiliar, como arange...(X)
 
 -Dar um jeito de conversão para o tipo do define independente do tipo colocado na inicialização, se for tipo int no define e tiver passsando um float/double ele não trunca
--Acertar multi_uni
+-Acertar multi_uni(X)
+-Acertar a logica para mudar valores por referência

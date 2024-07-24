@@ -12,18 +12,18 @@ std::vector<int> matrix::uni_multi(int i){
 // Ta certo para matrizes bidimensionais
 int matrix::multi_uni(std::vector<int> vet){
         int index_tmp = 0;
-        // o i ele vai passar pelo vet e o j ele vai passar de forma invertida pelas dimensões
         int i = 0;
         for(int j = this->n_dim - 1; j != 0; i++, j--){
                 index_tmp += vet[i] * this->dim[j];
         }
+         //printf("---<%d\n",index_tmp + vet[i]);
         //std::cout << tmp + i[this->n_dim - 1] << std::endl;
-        return index_tmp + vet[i];
+        return (index_tmp + vet[i]);
 }
 
 // sobrecarfas para trabalhar com matrizes diferentes
 int matrix::multi_uni(matrix &m, std::vector<int> i){
-        return m[i];
+        return m.multi_uni(i);
 }
 
 int matrix::multi_uni(matrix &m, std::initializer_list<int> i){
@@ -81,21 +81,23 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
         a = 0;
         this->el_qdt = tmp;
         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
+
         this->max = el[0];
         this->min = el[0];
+
         for(d_type i : el){
                 this->elem[a++] = i;
                 this->max = max_(this->max, i);
                 this->min = min_(this->min, i);
                 this->max_digs_space = max_(this->max_digs_space, dig_qtd(i));
         }
-        this->max = max_(this->max, 0);
-        this->min = min_(this->max, 0);
+
         if(a < tmp){
                 for(; a < tmp; a++){
                         this->elem[a] = 0;
                 }
-
+                this->max = max_(this->max, 0);
+                this->min = min_(this->max, 0);
         }
 } 
 
@@ -379,20 +381,23 @@ matrix matrix::transpose(){
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
                         std::vector<d_type> t(m_dim * m_dim); // cria basicamente uma matriz quadrada da maior dimensão
                         std::fill(t.begin(), t.end(), this->min - 1);
-                        matrix T({m_dim, m_dim}, t);
+                        matrix tmp_matrix({m_dim, m_dim}, t);
                         for(int i = 0; i < this->el_qdt; i++){
-                                T.elem[this->multi_uni(T, this->uni_multi(i))] = this->elem[i];
-
+                                int j =  tmp_matrix.multi_uni(this->uni_multi(i));
+                                tmp_matrix.elem[j] = this->elem[i];
                         }
+                        matrix tmp_matrix1 = tmp_matrix.transpose();
 
-                        for(int i = 0, j = 0; i < T.el_qdt; i++){
-                                if(T.elem[i] != this->min - 1){
-                                        e[j++] = T.elem[i];
+                        for(int i = 0, j = 0; i < tmp_matrix1.el_qdt; i++){
+                                if(tmp_matrix1.elem[i] != this->min - 1){
+                                        e[j++] = tmp_matrix1.elem[i];
                                 }
                         }
                         d[0] = this->dim[1];
                         d[1] = this->dim[0];
+                        
                 }
+                
         } else {
                 error_print("Número de dimensões maior que 2, não suportado");       
         }
