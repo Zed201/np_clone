@@ -231,10 +231,10 @@ matrix matrix::operator*(matrix &y){// tem que ter referencia se não ele da err
                 for(int j = 0; j < y.dim[1]; j++){
                         d_type soma = 0;
                         for(int k = 0; k < this->dim[1]; k++){
-                                //ALGUM erro aqui, ta dando os valores errados
-                                soma += this->multi_uni({k,i}) * y[{j,k}]; 
+                                soma += this->get({i,k}) * y[{k,j}]; 
                         }
-                        m.elem[multi_uni(m, {i,j})] = soma;
+                        //printf("%d \n", soma);
+                        m.set({i,j}, soma);
                 }
         }
         return m;
@@ -255,6 +255,14 @@ d_type matrix::operator[](std::initializer_list<int> n){
 
 d_type matrix::operator[](std::vector<int> n){
         return this->get(n);
+}
+
+// funçãp para dizer onde colocar o elemento
+void matrix::set(std::initializer_list<int> n, d_type i){
+        this->elem[this->multi_uni(n)] = i;
+        this->max = max_(this->max, i);
+        this->min = min_(this->min, i);
+        this->max_digs_space = max_(this->max_digs_space, dig_qtd(i));
 }
 
 matrix matrix::operator/(matrix &y){// tem que ter referencia se não ele da erro nos construtores

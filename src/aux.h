@@ -82,7 +82,7 @@ class matrix{
 
         // Por enquanto apenas 1 elemento
         d_type get(std::vector<int> loc);
-
+        void set(std::initializer_list<int> n, d_type i);
         void rec_print(int c, int &c_el, std::string &str) const;
         void format_print(std::string& str) const;
         std::string print() const;
