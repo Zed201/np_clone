@@ -55,13 +55,16 @@ std::string print_(double x, int max_digs_space){
 }
 
 int dig_qtd(int x){
+        if(!x) return 1;
         return static_cast<int>(log10(x)) + 1;
 }       
 
 int dig_qtd(float x){
+        if(!x) return 1;
         return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
 }
 
 int dig_qtd(double x){
+        if(!x) return 1;
         return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
 }

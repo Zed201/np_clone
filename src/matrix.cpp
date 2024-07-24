@@ -9,20 +9,23 @@ std::vector<int> matrix::uni_multi(int i){
         return tmp;
 }
 
-// TODO: Acertar isso daqui, fazer as contas(ta errado o transpose e a multiplicação por causa disso, deixar ele começando no 0)
-int matrix::multi_uni(std::vector<int> i){
-        int tmp = 0;
-        for(int j = 0; j < this->n_dim - 1; j++){
-                tmp += i[j] * this->dim[j];
+// Ta certo para matrizes bidimensionais
+int matrix::multi_uni(std::vector<int> vet){
+        int index_tmp = 0;
+        // o i ele vai passar pelo vet e o j ele vai passar de forma invertida pelas dimensões
+        int i = 0;
+        for(int j = this->n_dim - 1; j != 0; i++, j--){
+                index_tmp += vet[i] * this->dim[j];
         }
         //std::cout << tmp + i[this->n_dim - 1] << std::endl;
-        return tmp + i[this->n_dim - 1] - 1;
+        return index_tmp + vet[i];
 }
 
 // sobrecarfas para trabalhar com matrizes diferentes
 int matrix::multi_uni(matrix &m, std::vector<int> i){
         return m[i];
 }
+
 int matrix::multi_uni(matrix &m, std::initializer_list<int> i){
         return this->multi_uni(m, std::vector(i));
 }
@@ -210,7 +213,7 @@ matrix matrix::operator-(matrix &y){// tem que ter referencia se não ele da err
         }
         return matrix(this->shape(), x);
 }
-// TODO:
+// TODO: Refazer com os indices de matrizes concertados
 // apenas para matrizes 2d
 matrix matrix::operator*(matrix &y){// tem que ter referencia se não ele da erro nos construtores
         if(this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 || this->dim[1] != y.dim[0]){
@@ -346,7 +349,7 @@ std::string matrix::print() const {
         format_print(buffer);
         return buffer;
 }
-// concertar que agora tem o multi-uni certo
+// TODO: Dando erro quando as dimensões são diferentes
 matrix matrix::transpose(){
         std::vector<int> d(this->n_dim);
         std::vector<d_type> e(this->el_qdt);
@@ -372,7 +375,7 @@ matrix matrix::transpose(){
                                 }
                                 e[this->multi_uni(tmp)] = this->elem[i];
                         }
-                } else { // para matrizes nao quadradas TODO
+                } else { // Dando erro de double free aqui:
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
                         std::vector<d_type> t(m_dim * m_dim); // cria basicamente uma matriz quadrada da maior dimensão
                         std::fill(t.begin(), t.end(), this->min - 1);
