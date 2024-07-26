@@ -153,7 +153,7 @@ void matrix::reshape(std::initializer_list<int> n_shape){
 matrix matrix::operator+(int y){
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] + y;
+                x[i] = this->operator[](i) + y;
         }
         return matrix(this->shape(), x);
 }
@@ -161,7 +161,7 @@ matrix matrix::operator+(int y){
 matrix matrix::operator-(int y){
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] - y;
+                x[i] = this->operator[](i) - y;
         }
         return matrix(this->shape(), x);
 }
@@ -169,7 +169,7 @@ matrix matrix::operator-(int y){
 matrix matrix::operator*(int y){
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] * y;
+                x[i] = this->operator[](i) * y;
         }
         return matrix(this->shape(), x);
 }
@@ -177,7 +177,7 @@ matrix matrix::operator*(int y){
 matrix matrix::operator/(int y){
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] / y;
+                x[i] = this->operator[](i) / y;
         }
         return matrix(this->shape(), x);
 }
@@ -187,7 +187,7 @@ bool matrix::operator==(matrix &y){
                 return false;
         }
         for(int i = 0; i < this->el_qdt; i++){
-                if(this->elem[i] != y.elem[i]){
+                if(this->operator[](i) != y[i]){
                         return false;
                 }
         }
@@ -200,7 +200,7 @@ matrix matrix::operator+(matrix &y){// tem que ter referencia se não ele da err
         }
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] + y.elem[i];
+                x[i] = this->operator[](i) + y[i];
         }
         return matrix(this->shape(), x);
 }
@@ -211,7 +211,7 @@ matrix matrix::operator-(matrix &y){// tem que ter referencia se não ele da err
         }
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] - y.elem[i];
+                x[i] = this->operator[](i) - y[i];
         }
         return matrix(this->shape(), x);
 }
@@ -231,38 +231,37 @@ matrix matrix::operator*(matrix &y){// tem que ter referencia se não ele da err
                 for(int j = 0; j < y.dim[1]; j++){
                         d_type soma = 0;
                         for(int k = 0; k < this->dim[1]; k++){
-                                soma += this->get({i,k}) * y[{k,j}]; 
+                                soma += this->operator[]({i,k}) * y[{k,j}]; 
                         }
                         //printf("%d \n", soma);
-                        m.set({i,j}, soma);
+                        m[{i,j}] = soma;
                 }
         }
         return m;
 
 }
 
-d_type matrix::get(std::vector<int> loc){
+d_type& matrix::get(std::vector<int> loc){
         if(loc.size() != this->n_dim){
                 error_print("Erro de dimensão");
         }
         return this->elem[this->multi_uni(loc)];
 }
 
+d_type& matrix::operator[](int n){
+        if(n >= this->el_qdt){
+                error_print("Acesso indevido");
+        }
+        return this->elem[n];
+}
+
 // TODO: faze slice para mais elementos nesse caso é apenas um get e fazer para sobrecrita poder ocorrer também
-d_type matrix::operator[](std::initializer_list<int> n){
+d_type& matrix::operator[](std::initializer_list<int> n){
         return this->get(std::vector<int>(n));
 }
 
-d_type matrix::operator[](std::vector<int> n){
+d_type& matrix::operator[](std::vector<int> n){
         return this->get(n);
-}
-
-// funçãp para dizer onde colocar o elemento
-void matrix::set(std::initializer_list<int> n, d_type i){
-        this->elem[this->multi_uni(n)] = i;
-        this->max = max_(this->max, i);
-        this->min = min_(this->min, i);
-        this->max_digs_space = max_(this->max_digs_space, dig_qtd(i));
 }
 
 matrix matrix::operator/(matrix &y){// tem que ter referencia se não ele da erro nos construtores
@@ -271,7 +270,7 @@ matrix matrix::operator/(matrix &y){// tem que ter referencia se não ele da err
         }
         std::vector<d_type> x(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++) {
-                x[i] = this->elem[i] / y.elem[i];
+                x[i] = this->operator[](i) / y[i];
         }
         return matrix(this->shape(), x);
 }
@@ -369,7 +368,7 @@ matrix matrix::transpose(){
                         d[i] = this->dim[i];
                 }
                 for(int i = 0; i < this->el_qdt; i++){
-                        e[i] = this->elem[i];
+                        e[i] = this->operator[](i);
                 }
         } else if(this->n_dim == 2){ // se for diferente de 2d, inverte o shape e os elementos                        
                 if(this->dim[0] == this->dim[1]){ // para matrizes quadradas
@@ -383,7 +382,7 @@ matrix matrix::transpose(){
                                         // na diagonal principal nao muda nada
                                         std::swap(tmp[0], tmp[1]);
                                 }
-                                e[this->multi_uni(tmp)] = this->elem[i];
+                                e[this->multi_uni(tmp)] = this->operator[](i);
                         }
                 } else { // Dando erro de double free aqui:
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
@@ -392,13 +391,13 @@ matrix matrix::transpose(){
                         matrix tmp_matrix({m_dim, m_dim}, t);
                         for(int i = 0; i < this->el_qdt; i++){
                                 int j =  tmp_matrix.multi_uni(this->uni_multi(i));
-                                tmp_matrix.elem[j] = this->elem[i];
+                                tmp_matrix[j] = this->operator[](i);
                         }
                         matrix tmp_matrix1 = tmp_matrix.transpose();
 
                         for(int i = 0, j = 0; i < tmp_matrix1.el_qdt; i++){
-                                if(tmp_matrix1.elem[i] != this->min - 1){
-                                        e[j++] = tmp_matrix1.elem[i];
+                                if(tmp_matrix1[i] != this->min - 1){
+                                        e[j++] = tmp_matrix1[i];
                                 }
                         }
                         d[0] = this->dim[1];
@@ -415,7 +414,7 @@ matrix matrix::transpose(){
 std::vector<d_type> matrix::flatten(){
         std::vector<d_type> t(this->el_qdt);
         for(int i = 0; i < this->el_qdt; i++){
-                t[i] = static_cast<d_type>(this->elem[i]);
+                t[i] = static_cast<d_type>(this->operator[](i));
         }
         return t;
 }
@@ -423,7 +422,7 @@ std::vector<d_type> matrix::flatten(){
 d_type matrix::allSum(){
         d_type t = 0;
         for(int i = 0; i < this->el_qdt; i++){
-                t += this->elem[i];
+                t += this->operator[](i);
         }
         return t;
 }
