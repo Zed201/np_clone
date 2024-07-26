@@ -1,6 +1,6 @@
 # no arch é so instalar o c++ mais recente, mas no ubuntu por padrão ele não instala o mais recente, 
 # então tem de instalar o g++-13, nesse caso so trocar o compilador
-CC=g++-13
+CC=g++
 CFLAGS = -c -std=c++20
 all: a.out
 	./a.out

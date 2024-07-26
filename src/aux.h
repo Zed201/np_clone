@@ -96,7 +96,7 @@ class matrix{
 
 };
 
-std::ostream& operator<<(std::ostream& os, matrix& m);
+std::ostream& operator<<(std::ostream& os, const matrix& m);
 // range inclusivo de ambos os lados, podendo passar o step
 template<typename T>
 std::vector<d_type> range(T start, T end, T step = 1){

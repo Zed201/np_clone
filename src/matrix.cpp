@@ -295,7 +295,7 @@ void matrix::rec_print(int c, int &c_el, std::string &str) const {
         str.append("]"); 
 }
 
-std::ostream& operator<<(std::ostream& os, matrix& m){
+std::ostream& operator<<(std::ostream& os, const matrix& m){
         os << m.print();
         return os;
 }
