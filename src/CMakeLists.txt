@@ -58,4 +58,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Adiciona o executável
-add_executable(MyProject test.cpp aux.cpp matrix.cpp aux.h)
+add_executable(out test.cpp aux.cpp matrix.cpp aux.h)
+
+add_custom_target(c_clean
+    COMMAND rm -rf *.o ./CMakeFiles cmake_install.cmake CMakeCache.txt Makfile
+)
