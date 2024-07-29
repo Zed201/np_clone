@@ -30,4 +30,10 @@ node_modules/
 .build/
 .BUILD/
 
+Makefile
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+
 # para arquivos sem extensão(inclui makefile então ficar atento)
