@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <vector>
 
-#define d_type          int
+#define d_type          long
 #define f_precision     3
 #define tab_size        1
 #define string_lizer(x) #x
@@ -30,15 +30,19 @@ void error_print(const char *text);
 void error_print(std::string text);
 int pow(int x, int y);
 float pow(float x, int y);
+
 std::string print_(int x, int max_digs_space);
 std::string print_(float x, int max_digs_space);
 std::string print_(double x, int max_digs_space);
+std::string print_(long x, int max_digs_space);
+
 int dig_qtd(int x);
 int dig_qtd(float x);
 int dig_qtd(double x);
+int dig_qtd(long x);
 
-//  verificar se ta pegando(tem que ter g++
-//  versão 13.1)
+
+
 class matrix {
     public:
         int n_dim, *dim, el_qdt, max_digs_space;
@@ -49,8 +53,7 @@ class matrix {
 
         int multi_uni(std::vector<int> i);
         int multi_uni(matrix &m, std::vector<int> i);
-        int multi_uni(matrix &m,
-                      std::initializer_list<int> i);
+        int multi_uni(matrix &m, std::initializer_list<int> i);
 
         bool is_upper_tri(std::vector<int> i);
         bool is_lower_tri(std::vector<int> i);
@@ -85,8 +88,7 @@ class matrix {
         d_type &operator[](int n);
         d_type &get(std::vector<int> loc);
 
-        void rec_print(int c, int &c_el,
-                       std::string &str) const;
+        void rec_print(int c, int &c_el, std::string &str) const;
         void format_print(std::string &str) const;
         std::string print() const;
 
@@ -101,13 +103,11 @@ class matrix {
 std::ostream &operator<<(std::ostream &os, const matrix &m);
 //  range inclusivo de ambos os lados, podendo
 //  passar o step
-template <typename T>
-std::vector<d_type> range(T start, T end, T step = 1) {
+template <typename T> std::vector<d_type> range(T start, T end, T step = 1) {
         std::vector<d_type> tmp;
         if (start > end) {
                 for (; start > end; start -= step) {
-                        tmp.push_back(
-                                static_cast<d_type>(start));
+                        tmp.push_back(static_cast<d_type>(start));
                 }
         } else {
                 for (; start < end; start += step) {
@@ -116,12 +116,8 @@ std::vector<d_type> range(T start, T end, T step = 1) {
         }
         return tmp;
 }
-//-----------------------------------------------------------------------------------------------------------------------
-template <typename T, typename t> T max_(T x, t y) {
-        return (x > y) ? x : y;
-}
 
-template <typename T, typename t> T min_(T x, t y) {
-        return (x < y) ? x : y;
-}
+template <typename T, typename t> T max_(T x, t y) { return (x > y) ? x : y; }
+
+template <typename T, typename t> T min_(T x, t y) { return (x < y) ? x : y; }
 #endif

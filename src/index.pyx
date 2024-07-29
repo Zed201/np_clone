@@ -1,3 +1,2 @@
-# distutils: language=c++
+#distutils : language = c++
 from libcpp.vector cimport vector
-

@@ -12,7 +12,7 @@ std::vector<int> matrix::uni_multi(int i) {
 //     Ta certo para matrizes bidimensionais
 int matrix::multi_uni(std::vector<int> vet) {
         int index_tmp = 0;
-        int i         = 0;
+        int i = 0;
         for (int j = this->n_dim - 1; j != 0; i++, j--) {
                 index_tmp += vet[i] * this->dim[j];
         }
@@ -24,12 +24,9 @@ int matrix::multi_uni(std::vector<int> vet) {
 
 //     sobrecarfas para trabalhar com matrizes
 //     diferentes
-int matrix::multi_uni(matrix &m, std::vector<int> i) {
-        return m.multi_uni(i);
-}
+int matrix::multi_uni(matrix &m, std::vector<int> i) { return m.multi_uni(i); }
 
-int matrix::multi_uni(matrix &m,
-                      std::initializer_list<int> i) {
+int matrix::multi_uni(matrix &m, std::initializer_list<int> i) {
         return this->multi_uni(m, std::vector(i));
 }
 
@@ -50,16 +47,13 @@ bool matrix::is_upper_tri(std::vector<int> i) {
                             "pode ser chamado para "
                             "matrizes 2D");
         }
-        if (this->multi_uni(i) >
-            this->multi_uni({i[0], i[0]})) {
+        if (this->multi_uni(i) > this->multi_uni({i[0], i[0]})) {
                 return true;
         }
         return false;
 }
 
-bool matrix::is_lower_tri(std::vector<int> i) {
-        return !this->is_upper_tri(i);
-}
+bool matrix::is_lower_tri(std::vector<int> i) { return !this->is_upper_tri(i); }
 
 bool matrix::diagonal_pri(std::vector<int> i) {
         if (this->n_dim > 2) {
@@ -73,8 +67,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         return false;
 }
 
-matrix::matrix(std::vector<int> sh, std::vector<d_type> el)
-        : max_digs_space(0) {
+matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
         for (int i : sh) {
@@ -86,8 +79,8 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el)
                 error_print("Tamanho errado");
         }
 
-        this->n_dim  = a;
-        a            = 0;
+        this->n_dim = a;
+        a = 0;
         this->el_qdt = tmp;
         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
 
@@ -95,11 +88,10 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el)
         this->min = el[0];
 
         for (d_type i : el) {
-                this->elem[a++]      = i;
-                this->max            = max_(this->max, i);
-                this->min            = min_(this->min, i);
-                this->max_digs_space = max_(
-                        this->max_digs_space, dig_qtd(i));
+                this->elem[a++] = i;
+                this->max = max_(this->max, i);
+                this->min = min_(this->min, i);
+                this->max_digs_space = max_(this->max_digs_space, dig_qtd(i));
         }
 
         if (a < tmp) {
@@ -111,17 +103,13 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el)
         }
 }
 
-matrix::matrix(std::initializer_list<int> shapes,
-               std::initializer_list<d_type> elementos)
-        : matrix(std::vector<int>(shapes),
-                 std::vector<d_type>(elementos)) {}
+matrix::matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos)
+        : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)) {}
 
-matrix::matrix(matrix &n)
-        : matrix(n.shape(), n.flatten()) {}
+matrix::matrix(matrix &n) : matrix(n.shape(), n.flatten()) {}
 
 matrix::matrix(std::initializer_list<d_type> elementos)
-        : matrix(std::vector<int>(
-                         {((int)elementos.size())}),
+        : matrix(std::vector<int>({((int)elementos.size())}),
                  std::vector<d_type>(elementos)) {}
 
 matrix::~matrix() {
@@ -151,9 +139,7 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
 
         if (n.size() != this->n_dim) {
                 this->n_dim = n.size();
-                this->dim   = (int *)std::realloc(
-                        this->dim,
-                        sizeof(int) * this->n_dim);
+                this->dim = (int *)std::realloc(this->dim, sizeof(int) * this->n_dim);
         }
 
         tmp = 0;
@@ -206,11 +192,10 @@ bool matrix::operator==(matrix &y) {
         return true;
 }
 
-matrix
-matrix::operator+(matrix &y) {  //     tem que ter
-                                //     referencia se não ele
-                                //     da erro nos
-                                //     construtores
+matrix matrix::operator+(matrix &y) {  //     tem que ter
+                                       //     referencia se não ele
+                                       //     da erro nos
+                                       //     construtores
         if (this->shape() != y.shape()) {
                 error_print("Erro de formato");
         }
@@ -221,11 +206,10 @@ matrix::operator+(matrix &y) {  //     tem que ter
         return matrix(this->shape(), x);
 }
 
-matrix
-matrix::operator-(matrix &y) {  //     tem que ter
-                                //     referencia se não ele
-                                //     da erro nos
-                                //     construtores
+matrix matrix::operator-(matrix &y) {  //     tem que ter
+                                       //     referencia se não ele
+                                       //     da erro nos
+                                       //     construtores
         if (this->shape() != y.shape()) {
                 error_print("Erro de formato");
         }
@@ -237,13 +221,12 @@ matrix::operator-(matrix &y) {  //     tem que ter
 }
 //     TODO: Refazer com os indices de matrizes
 //     concertados apenas para matrizes 2d
-matrix
-matrix::operator*(matrix &y) {  //     tem que ter
-                                //     referencia se não ele
-                                //     da erro nos
-                                //     construtores
-        if (this->n_dim != y.n_dim || this->n_dim > 2 ||
-            y.n_dim > 2 || this->dim[1] != y.dim[0]) {
+matrix matrix::operator*(matrix &y) {  //     tem que ter
+                                       //     referencia se não ele
+                                       //     da erro nos
+                                       //     construtores
+        if (this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 ||
+            this->dim[1] != y.dim[0]) {
                 error_print("Erro de dimensões");
         }
 
@@ -255,11 +238,8 @@ matrix::operator*(matrix &y) {  //     tem que ter
         for (int i = 0; i < this->dim[0]; i++) {
                 for (int j = 0; j < y.dim[1]; j++) {
                         d_type soma = 0;
-                        for (int k = 0; k < this->dim[1];
-                             k++) {
-                                soma += this->operator[](
-                                                {i, k}) *
-                                        y[{k, j}];
+                        for (int k = 0; k < this->dim[1]; k++) {
+                                soma += this->operator[]({i, k}) * y[{k, j}];
                         }
                         //     printf("%d \n",
                         //     soma);
@@ -290,15 +270,12 @@ d_type &matrix::operator[](std::initializer_list<int> n) {
         return this->get(std::vector<int>(n));
 }
 
-d_type &matrix::operator[](std::vector<int> n) {
-        return this->get(n);
-}
+d_type &matrix::operator[](std::vector<int> n) { return this->get(n); }
 
-matrix
-matrix::operator/(matrix &y) {  //     tem que ter
-                                //     referencia se não ele
-                                //     da erro nos
-                                //     construtores
+matrix matrix::operator/(matrix &y) {  //     tem que ter
+                                       //     referencia se não ele
+                                       //     da erro nos
+                                       //     construtores
         if (this->shape() != y.shape()) {
                 error_print("Erro de formato");
         }
@@ -316,8 +293,7 @@ matrix::operator/(matrix &y) {  //     tem que ter
 //     const também, mas ele é de fora, ele
 //     deveria ser definido
 
-void matrix::rec_print(int c, int &c_el,
-                       std::string &str) const {
+void matrix::rec_print(int c, int &c_el, std::string &str) const {
         if (c >= this->n_dim) {
                 return;
         }
@@ -327,9 +303,7 @@ void matrix::rec_print(int c, int &c_el,
                 if (c == this->n_dim - 1) {  //     dimensão
                                              //     mais
                                              //     interna
-                        str.append(print_(
-                                this->elem[c_el++],
-                                this->max_digs_space));
+                        str.append(print_(this->elem[c_el++], this->max_digs_space));
                 } else {  //     recursao para
                           //     dimensão mais
                           //     interna
@@ -339,8 +313,7 @@ void matrix::rec_print(int c, int &c_el,
         str.append("]");
 }
 
-std::ostream &operator<<(std::ostream &os,
-                         const matrix &m) {
+std::ostream &operator<<(std::ostream &os, const matrix &m) {
         os << m.print();
         return os;
 }
@@ -348,10 +321,8 @@ std::ostream &operator<<(std::ostream &os,
 void matrix::format_print(std::string &str) const {
         str.append("\n");
         const struct search_replace *t;
-        for (t = rep;
-             t < rep + (sizeof(rep) / sizeof(*rep)); t++) {
-                str = std::regex_replace(str, t->pattern,
-                                         t->sub_s);
+        for (t = rep; t < rep + (sizeof(rep) / sizeof(*rep)); t++) {
+                str = std::regex_replace(str, t->pattern, t->sub_s);
         }
         std::regex pat("\n ");
         std::string tmp = "\n";
@@ -360,12 +331,11 @@ void matrix::format_print(std::string &str) const {
         }
         str = std::regex_replace(str, pat, tmp);
         std::regex colchetes(" +\\[{2,}");
-        auto beg = std::sregex_iterator(
-                str.begin(), str.end(), colchetes);
+        auto beg = std::sregex_iterator(str.begin(), str.end(), colchetes);
         auto end = std::sregex_iterator();
         std::string::const_iterator last_pos = str.begin();
-        std::string::const_iterator u        = str.end();
-        std::string result                   = "";
+        std::string::const_iterator u = str.end();
+        std::string result = "";
         //     TODO:optimizar isso daqui
         for (std::sregex_iterator i = beg; i != end; ++i) {
                 std::smatch m = *i;
@@ -379,7 +349,7 @@ void matrix::format_print(std::string &str) const {
                         }
                 }
                 spaces = spaces - col + 1;
-                tmp    = "";
+                tmp = "";
                 //     std::cout << spaces << ','
                 //     << col << std::endl; reduz
                 //     a quantidade de espaços
@@ -413,7 +383,6 @@ std::string matrix::print() const {
 matrix matrix::transpose() {
         std::vector<int> d(this->n_dim);
         std::vector<d_type> e(this->el_qdt);
-
         if (this->n_dim == 1) {  //     se for 1D, so vai
                                  //     retornar ela mesma
                 for (int i = 0; i < this->n_dim; i++) {
@@ -422,21 +391,18 @@ matrix matrix::transpose() {
                 for (int i = 0; i < this->el_qdt; i++) {
                         e[i] = this->operator[](i);
                 }
-        } else if (this->n_dim ==
-                   2) {  //     se for diferente
-                         //     de 2d, inverte o
-                         //     shape e os
-                         //     elementos
-                if (this->dim[0] ==
-                    this->dim[1]) {  //     para
-                                     //     matrizes
-                                     //     quadradas
+        } else if (this->n_dim == 2) {               //     se for diferente
+                                                     //     de 2d, inverte o
+                                                     //     shape e os
+                                                     //     elementos
+                if (this->dim[0] == this->dim[1]) {  //     para
+                                                     //     matrizes
+                                                     //     quadradas
                         d[0] = this->dim[1];
                         d[1] = this->dim[0];
                         std::vector<int> tmp(2);
 
-                        for (int i = 0; i < this->el_qdt;
-                             i++) {
+                        for (int i = 0; i < this->el_qdt; i++) {
                                 tmp = this->uni_multi(i);
                                 if (tmp[0] != tmp[1]) {
                                         //     na
@@ -445,46 +411,32 @@ matrix matrix::transpose() {
                                         //     nao
                                         //     muda
                                         //     nada
-                                        std::swap(tmp[0],
-                                                  tmp[1]);
+                                        std::swap(tmp[0], tmp[1]);
                                 }
-                                e[this->multi_uni(tmp)] =
-                                        this->operator[](i);
+                                e[this->multi_uni(tmp)] = this->operator[](i);
                         }
                 } else {  //     Dando erro de
                           //     double free aqui:
-                        int m_dim = max_<int>(this->dim[0],
-                                              this->dim[1]);
-                        std::vector<d_type> t(
-                                m_dim *
-                                m_dim);  //     cria
-                                         //     basicamente
-                                         //     uma
-                                         //     matriz
-                                         //     quadrada
-                                         //     da
-                                         //     maior
-                                         //     dimensão
-                        std::fill(t.begin(), t.end(),
-                                  this->min - 1);
-                        matrix tmp_matrix({m_dim, m_dim},
-                                          t);
-                        for (int i = 0; i < this->el_qdt;
-                             i++) {
-                                int j = tmp_matrix.multi_uni(
-                                        this->uni_multi(i));
-                                tmp_matrix[j] =
-                                        this->operator[](i);
+                        int m_dim = max_<int>(this->dim[0], this->dim[1]);
+                        std::vector<d_type> t(m_dim * m_dim);  //     cria
+                                                               //     basicamente
+                                                               //     uma
+                                                               //     matriz
+                                                               //     quadrada
+                                                               //     da
+                                                               //     maior
+                                                               //     dimensão
+                        std::fill(t.begin(), t.end(), this->min - 1);
+                        matrix tmp_matrix({m_dim, m_dim}, t);
+                        for (int i = 0; i < this->el_qdt; i++) {
+                                int j = tmp_matrix.multi_uni(this->uni_multi(i));
+                                tmp_matrix[j] = this->operator[](i);
                         }
-                        matrix tmp_matrix1 =
-                                tmp_matrix.transpose();
+                        matrix tmp_matrix1 = tmp_matrix.transpose();
 
-                        for (int i = 0, j = 0;
-                             i < tmp_matrix1.el_qdt; i++) {
-                                if (tmp_matrix1[i] !=
-                                    this->min - 1) {
-                                        e[j++] = tmp_matrix1
-                                                [i];
+                        for (int i = 0, j = 0; i < tmp_matrix1.el_qdt; i++) {
+                                if (tmp_matrix1[i] != this->min - 1) {
+                                        e[j++] = tmp_matrix1[i];
                                 }
                         }
                         d[0] = this->dim[1];
@@ -502,8 +454,7 @@ matrix matrix::transpose() {
 std::vector<d_type> matrix::flatten() {
         std::vector<d_type> t(this->el_qdt);
         for (int i = 0; i < this->el_qdt; i++) {
-                t[i] = static_cast<d_type>(
-                        this->operator[](i));
+                t[i] = static_cast<d_type>(this->operator[](i));
         }
         return t;
 }
@@ -516,6 +467,4 @@ d_type matrix::allSum() {
         return t;
 }
 
-d_type matrix::average() {
-        return (this->allSum() / this->el_qdt);
-}
+d_type matrix::average() { return (this->allSum() / this->el_qdt); }
