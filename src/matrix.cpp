@@ -69,6 +69,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
+        this->b = false;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
         for (int i : sh) {
                 this->dim[a++] = i;
@@ -126,7 +127,7 @@ std::vector<int> matrix::shape() {
 }
 
 void matrix::reshape(std::initializer_list<int> n_shape) {
-        std::vector n(n_shape);
+        std::vector<d_type> n(n_shape);
 
         int tmp = 1;
         for (int i : n) {
@@ -249,28 +250,57 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter
         return m;
 }
 
-d_type &matrix::get(std::vector<int> loc) {
+// d_type &matrix::get(std::vector<int> loc) {
+//         if (loc.size() != this->n_dim) {
+//                 error_print("Erro de dimensão");
+//         }
+//         return this->elem[this->multi_uni(loc)];
+// }
+
+// d_type &matrix::operator[](int n) {
+//         if (n >= this->el_qdt) {
+//                 error_print("Acesso indevido");
+//         }
+//         return this->elem[n];
+// }
+
+// //     TODO: faze slice para mais elementos nesse
+// //     caso é apenas um get e fazer para
+// //     sobrecrita poder ocorrer também
+// d_type &matrix::operator[](std::initializer_list<int> n) {
+//         return this->get(std::vector<int>(n));
+// }
+
+// d_type &matrix::operator[](std::vector<int> n) { return this->get(n); }
+
+
+d_type& matrix::get(std::vector<int> loc) {
         if (loc.size() != this->n_dim) {
                 error_print("Erro de dimensão");
         }
         return this->elem[this->multi_uni(loc)];
 }
 
-d_type &matrix::operator[](int n) {
+proxy<matrix> matrix::operator[](int n) {
         if (n >= this->el_qdt) {
                 error_print("Acesso indevido");
         }
-        return this->elem[n];
+        return proxy<matrix>(this->elem[n], *this);
+        //return this->elem[n];
 }
 
 //     TODO: faze slice para mais elementos nesse
 //     caso é apenas um get e fazer para
 //     sobrecrita poder ocorrer também
-d_type &matrix::operator[](std::initializer_list<int> n) {
-        return this->get(std::vector<int>(n));
+proxy<matrix> matrix::operator[](std::initializer_list<int> n) {
+        //return this->get(std::vector<int>(n));
+        return proxy<matrix>(this->get(std::vector<int>(n)), *this);
 }
 
-d_type &matrix::operator[](std::vector<int> n) { return this->get(n); }
+proxy<matrix> matrix::operator[](std::vector<int> n) { 
+        
+         return proxy<matrix>(this->get(n), *this);
+        }
 
 matrix matrix::operator/(matrix &y) {  //     tem que ter
                                        //     referencia se não ele
@@ -468,3 +498,15 @@ d_type matrix::allSum() {
 }
 
 d_type matrix::average() { return (this->allSum() / this->el_qdt); }
+
+void matrix::update(){
+        this->max = 0;
+        this->min = 0;
+        this->max_digs_space = 0;
+        for(int i = 0; i < this->el_qdt; i++){
+                this->max = max_(this->max, this->elem[i]);
+                this->min = min_(this->min, this->elem[i]);
+                this->max_digs_space = max_(this->max_digs_space, dig_qtd(this->elem[i]));
+        }
+        
+}

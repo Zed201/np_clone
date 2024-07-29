@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <vector>
 
-#define d_type          long
+#define d_type          int
 #define f_precision     3
 #define tab_size        1
 #define string_lizer(x) #x
@@ -41,12 +41,35 @@ int dig_qtd(float x);
 int dig_qtd(double x);
 int dig_qtd(long x);
 
+// TODO: Passar as implementaçõa para o .cpp e testar mais
+template<class P>
+class proxy{
+        private:
+        d_type &ref;
+        P &parent;
+        public:
+                proxy(d_type &r, P &p) :ref(r), parent(p) {}
+                proxy& operator=(const d_type i) {
+                        this->ref = i;
+                        this->parent.update();
+                        return *this;
+                }
 
+                operator d_type() const {
+                        return ref;
+                }
+
+                void operator=(proxy &i){
+                        i.ref = this->ref;
+                }
+
+};
 
 class matrix {
     public:
         int n_dim, *dim, el_qdt, max_digs_space;
         d_type *elem, max, min;
+        bool b;
 
         std::vector<int> uni_multi(int i);
         std::vector<int> uni_multi(matrix &m, int i);
@@ -83,10 +106,15 @@ class matrix {
         matrix operator-(matrix &y);
         matrix operator*(matrix &y);
 
-        d_type &operator[](std::initializer_list<int> n);
-        d_type &operator[](std::vector<int> n);
-        d_type &operator[](int n);
-        d_type &get(std::vector<int> loc);
+        // d_type &operator[](std::initializer_list<int> n);
+        // d_type &operator[](std::vector<int> n);
+        // d_type &operator[](int n);
+        // d_type &get(std::vector<int> loc);
+
+        proxy<matrix> operator[](std::initializer_list<int> n);
+        proxy<matrix> operator[](std::vector<int> n);
+        proxy<matrix> operator[](int n);
+        d_type& get(std::vector<int> loc);
 
         void rec_print(int c, int &c_el, std::string &str) const;
         void format_print(std::string &str) const;
@@ -98,6 +126,8 @@ class matrix {
 
         d_type allSum();
         d_type average();
+
+        void update();
 };
 
 std::ostream &operator<<(std::ostream &os, const matrix &m);
