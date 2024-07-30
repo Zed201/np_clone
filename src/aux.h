@@ -40,7 +40,6 @@ int dig_qtd(float x);
 int dig_qtd(double x);
 int dig_qtd(long x);
 
-//  TODO: Passar as implementaçõa para o .cpp e testar mais
 template <class P> class proxy {
     private:
         d_type &ref;
@@ -113,6 +112,8 @@ class matrix {
         d_type average();
 
         void update();
+
+        void divide2d();
 };
 
 matrix full(std::vector<int> shape, d_type n);

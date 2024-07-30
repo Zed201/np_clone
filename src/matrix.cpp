@@ -431,3 +431,17 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         }
         return false;
 }
+// dividir em várias matrizes 2d
+void matrix::divide2d(){
+        if(this->n_dim <= 2){
+                std::vector<matrix> a;
+                // algum erro aqui
+                a.emplace_back(this->shape(), this->elem);
+                //return a;
+        }
+        std::vector<int> final_shape = {this->dim[this->n_dim - 2], this->dim[this->n_dim - 1]};
+        for(int i = 0; i < this->n_dim - 2; i++){
+                
+        }
+        // return std::vector<matrix>(1);
+ }

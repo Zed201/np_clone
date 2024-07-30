@@ -1,9 +1,8 @@
 #include "aux.h"
 
 int main() {
-        matrix a({5,5}, range(1,26));
+        matrix a({1,5,1}, range(1,6));
         std::cout << a << std::endl;
-        std::cout << a.transpose() << std::endl;
-
+        a.divide2d();
         return 0;
 }
