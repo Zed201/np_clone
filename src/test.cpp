@@ -1,7 +1,7 @@
 #include "aux.h"
 
 int main() {
-        matrix a({3, 4}, range(1, 13));
+        matrix a = full({3,3}, 5);
         std::cout << a << std::endl;
         return 0;
 }

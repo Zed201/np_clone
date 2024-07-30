@@ -115,6 +115,8 @@ class matrix {
         void update();
 };
 
+matrix& full(std::vector<int> shape, d_type n);
+
 std::ostream &operator<<(std::ostream &os, const matrix &m);
 //  range inclusivo de ambos os lados, podendo
 //  passar o step

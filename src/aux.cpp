@@ -72,3 +72,15 @@ int dig_qtd(float x) { return static_cast<int>(log10(static_cast<int>(x))) + 1 +
 int dig_qtd(double x) { return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision; }
 
 int dig_qtd(long x) { return static_cast<int>(log10(x)) + 1; }
+
+matrix& full(std::vector<int> shape, d_type n){
+        int i = 0;
+        for(int j : shape){
+                i *= j;
+        }
+        std::vector<d_type> el(i);
+        std::fill(el.begin(), el.end(), n);
+
+        matrix a(shape, el);
+        return a;
+}
