@@ -56,7 +56,7 @@ std::string print_(double x, int max_digs_space) {
         return tmp;
 }
 
-std::string print_(long x, int max_digs_space){
+std::string print_(long x, int max_digs_space) {
         std::string tmp;
         for (int i = 0; i < (max_digs_space - dig_qtd(x)) + tab_size; i++) {
                 tmp.push_back(' ');
@@ -67,14 +67,8 @@ std::string print_(long x, int max_digs_space){
 
 int dig_qtd(int x) { return static_cast<int>(log10(x)) + 1; }
 
-int dig_qtd(float x) {
-        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
-}
+int dig_qtd(float x) { return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision; }
 
-int dig_qtd(double x) {
-        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
-}
+int dig_qtd(double x) { return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision; }
 
-int dig_qtd(long x){
-        return static_cast<int>(log10(x)) + 1;
-}
+int dig_qtd(long x) { return static_cast<int>(log10(x)) + 1; }

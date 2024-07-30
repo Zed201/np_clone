@@ -1,75 +1,7 @@
 #include "aux.h"
 
-std::vector<int> matrix::uni_multi(int i) {
-        std::vector<int> tmp(this->n_dim);
-        for (int j = this->n_dim - 1; j >= 0; j--) {
-                tmp[j] = i % this->dim[j];
-                i /= this->dim[j];
-        }
-        return tmp;
-}
-
-//     Ta certo para matrizes bidimensionais
-int matrix::multi_uni(std::vector<int> vet) {
-        int index_tmp = 0;
-        int i = 0;
-        for (int j = this->n_dim - 1; j != 0; i++, j--) {
-                index_tmp += vet[i] * this->dim[j];
-        }
-        //     printf("---<%d\n",index_tmp +
-        //     vet[i]); std::cout << tmp +
-        //     i[this->n_dim - 1] << std::endl;
-        return (index_tmp + vet[i]);
-}
-
-//     sobrecarfas para trabalhar com matrizes
-//     diferentes
-int matrix::multi_uni(matrix &m, std::vector<int> i) { return m.multi_uni(i); }
-
-int matrix::multi_uni(matrix &m, std::initializer_list<int> i) {
-        return this->multi_uni(m, std::vector(i));
-}
-
-std::vector<int> matrix::uni_multi(matrix &m, int i) {
-        std::vector<int> tmp(m.n_dim);
-        for (int j = m.n_dim - 1; j >= 0; j--) {
-                tmp[j] = i % m.dim[j];
-                i /= m.dim[j];
-        }
-        return tmp;
-}
-
-//     funçoes para ver se ta ou noa no triangulo
-//     superior ou no inferior da matriz
-bool matrix::is_upper_tri(std::vector<int> i) {
-        if (this->n_dim > 2) {
-                error_print("Erro de dimensão, só "
-                            "pode ser chamado para "
-                            "matrizes 2D");
-        }
-        if (this->multi_uni(i) > this->multi_uni({i[0], i[0]})) {
-                return true;
-        }
-        return false;
-}
-
-bool matrix::is_lower_tri(std::vector<int> i) { return !this->is_upper_tri(i); }
-
-bool matrix::diagonal_pri(std::vector<int> i) {
-        if (this->n_dim > 2) {
-                error_print("Erro de dimensão, só "
-                            "pode ser chamado para "
-                            "matrizes 2D");
-        }
-        if (i[0] == i[1]) {
-                return true;
-        }
-        return false;
-}
-
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
-        this->b = false;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
         for (int i : sh) {
                 this->dim[a++] = i;
@@ -110,8 +42,7 @@ matrix::matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> 
 matrix::matrix(matrix &n) : matrix(n.shape(), n.flatten()) {}
 
 matrix::matrix(std::initializer_list<d_type> elementos)
-        : matrix(std::vector<int>({((int)elementos.size())}),
-                 std::vector<d_type>(elementos)) {}
+        : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos)) {}
 
 matrix::~matrix() {
         free(this->dim);
@@ -220,14 +151,14 @@ matrix matrix::operator-(matrix &y) {  //     tem que ter
         }
         return matrix(this->shape(), x);
 }
-//     TODO: Refazer com os indices de matrizes
-//     concertados apenas para matrizes 2d
+
+//  TODO: Fazer para matrizes de mais dimensões, basicamente dividir elas em multiplas matrizes 2d e multiplicar elas 1
+//  por 1 depois juntar
 matrix matrix::operator*(matrix &y) {  //     tem que ter
                                        //     referencia se não ele
                                        //     da erro nos
                                        //     construtores
-        if (this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 ||
-            this->dim[1] != y.dim[0]) {
+        if (this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 || this->dim[1] != y.dim[0]) {
                 error_print("Erro de dimensões");
         }
 
@@ -242,39 +173,13 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter
                         for (int k = 0; k < this->dim[1]; k++) {
                                 soma += this->operator[]({i, k}) * y[{k, j}];
                         }
-                        //     printf("%d \n",
-                        //     soma);
                         m[{i, j}] = soma;
                 }
         }
         return m;
 }
 
-// d_type &matrix::get(std::vector<int> loc) {
-//         if (loc.size() != this->n_dim) {
-//                 error_print("Erro de dimensão");
-//         }
-//         return this->elem[this->multi_uni(loc)];
-// }
-
-// d_type &matrix::operator[](int n) {
-//         if (n >= this->el_qdt) {
-//                 error_print("Acesso indevido");
-//         }
-//         return this->elem[n];
-// }
-
-// //     TODO: faze slice para mais elementos nesse
-// //     caso é apenas um get e fazer para
-// //     sobrecrita poder ocorrer também
-// d_type &matrix::operator[](std::initializer_list<int> n) {
-//         return this->get(std::vector<int>(n));
-// }
-
-// d_type &matrix::operator[](std::vector<int> n) { return this->get(n); }
-
-
-d_type& matrix::get(std::vector<int> loc) {
+d_type &matrix::get(std::vector<int> loc) {
         if (loc.size() != this->n_dim) {
                 error_print("Erro de dimensão");
         }
@@ -286,21 +191,14 @@ proxy<matrix> matrix::operator[](int n) {
                 error_print("Acesso indevido");
         }
         return proxy<matrix>(this->elem[n], *this);
-        //return this->elem[n];
 }
 
 //     TODO: faze slice para mais elementos nesse
-//     caso é apenas um get e fazer para
-//     sobrecrita poder ocorrer também
 proxy<matrix> matrix::operator[](std::initializer_list<int> n) {
-        //return this->get(std::vector<int>(n));
         return proxy<matrix>(this->get(std::vector<int>(n)), *this);
 }
 
-proxy<matrix> matrix::operator[](std::vector<int> n) { 
-        
-         return proxy<matrix>(this->get(n), *this);
-        }
+proxy<matrix> matrix::operator[](std::vector<int> n) { return proxy<matrix>(this->get(n), *this); }
 
 matrix matrix::operator/(matrix &y) {  //     tem que ter
                                        //     referencia se não ele
@@ -348,6 +246,7 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         return os;
 }
 
+//     TODO:optimizar isso daqui
 void matrix::format_print(std::string &str) const {
         str.append("\n");
         const struct search_replace *t;
@@ -366,7 +265,6 @@ void matrix::format_print(std::string &str) const {
         std::string::const_iterator last_pos = str.begin();
         std::string::const_iterator u = str.end();
         std::string result = "";
-        //     TODO:optimizar isso daqui
         for (std::sregex_iterator i = beg; i != end; ++i) {
                 std::smatch m = *i;
                 std::string s = m.str();
@@ -408,8 +306,7 @@ std::string matrix::print() const {
         format_print(buffer);
         return buffer;
 }
-//     TODO: Dando erro quando as dimensões são
-//     diferentes
+
 matrix matrix::transpose() {
         std::vector<int> d(this->n_dim);
         std::vector<d_type> e(this->el_qdt);
@@ -499,14 +396,70 @@ d_type matrix::allSum() {
 
 d_type matrix::average() { return (this->allSum() / this->el_qdt); }
 
-void matrix::update(){
+void matrix::update() {
         this->max = 0;
         this->min = 0;
         this->max_digs_space = 0;
-        for(int i = 0; i < this->el_qdt; i++){
+        for (int i = 0; i < this->el_qdt; i++) {
                 this->max = max_(this->max, this->elem[i]);
                 this->min = min_(this->min, this->elem[i]);
                 this->max_digs_space = max_(this->max_digs_space, dig_qtd(this->elem[i]));
         }
-        
+}
+
+std::vector<int> matrix::uni_multi(int i) {
+        std::vector<int> tmp(this->n_dim);
+        for (int j = this->n_dim - 1; j >= 0; j--) {
+                tmp[j] = i % this->dim[j];
+                i /= this->dim[j];
+        }
+        return tmp;
+}
+
+int matrix::multi_uni(std::vector<int> vet) {
+        int index_tmp = 0;
+        int i = 0;
+        for (int j = this->n_dim - 1; j != 0; i++, j--) {
+                index_tmp += vet[i] * this->dim[j];
+        }
+        return (index_tmp + vet[i]);
+}
+
+int matrix::multi_uni(matrix &m, std::vector<int> i) { return m.multi_uni(i); }
+
+int matrix::multi_uni(matrix &m, std::initializer_list<int> i) { return this->multi_uni(m, std::vector(i)); }
+
+std::vector<int> matrix::uni_multi(matrix &m, int i) {
+        std::vector<int> tmp(m.n_dim);
+        for (int j = m.n_dim - 1; j >= 0; j--) {
+                tmp[j] = i % m.dim[j];
+                i /= m.dim[j];
+        }
+        return tmp;
+}
+
+bool matrix::is_upper_tri(std::vector<int> i) {
+        if (this->n_dim > 2) {
+                error_print("Erro de dimensão, só "
+                            "pode ser chamado para "
+                            "matrizes 2D");
+        }
+        if (this->multi_uni(i) > this->multi_uni({i[0], i[0]})) {
+                return true;
+        }
+        return false;
+}
+
+bool matrix::is_lower_tri(std::vector<int> i) { return !this->is_upper_tri(i); }
+
+bool matrix::diagonal_pri(std::vector<int> i) {
+        if (this->n_dim > 2) {
+                error_print("Erro de dimensão, só "
+                            "pode ser chamado para "
+                            "matrizes 2D");
+        }
+        if (i[0] == i[1]) {
+                return true;
+        }
+        return false;
 }
