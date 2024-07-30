@@ -60,7 +60,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Adiciona o executável
 add_executable(a.out test.cpp aux.cpp matrix.cpp aux.h)
 
-add_custom_target(c_clean
+add_custom_target(cls
     COMMAND rm -rf *.o *.out ./CMakeFiles cmake_install.cmake CMakeCache.txt Makfile
 )
 

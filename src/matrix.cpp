@@ -58,7 +58,7 @@ std::vector<int> matrix::shape() {
 }
 
 void matrix::reshape(std::initializer_list<int> n_shape) {
-        std::vector<d_type> n(n_shape);
+        std::vector<int> n(n_shape);
 
         int tmp = 1;
         for (int i : n) {
@@ -124,10 +124,7 @@ bool matrix::operator==(matrix &y) {
         return true;
 }
 
-matrix matrix::operator+(matrix &y) {  //     tem que ter
-                                       //     referencia se não ele
-                                       //     da erro nos
-                                       //     construtores
+matrix matrix::operator+(matrix &y) { 
         if (this->shape() != y.shape()) {
                 error_print("Erro de formato");
         }
@@ -138,10 +135,7 @@ matrix matrix::operator+(matrix &y) {  //     tem que ter
         return matrix(this->shape(), x);
 }
 
-matrix matrix::operator-(matrix &y) {  //     tem que ter
-                                       //     referencia se não ele
-                                       //     da erro nos
-                                       //     construtores
+matrix matrix::operator-(matrix &y) { 
         if (this->shape() != y.shape()) {
                 error_print("Erro de formato");
         }
@@ -154,10 +148,7 @@ matrix matrix::operator-(matrix &y) {  //     tem que ter
 
 //  TODO: Fazer para matrizes de mais dimensões, basicamente dividir elas em multiplas matrizes 2d e multiplicar elas 1
 //  por 1 depois juntar
-matrix matrix::operator*(matrix &y) {  //     tem que ter
-                                       //     referencia se não ele
-                                       //     da erro nos
-                                       //     construtores
+matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 || this->dim[1] != y.dim[0]) {
                 error_print("Erro de dimensões");
         }
@@ -278,10 +269,7 @@ void matrix::format_print(std::string &str) const {
                 }
                 spaces = spaces - col + 1;
                 tmp = "";
-                //     std::cout << spaces << ','
-                //     << col << std::endl; reduz
-                //     a quantidade de espaços
-                //     para ficar alinhado
+                // reduz a quantidade de espaços para ficar alinhado
                 for (int j = 0; j < spaces; j++) {
                         tmp += " ";
                 }
@@ -318,43 +306,23 @@ matrix matrix::transpose() {
                 for (int i = 0; i < this->el_qdt; i++) {
                         e[i] = this->operator[](i);
                 }
-        } else if (this->n_dim == 2) {               //     se for diferente
-                                                     //     de 2d, inverte o
-                                                     //     shape e os
-                                                     //     elementos
-                if (this->dim[0] == this->dim[1]) {  //     para
-                                                     //     matrizes
-                                                     //     quadradas
+        } else if (this->n_dim == 2) {// se for 2d quadrada ele so inverter os indíces 
+                if (this->dim[0] == this->dim[1]) { 
                         d[0] = this->dim[1];
                         d[1] = this->dim[0];
                         std::vector<int> tmp(2);
 
                         for (int i = 0; i < this->el_qdt; i++) {
                                 tmp = this->uni_multi(i);
-                                if (tmp[0] != tmp[1]) {
-                                        //     na
-                                        //     diagonal
-                                        //     principal
-                                        //     nao
-                                        //     muda
-                                        //     nada
+                                if (tmp[0] != tmp[1]) { // na diagonal principal nao muda nada
                                         std::swap(tmp[0], tmp[1]);
                                 }
                                 e[this->multi_uni(tmp)] = this->operator[](i);
                         }
-                } else {  //     Dando erro de
-                          //     double free aqui:
+                } else {// se não ele cria uma nova matriz e inverte ela
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
-                        std::vector<d_type> t(m_dim * m_dim);  //     cria
-                                                               //     basicamente
-                                                               //     uma
-                                                               //     matriz
-                                                               //     quadrada
-                                                               //     da
-                                                               //     maior
-                                                               //     dimensão
-                        std::fill(t.begin(), t.end(), this->min - 1);
-                        matrix tmp_matrix({m_dim, m_dim}, t);
+                        std::vector<d_type> t(m_dim * m_dim);  //     cria um quadrado da maior dimensão
+                        matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
                         for (int i = 0; i < this->el_qdt; i++) {
                                 int j = tmp_matrix.multi_uni(this->uni_multi(i));
                                 tmp_matrix[j] = this->operator[](i);
