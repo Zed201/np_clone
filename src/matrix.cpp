@@ -232,24 +232,27 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
 
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
-                std::vector<matrix> c((int)a.size());  //  TODO: erro por aqui
-                for (int i = 0; i < c.size(); i++) {   //  TODO: Optimizar isso aqui
-                        c[i] = (a[i] * b[i]);          //  talvez seja b * a
+                //  TODO: Nao consigo fazer um vetor puro de matrix,
+                std::vector<matrix> c = this->divide2d();  //  dar um jeito nisso aqui
+                for (int i = 0; i < c.size(); i++) {       //  TODO: Optimizar isso aqui
+                        c[i] = (a[i] * b[i]);              //  talvez seja b * a
                 }
-                //  unir as matrizes
+
                 std::vector<d_type> el(this->el_qdt);
                 std::vector<int> sh(this->shape());
 
                 int i = 0;
                 for (matrix j : c) {
-                        for (int k = 0; j.el_qdt; k++) {
+                        //  printf("%d--\n", j.el_qdt);
+                        for (int k = 0; k < j.el_qdt; k++) {
                                 el[i++] = j[k];
                         }
                 }
-                error_print("Erro nas dimensões");
+                return matrix(sh, el);
 
         } else {
                 error_print("Erro nas dimensões");
+                return matrix({0});  //  so para nao dar warning
         }
 }
 
@@ -516,6 +519,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
 }
 //  dividir em várias matrizes 2d
 std::vector<matrix> matrix::divide2d() {
+        //  TODO: Nao consigo fazer vetor com parte ja alocada
         std::vector<matrix> a;
         if (this->n_dim <= 2) {
                 std::vector<int> el(this->el_qdt);
