@@ -39,14 +39,35 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
 matrix::matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)) {}
 
-matrix::matrix(matrix &n) : matrix(n.shape(), n.flatten()) {}
+// construtor de copia 
+matrix::matrix(const matrix &n){
+        this->n_dim = n.n_dim;
+        this->dim = (int *) malloc(sizeof(int) * n.n_dim);
+
+        this->el_qdt = n.el_qdt;
+        this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+
+        this->max = n.max;
+        this->min = n.min;
+        this->max_digs_space = n.max_digs_space;
+
+        for (int i = 0; i < n.n_dim; i++) {
+                this->dim[i] = n.dim[i];
+        }
+
+        for (int i = 0; i < n.el_qdt; i++) {
+                this->elem[i] = n.elem[i];
+        }
+}
 
 matrix::matrix(std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos)) {}
 
 matrix::~matrix() {
         free(this->dim);
+        this->dim = nullptr;
         free(this->elem);
+        this->elem = nullptr;
 }
 
 std::vector<int> matrix::shape() {
@@ -78,6 +99,34 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         for (int i : n) {
                 this->dim[tmp++] = i;
         }
+}
+
+matrix& matrix::operator=(const matrix &n){
+        if(this->elem != nullptr){
+                free(this->elem);
+        }
+
+        if(this->dim != nullptr){
+                free(this->dim);
+        }
+
+        this->dim = (int *) malloc(sizeof(int) * n.n_dim);
+
+        this->el_qdt = n.el_qdt;
+        this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+
+        this->max = n.max;
+        this->min = n.min;
+        this->max_digs_space = n.max_digs_space;
+
+        for (int i = 0; i < n.n_dim; i++) {
+                this->dim[i] = n.dim[i];
+        }
+
+        for (int i = 0; i < n.el_qdt; i++) {
+                this->elem[i] = n.elem[i];
+        }
+        return *this;
 }
 
 matrix matrix::operator+(int y) {
@@ -432,16 +481,22 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         return false;
 }
 // dividir em várias matrizes 2d
-void matrix::divide2d(){
+std::vector<matrix> matrix::divide2d(){
+        std::vector<matrix> a;
         if(this->n_dim <= 2){
-                std::vector<matrix> a;
                 // algum erro aqui
-                a.emplace_back(this->shape(), this->elem);
-                //return a;
+                std::vector<int> el(this->el_qdt);
+                for(int i = 0; i < this->el_qdt; i++){
+                        el[i] = this->operator[](i);
+                }
+                matrix b(this->shape(), el);
+                a.push_back(b);
+                return a;
         }
         std::vector<int> final_shape = {this->dim[this->n_dim - 2], this->dim[this->n_dim - 1]};
         for(int i = 0; i < this->n_dim - 2; i++){
                 
         }
         // return std::vector<matrix>(1);
+        return a;
  }

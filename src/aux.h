@@ -76,7 +76,7 @@ class matrix {
 
         matrix(std::vector<int> sh, std::vector<d_type> el);
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos);
-        matrix(matrix &n);
+        matrix(const matrix &n);
         matrix(std::initializer_list<d_type> elementos);
 
         ~matrix();
@@ -89,6 +89,7 @@ class matrix {
         matrix operator*(int y);
         matrix operator/(int y);
 
+        matrix& operator=(const matrix &n);
         matrix operator/(matrix &y);
         bool operator==(matrix &y);
         matrix operator+(matrix &y);
@@ -113,7 +114,7 @@ class matrix {
 
         void update();
 
-        void divide2d();
+        std::vector<matrix> divide2d();
 };
 
 matrix full(std::vector<int> shape, d_type n);
