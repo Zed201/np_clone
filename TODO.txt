@@ -1,5 +1,5 @@
 -Fazer o slice[ ]
--Fazer multiplicação n-dimensional de matrizes(dividindo elas em 2d)[ ]
+-Fazer multiplicação n-dimensional de matrizes(dividindo elas em 2d)[X]
 -Concertar o proxy e testar[X]
 -Funções de preencher[X]
 -Determinante[ ]

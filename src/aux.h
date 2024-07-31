@@ -74,6 +74,7 @@ class matrix {
         bool is_lower_tri(std::vector<int> i);
         bool diagonal_pri(std::vector<int> i);
 
+        matrix();
         matrix(std::vector<int> sh, std::vector<d_type> el);
         matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos);
         matrix(const matrix &n);

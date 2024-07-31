@@ -35,7 +35,8 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
                 this->min = min_(this->max, 0);
         }
 }
-
+//  construtor padrão sem nd
+matrix::matrix() : matrix({0}) {}
 matrix::matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)) {}
 
@@ -44,16 +45,16 @@ matrix::matrix(const matrix &n) {
         this->n_dim = n.n_dim;
         this->dim = (int *)malloc(sizeof(int) * n.n_dim);
 
+        for (int i = 0; i < n.n_dim; i++) {
+                this->dim[i] = n.dim[i];
+        }
+
         this->el_qdt = n.el_qdt;
         this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
 
         this->max = n.max;
         this->min = n.min;
         this->max_digs_space = n.max_digs_space;
-
-        for (int i = 0; i < n.n_dim; i++) {
-                this->dim[i] = n.dim[i];
-        }
 
         for (int i = 0; i < n.el_qdt; i++) {
                 this->elem[i] = n.elem[i];
@@ -102,6 +103,7 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
 }
 
 matrix &matrix::operator=(const matrix &n) {
+
         if (this->elem != nullptr) {
                 free(this->elem);
         }
@@ -110,6 +112,7 @@ matrix &matrix::operator=(const matrix &n) {
                 free(this->dim);
         }
 
+        this->n_dim = n.n_dim;
         this->dim = (int *)malloc(sizeof(int) * n.n_dim);
 
         this->el_qdt = n.el_qdt;
@@ -232,10 +235,17 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
 
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
-                //  TODO: Nao consigo fazer um vetor puro de matrix,
-                std::vector<matrix> c = this->divide2d();  //  dar um jeito nisso aqui
-                for (int i = 0; i < c.size(); i++) {       //  TODO: Optimizar isso aqui
-                        c[i] = (a[i] * b[i]);              //  talvez seja b * a
+                std::vector<matrix> c(a.size());      //  dar um jeito nisso aqui
+                for (int i = 0; i < c.size(); i++) {  //  TODO: Optimizar isso aqui
+                        for (int j : a[i].shape()) {
+                                std::cout << j << " ";
+                        }
+                        std::cout << std::endl;
+                        for (int j : b[i].shape()) {
+                                std::cout << j << " ";
+                        }
+                        std::cout << std::endl;
+                        c[i] = (a[i] * b[i]);  //  talvez seja b * a
                 }
 
                 std::vector<d_type> el(this->el_qdt);
@@ -243,7 +253,6 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
 
                 int i = 0;
                 for (matrix j : c) {
-                        //  printf("%d--\n", j.el_qdt);
                         for (int k = 0; k < j.el_qdt; k++) {
                                 el[i++] = j[k];
                         }
@@ -519,15 +528,14 @@ bool matrix::diagonal_pri(std::vector<int> i) {
 }
 //  dividir em várias matrizes 2d
 std::vector<matrix> matrix::divide2d() {
-        //  TODO: Nao consigo fazer vetor com parte ja alocada
-        std::vector<matrix> a;
         if (this->n_dim <= 2) {
+                std::vector<matrix> a(1);
                 std::vector<int> el(this->el_qdt);
                 for (int i = 0; i < this->el_qdt; i++) {
                         el[i] = this->operator[](i);
                 }
-                matrix b(this->shape(), el);
-                a.push_back(b);
+
+                a[0] = matrix(this->shape(), el);
                 return a;
         }
 
@@ -535,6 +543,7 @@ std::vector<matrix> matrix::divide2d() {
         for (int i = 0; i < this->n_dim - 2; i++) {
                 qtd_s *= this->dim[i];
         }
+        std::vector<matrix> a(qtd_s);
         std::vector<int> final_shape = {this->dim[this->n_dim - 2], this->dim[this->n_dim - 1]};
         int tam_2x2 = final_shape[0] * final_shape[1];
         for (int i = 0; i < qtd_s; i++) {
@@ -543,7 +552,7 @@ std::vector<matrix> matrix::divide2d() {
                         int index = (i * tam_2x2) + j;
                         el[j] = this->elem[(i * tam_2x2) + j];
                 }
-                a.emplace_back(final_shape, el);
+                a[i] = matrix(final_shape, el);
         }
         return a;
 }
