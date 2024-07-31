@@ -198,25 +198,59 @@ matrix matrix::operator-(matrix &y) {
 //  TODO: Fazer para matrizes de mais dimensões, basicamente dividir elas em multiplas matrizes 2d e multiplicar elas 1
 //  por 1 depois juntar
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
-        if (this->n_dim != y.n_dim || this->n_dim > 2 || y.n_dim > 2 || this->dim[1] != y.dim[0]) {
+        if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
         }
 
-        std::vector<int> sh(2);
-        sh[0] = this->dim[0];
-        sh[1] = y.dim[1];
-        std::vector<d_type> el(this->dim[0] * y.dim[1]);
-        matrix m(sh, el);
-        for (int i = 0; i < this->dim[0]; i++) {
-                for (int j = 0; j < y.dim[1]; j++) {
-                        d_type soma = 0;
-                        for (int k = 0; k < this->dim[1]; k++) {
-                                soma += this->operator[]({i, k}) * y[{k, j}];
+        if (this->n_dim == 2 && this->dim[1] == y.dim[0]) {  //  matrizes 2d normais
+                std::vector<int> sh(2);
+                sh[0] = this->dim[0];
+                sh[1] = y.dim[1];
+                std::vector<d_type> el(this->dim[0] * y.dim[1]);
+                matrix m(sh, el);
+                for (int i = 0; i < this->dim[0]; i++) {
+                        for (int j = 0; j < y.dim[1]; j++) {
+                                d_type soma = 0;
+                                for (int k = 0; k < this->dim[1]; k++) {
+                                        soma += this->operator[]({i, k}) * y[{k, j}];
+                                }
+                                m[{i, j}] = soma;
                         }
-                        m[{i, j}] = soma;
                 }
+                return m;
+        } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
+                //  verificar se as dimensões batem
+                bool tmp = true;
+                for (int i = 0; i < this->n_dim; i++) {
+                        if (y.dim[i] != this->dim[i]) {
+                                tmp = false;
+                        }
+                }
+                if (!tmp) {
+                        error_print("Dimensões diferentes");
+                }
+
+                std::vector<matrix> a = this->divide2d();
+                std::vector<matrix> b = y.divide2d();
+                std::vector<matrix> c((int)a.size());  //  TODO: erro por aqui
+                for (int i = 0; i < c.size(); i++) {   //  TODO: Optimizar isso aqui
+                        c[i] = (a[i] * b[i]);          //  talvez seja b * a
+                }
+                //  unir as matrizes
+                std::vector<d_type> el(this->el_qdt);
+                std::vector<int> sh(this->shape());
+
+                int i = 0;
+                for (matrix j : c) {
+                        for (int k = 0; j.el_qdt; k++) {
+                                el[i++] = j[k];
+                        }
+                }
+                error_print("Erro nas dimensões");
+
+        } else {
+                error_print("Erro nas dimensões");
         }
-        return m;
 }
 
 d_type &matrix::get(std::vector<int> loc) {
@@ -494,16 +528,16 @@ std::vector<matrix> matrix::divide2d() {
         }
 
         int qtd_s = 1;
-        for(int i = 0; i < this->n_dim - 2; i++){
+        for (int i = 0; i < this->n_dim - 2; i++) {
                 qtd_s *= this->dim[i];
         }
         std::vector<int> final_shape = {this->dim[this->n_dim - 2], this->dim[this->n_dim - 1]};
         int tam_2x2 = final_shape[0] * final_shape[1];
         for (int i = 0; i < qtd_s; i++) {
                 std::vector<d_type> el(tam_2x2);
-                for(int j = 0; j < tam_2x2; j++){
+                for (int j = 0; j < tam_2x2; j++) {
                         int index = (i * tam_2x2) + j;
-                        el[j] = this->elem[(i * tam_2x2) + j]; 
+                        el[j] = this->elem[(i * tam_2x2) + j];
                 }
                 a.emplace_back(final_shape, el);
         }
