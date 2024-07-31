@@ -89,7 +89,7 @@ class matrix {
         matrix operator*(int y);
         matrix operator/(int y);
 
-        matrix& operator=(const matrix &n);
+        matrix &operator=(const matrix &n);
         matrix operator/(matrix &y);
         bool operator==(matrix &y);
         matrix operator+(matrix &y);

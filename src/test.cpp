@@ -1,9 +1,9 @@
 #include "aux.h"
 
 int main() {
-        matrix a({5,1}, range(1,6));
+        matrix a({2,3,5,5}, range(1, 151));
         std::cout << a << std::endl;
-        for(matrix b : a.divide2d()){
+        for (matrix b : a.divide2d()) {
                 std::cout << b << std::endl;
         }
         return 0;
