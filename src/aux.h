@@ -7,7 +7,6 @@
 #include <initializer_list>
 #include <iostream>
 #include <regex>
-//  #include <stdio.h>
 #include <vector>
 
 #define d_type          int
@@ -116,6 +115,12 @@ class matrix {
         void update();
 
         std::vector<matrix> divide2d();
+
+        //  basicamente para ser oque o [] faz no numpy normalmente, retornar uma matriz que tem os elementos cortados
+        //  nao vai ter de x:y ou coisa parecida pois a logica vai ficar complicada, ainda mais de implementar para ser
+        //  usada de forma mais fácilo apenas para ser um [] para retornar matrizes
+        matrix slice(std::initializer_list<int> n);
+        matrix slice(std::vector<int> n);
 };
 
 matrix full(std::vector<int> shape, d_type n);

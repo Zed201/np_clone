@@ -2,10 +2,8 @@
 
 int main() {
         matrix a({2, 3, 5, 5}, range(1, 151));
-        matrix b({2, 3, 5, 5}, range(1, 151));
-        std::cout << a * b << std::endl;
-        for (matrix c : a.divide2d()) {
-                std::cout << c << std::endl;
-        }
+        std::cout << a << std::endl;
+        std::cout << a.slice({2, 2, 4, 4}) << std::endl;
+
         return 0;
 }

@@ -65,32 +65,37 @@ std::string print_(long x, int max_digs_space) {
         return tmp;
 }
 
-int dig_qtd(int x) { 
-        if(!x){
+int dig_qtd(int x) {
+        if (!x) {
                 return 1;
         }
-                return static_cast<int>(log10(x)) + 1; }
+        return static_cast<int>(log10(x)) + 1;
+}
 
 int dig_qtd(float x) {
-        if(!x){
-                return 1 + f_precision;
-        } return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision; }
-
-int dig_qtd(double x) { 
-        if(!x){
+        if (!x) {
                 return 1 + f_precision;
         }
-        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision; }
+        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
+}
 
-int dig_qtd(long x) { 
-        if(!x){
+int dig_qtd(double x) {
+        if (!x) {
+                return 1 + f_precision;
+        }
+        return static_cast<int>(log10(static_cast<int>(x))) + 1 + f_precision;
+}
+
+int dig_qtd(long x) {
+        if (!x) {
                 return 1;
         }
-        return static_cast<int>(log10(x)) + 1; }
+        return static_cast<int>(log10(x)) + 1;
+}
 
-matrix full(std::vector<int> shape, d_type n){
+matrix full(std::vector<int> shape, d_type n) {
         int i = 1;
-        for(int j : shape){
+        for (int j : shape) {
                 i *= j;
         }
         std::vector<d_type> el(i);
@@ -98,14 +103,12 @@ matrix full(std::vector<int> shape, d_type n){
         return matrix(shape, el);
 }
 
-matrix full(std::initializer_list<int> shape, d_type n){
-        return full(std::vector<int>(shape), n);
-}
+matrix full(std::initializer_list<int> shape, d_type n) { return full(std::vector<int>(shape), n); }
 
-matrix indetity(int shape){
+matrix indetity(int shape) {
         matrix a = full({shape, shape}, 0);
-        for(int i = 0 ; i < shape; i++){
-                a[{i,i}] = 1;
+        for (int i = 0; i < shape; i++) {
+                a[{i, i}] = 1;
         }
         return a;
 }

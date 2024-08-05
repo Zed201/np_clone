@@ -1,4 +1,4 @@
-#include "aux.h"
+#include "./aux.h"
 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
@@ -279,7 +279,16 @@ proxy<matrix> matrix::operator[](int n) {
         return proxy<matrix>(this->elem[n], *this);
 }
 
-//     TODO: faze slice para mais elementos nesse
+matrix matrix::slice(std::vector<int> n) {
+        if (n.size() == this->n_dim) {
+                //  basicamente o mesmo do [] mas encapsulado numa matrix
+                return matrix({this->operator[](n)});
+        }
+        return matrix({0});
+}
+
+matrix matrix::slice(std::initializer_list<int> n) { return this->slice(std::vector(n)); }
+
 proxy<matrix> matrix::operator[](std::initializer_list<int> n) {
         return proxy<matrix>(this->get(std::vector<int>(n)), *this);
 }
@@ -479,13 +488,28 @@ std::vector<int> matrix::uni_multi(int i) {
         return tmp;
 }
 
+//  TODO: Concertar
+//  retorna o index de um multidimensional para o unidimensional
 int matrix::multi_uni(std::vector<int> vet) {
-        int index_tmp = 0;
-        int i = 0;
-        for (int j = this->n_dim - 1; j != 0; i++, j--) {
-                index_tmp += vet[i] * this->dim[j];
+        if (vet.size() != this->n_dim) {
+                error_print("Erro no numero de dimensões");
         }
-        return (index_tmp + vet[i]);
+        for (int i = 0; i < this->n_dim; i++) {
+                if (vet[i] >= this->dim[i]) {
+                        error_print("Acesso indevido");
+                }
+        }
+        //  fazer um vetor com os "pesos" de cada dimensão, o quanto vai ter que pular
+        //  basicamente a posição i vai ter a multiplicação dos numeros de i + 1 ate o final, o ultimo tendo peso de 1
+        int index_tmp = 0;
+        for (int i = 0; i < vet.size(); i++) {
+                int tmp = 1;
+                for (int j = i + 1; j < vet.size(); j++) {
+                        tmp *= this->dim[j];
+                }
+                index_tmp += (tmp * vet[i]);
+        }
+        return index_tmp;
 }
 
 int matrix::multi_uni(matrix &m, std::vector<int> i) { return m.multi_uni(i); }
