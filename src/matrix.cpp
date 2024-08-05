@@ -304,7 +304,7 @@ matrix matrix::slice(std::vector<int> n) {
                 sh.emplace_back(this->dim[i]);
         }
         int top = this->multi_uni(n), base = this->multi_uni(tmp);
-        std::vector<int> el(top - base + 1);
+        std::vector<d_type> el(top - base + 1);
         for(int i = base; i <= top; i++){
                 el[i - base] = this->operator[](i);
         }
@@ -575,7 +575,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
                 std::vector<matrix> a(1);
-                std::vector<int> el(this->el_qdt);
+                std::vector<d_type> el(this->el_qdt);
                 for (int i = 0; i < this->el_qdt; i++) {
                         el[i] = this->operator[](i);
                 }

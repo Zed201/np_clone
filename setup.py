@@ -3,10 +3,7 @@ from Cython.Build import cythonize
 import os
 
 # para pegar todos os .c, .cpp do ./src mais facilmente
-source_files = []
-for root, dirs, files in os.walk("./src"):
-    for i in files:
-        source_files.append("./src/" + i)
+source_files = ["./src/aux.cpp", "./src/matrix.cpp", "./src/index.pyx"]
 
 module = [
     Extension(
