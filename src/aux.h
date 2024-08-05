@@ -34,6 +34,15 @@ std::string print_(float x, int max_digs_space);
 std::string print_(double x, int max_digs_space);
 std::string print_(long x, int max_digs_space);
 
+template <typename T>
+void print_vec(std::vector<T> n){
+        std::cout << "[ ";
+        for(T i : n){
+                std::cout << i << ", ";
+        }
+        std::cout << "]" << std::endl;
+}
+
 int dig_qtd(int x);
 int dig_qtd(float x);
 int dig_qtd(double x);
@@ -59,7 +68,7 @@ template <class P> class proxy {
 
 class matrix {
     public:
-        int n_dim, *dim, el_qdt, max_digs_space;
+        int n_dim, *dim, *pesos_dim, el_qdt, max_digs_space;
         d_type *elem, max, min;
 
         std::vector<int> uni_multi(int i);

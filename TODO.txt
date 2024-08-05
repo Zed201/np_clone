@@ -1,4 +1,4 @@
--Fazer o slice[ ]
+-Fazer o slice[X]
 -Fazer multiplicação n-dimensional de matrizes(dividindo elas em 2d)[X]
 -Concertar o proxy e testar[X]
 -Funções de preencher[X]

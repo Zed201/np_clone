@@ -11,10 +11,16 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
                 free(this->dim);
                 error_print("Tamanho errado");
         }
-
         this->n_dim = a;
         a = 0;
         this->el_qdt = tmp;
+        this->pesos_dim = (int *)malloc(sizeof(int) * a);
+        for(int i = 0; i < this->n_dim; i++){
+                this->pesos_dim[i] = 1;
+                for(int j = i + 1; j < this->n_dim; j++){
+                        this->pesos_dim[i] *= sh[j];
+                }
+        }
         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
 
         this->max = el[0];
@@ -67,6 +73,10 @@ matrix::matrix(std::initializer_list<d_type> elementos)
 matrix::~matrix() {
         free(this->dim);
         this->dim = nullptr;
+
+        free(this->pesos_dim);
+        this->pesos_dim = nullptr;
+
         free(this->elem);
         this->elem = nullptr;
 }
@@ -284,7 +294,22 @@ matrix matrix::slice(std::vector<int> n) {
                 //  basicamente o mesmo do [] mas encapsulado numa matrix
                 return matrix({this->operator[](n)});
         }
-        return matrix({0});
+        // basicamente calcular o primeiro e o ultimo elemento a fazer parte do slice
+        // o n ele vai ser o topo e o tmp ele vai ser o base
+        std::vector<int> tmp(n);
+        std::vector<int> sh;
+        for(int i = (int) n.size(); i < this->n_dim; i++){
+                n.emplace_back(this->dim[i] - 1);
+                tmp.emplace_back(0);
+                sh.emplace_back(this->dim[i]);
+        }
+        int top = this->multi_uni(n), base = this->multi_uni(tmp);
+        std::vector<int> el(top - base + 1);
+        for(int i = base; i <= top; i++){
+                el[i - base] = this->operator[](i);
+        }
+
+        return matrix(sh, el);
 }
 
 matrix matrix::slice(std::initializer_list<int> n) { return this->slice(std::vector(n)); }
@@ -503,11 +528,7 @@ int matrix::multi_uni(std::vector<int> vet) {
         //  basicamente a posição i vai ter a multiplicação dos numeros de i + 1 ate o final, o ultimo tendo peso de 1
         int index_tmp = 0;
         for (int i = 0; i < vet.size(); i++) {
-                int tmp = 1;
-                for (int j = i + 1; j < vet.size(); j++) {
-                        tmp *= this->dim[j];
-                }
-                index_tmp += (tmp * vet[i]);
+                index_tmp += (this->pesos_dim[i] * vet[i]);
         }
         return index_tmp;
 }
