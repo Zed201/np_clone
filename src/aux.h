@@ -7,15 +7,15 @@
 #include <initializer_list>
 #include <iostream>
 #include <regex>
-#include <vector>
 #include <string.h>
+#include <vector>
 
 #define d_type          int
 #define f_precision     3
 #define tab_size        1
 #define string_lizer(x) #x
 #define t_str(x)        string_lizer(x)
-#define df_str "%." t_str(f_precision) "f"
+#define df_str          "%." t_str(f_precision) "f,"
 
 struct search_replace {
         std::regex pattern;
@@ -36,10 +36,9 @@ std::string print_(float x, int max_digs_space);
 std::string print_(double x, int max_digs_space);
 std::string print_(long x, int max_digs_space);
 
-template <typename T>
-void print_vec(std::vector<T> n){
+template <typename T> void print_vec(std::vector<T> n) {
         std::cout << "[ ";
-        for(T i : n){
+        for (T i : n) {
                 std::cout << i << ", ";
         }
         std::cout << "]" << std::endl;

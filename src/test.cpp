@@ -1,10 +1,12 @@
 #include "aux.h"
-// arquivo para testar a implementação em c++, compila com o cmake
+//  arquivo para testar a implementação em c++, compila com o cmake
 
 int main() {
         matrix a({5, 5}, range(0, 25));
-        a[{4,4}] = -100;
+        int x = -11231.577;
+        a[{4, 4}] = x;
         std::cout << a << std::endl;
 
+        printf("%f", x);
         return 0;
 }

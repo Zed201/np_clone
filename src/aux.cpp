@@ -35,8 +35,8 @@ std::string print_(int x, int max_digs_space) {
         for (int i = 0; i < (max_digs_space - qtd) + tab_size; i++) {
                 tmp.push_back(' ');
         }
-        char* buffer = (char *) malloc(sizeof(char) * qtd);
-        snprintf(buffer, sizeof(buffer), "%d", x);
+        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        snprintf(buffer, sizeof(buffer), "%d,", x);
 
         tmp.append(buffer);
         free(buffer);
@@ -50,8 +50,8 @@ std::string print_(float x, int max_digs_space) {
                 tmp.push_back(' ');
         }
 
-        char* buffer = (char *) malloc(sizeof(char) * qtd);
-        snprintf(buffer, sizeof(buffer), df_str, x);
+        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        snprintf(buffer, f_precision + qtd + 1, df_str, x);
         tmp.append(buffer);
         free(buffer);
         return tmp;
@@ -64,8 +64,8 @@ std::string print_(double x, int max_digs_space) {
                 tmp.push_back(' ');
         }
 
-        char* buffer = (char *) malloc(sizeof(char) * qtd);
-        snprintf(buffer, sizeof(buffer), df_str, x);
+        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        snprintf(buffer, f_precision + qtd + 1, df_str, x);
 
         tmp.append(buffer);
         free(buffer);
@@ -79,9 +79,9 @@ std::string print_(long x, int max_digs_space) {
                 tmp.push_back(' ');
         }
 
-        char* buffer = (char *) malloc(sizeof(char) * qtd);
-        snprintf(buffer, sizeof(buffer), "%ld", x);
-        
+        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        snprintf(buffer, qtd + 2, "%ld,", x);
+
         tmp.append(buffer);
         free(buffer);
         return tmp;
@@ -91,28 +91,28 @@ int dig_qtd(int x) {
         if (x == 0) {
                 return 1;
         }
-        return static_cast<int>(log10(abs(x))) + 1 + (x > 0 ? 0 : 4);
+        return static_cast<int>(log10(abs(x))) + 1 + (x > 0 ? 0 : 1);
 }
 
 int dig_qtd(float x) {
-        if (!x) {
+        if (x == 0) {
                 return 1 + f_precision;
         }
-        return static_cast<int>(log10(static_cast<int>(abs(x)))) + 1 + f_precision;
+        return static_cast<int>(log10(static_cast<int>(abs(x)))) + 1 + f_precision + (x > 0 ? 0 : 1);
 }
 
 int dig_qtd(double x) {
-        if (!x) {
+        if (x == 0) {
                 return 1 + f_precision;
         }
-        return static_cast<int>(log10(static_cast<int>(abs(x)))) + 1 + f_precision;
+        return static_cast<int>(log10(static_cast<int>(abs(x)))) + 1 + f_precision + (x > 0 ? 0 : 1);
 }
 
 int dig_qtd(long x) {
-        if (!x) {
+        if (x == 0) {
                 return 1;
         }
-        return static_cast<int>(log10(abs(x))) + 1;
+        return static_cast<int>(log10(abs(x))) + 1 + (x > 0 ? 0 : 1);
 }
 
 matrix full(std::vector<int> shape, d_type n) {

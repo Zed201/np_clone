@@ -3,5 +3,5 @@
 -Concertar o proxy e testar[X]
 -Funções de preencher[X]
 -Concertar aquelas que usam format, elas nao pegam na versão do gcc[X]
--Numeros negativos erro no print[ ]
+-Numeros negativos erro no print[X]
 -Resolver local do python.h, nao reconhecido mesmo quando tena compilar normal[ ]
