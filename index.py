@@ -1,3 +1,2 @@
 import npc
-
-npc.print()
+npc.test()

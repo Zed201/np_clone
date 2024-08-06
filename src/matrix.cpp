@@ -1,4 +1,5 @@
-#include "./aux.h"
+#include "matrix.h"
+#include "aux.h"
 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
@@ -15,9 +16,9 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
         a = 0;
         this->el_qdt = tmp;
         this->pesos_dim = (int *)malloc(sizeof(int) * a);
-        for(int i = 0; i < this->n_dim; i++){
+        for (int i = 0; i < this->n_dim; i++) {
                 this->pesos_dim[i] = 1;
-                for(int j = i + 1; j < this->n_dim; j++){
+                for (int j = i + 1; j < this->n_dim; j++) {
                         this->pesos_dim[i] *= sh[j];
                 }
         }
@@ -294,18 +295,18 @@ matrix matrix::slice(std::vector<int> n) {
                 //  basicamente o mesmo do [] mas encapsulado numa matrix
                 return matrix({this->operator[](n)});
         }
-        // basicamente calcular o primeiro e o ultimo elemento a fazer parte do slice
-        // o n ele vai ser o topo e o tmp ele vai ser o base
+        //  basicamente calcular o primeiro e o ultimo elemento a fazer parte do slice
+        //  o n ele vai ser o topo e o tmp ele vai ser o base
         std::vector<int> tmp(n);
         std::vector<int> sh;
-        for(int i = (int) n.size(); i < this->n_dim; i++){
+        for (int i = (int)n.size(); i < this->n_dim; i++) {
                 n.emplace_back(this->dim[i] - 1);
                 tmp.emplace_back(0);
                 sh.emplace_back(this->dim[i]);
         }
         int top = this->multi_uni(n), base = this->multi_uni(tmp);
         std::vector<d_type> el(top - base + 1);
-        for(int i = base; i <= top; i++){
+        for (int i = base; i <= top; i++) {
                 el[i - base] = this->operator[](i);
         }
 

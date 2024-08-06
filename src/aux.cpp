@@ -1,4 +1,5 @@
 #include "aux.h"
+#include "matrix.h"
 
 void error_print(const char *text) {
         std::cerr << std::string(text) << std::endl;
@@ -36,7 +37,7 @@ std::string print_(int x, int max_digs_space) {
                 tmp.push_back(' ');
         }
         char *buffer = (char *)malloc(sizeof(char) * qtd);
-        snprintf(buffer, sizeof(buffer), "%d,", x);
+        snprintf(buffer, qtd + 2, "%d,", x);
 
         tmp.append(buffer);
         free(buffer);

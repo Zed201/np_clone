@@ -8,7 +8,8 @@ source_files = ["./src/aux.cpp", "./src/matrix.cpp", "./src/index.pyx"]
 module = [
     Extension(
         name="npc",
-        sources=source_files
+        sources=["./src/index.pyx"],
+        language="c++"
     )
 ]
 
