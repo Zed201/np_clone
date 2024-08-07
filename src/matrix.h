@@ -95,4 +95,6 @@ class matrix {
         matrix slice(std::vector<int> n);
 };
 
+std::ostream &operator<<(std::ostream &os, const matrix &m);
+
 #endif

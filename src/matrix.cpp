@@ -1,6 +1,11 @@
 #include "matrix.h"
 #include "aux.h"
 
+std::ostream &operator<<(std::ostream &os, const matrix &m) {
+        os << m.print();
+        return os;
+}
+
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
@@ -362,10 +367,6 @@ void matrix::rec_print(int c, int &c_el, std::string &str) const {
         str.append("]");
 }
 
-std::ostream &operator<<(std::ostream &os, const matrix &m) {
-        os << m.print();
-        return os;
-}
 //     TODO:optimizar isso daqui
 void matrix::format_print(std::string &str) const {
         str.append("\n");

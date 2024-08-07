@@ -48,7 +48,6 @@ matrix full(std::vector<int> shape, d_type n);
 matrix full(std::initializer_list<int> shape, d_type n);
 matrix indetity(int shape);
 
-std::ostream &operator<<(std::ostream &os, const matrix &m);
 //  range inclusivo de ambos os lados, podendo
 //  passar o step
 template <typename T> std::vector<d_type> range(T start, T end, T step = 1) {
