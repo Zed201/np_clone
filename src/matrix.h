@@ -4,7 +4,6 @@
 #include "defines.h"
 #include <algorithm>
 #include <cmath>
-#include <format>
 #include <initializer_list>
 #include <iostream>
 #include <regex>

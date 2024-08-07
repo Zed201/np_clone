@@ -14,7 +14,7 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
                 this->dim[a++] = i;
                 tmp *= i;
         }
-        if (tmp < el.size()) {
+        if (tmp < static_cast<int>(el.size())) {
                 free(this->dim);
                 error_print("Tamanho errado");
         }
@@ -108,7 +108,7 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
                 error_print("Erro ao trocar shape");
         }
 
-        if (n.size() != this->n_dim) {
+        if (static_cast<int>(n.size()) != this->n_dim) {
                 this->n_dim = n.size();
                 this->dim = (int *)std::realloc(this->dim, sizeof(int) * this->n_dim);
         }
@@ -236,6 +236,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                         }
                 }
                 return m;
+
         } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
                 //  verificar se as dimensões batem
                 bool tmp = true;
@@ -252,7 +253,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
-                for (int i = 0; i < c.size(); i++) {
+                for (int i = 0; i < static_cast<int>(c.size()); i++) {
                         for (int j : a[i].shape()) {
                                 std::cout << j << " ";
                         }
@@ -282,7 +283,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
 }
 
 d_type &matrix::get(std::vector<int> loc) {
-        if (loc.size() != this->n_dim) {
+        if (static_cast<int>(loc.size()) != this->n_dim) {
                 error_print("Erro de dimensão");
         }
         return this->elem[this->multi_uni(loc)];
@@ -296,7 +297,7 @@ proxy<matrix> matrix::operator[](int n) {
 }
 
 matrix matrix::slice(std::vector<int> n) {
-        if (n.size() == this->n_dim) {
+        if (static_cast<int>(n.size()) == this->n_dim) {
                 //  basicamente o mesmo do [] mas encapsulado numa matrix
                 return matrix({this->operator[](n)});
         }
@@ -318,7 +319,7 @@ matrix matrix::slice(std::vector<int> n) {
         return matrix(sh, el);
 }
 
-matrix matrix::slice(std::initializer_list<int> n) { return this->slice(std::vector(n)); }
+matrix matrix::slice(std::initializer_list<int> n) { return this->slice(std::vector<int>(n)); }
 
 proxy<matrix> matrix::operator[](std::initializer_list<int> n) {
         return proxy<matrix>(this->get(std::vector<int>(n)), *this);
@@ -387,7 +388,7 @@ void matrix::format_print(std::string &str) const {
                 std::smatch m = *i;
                 std::string s = m.str();
                 int spaces = 0, col = 0;
-                for (int j = 0; j < s.size(); j++) {
+                for (int j = 0; j < static_cast<int>(s.size()); j++) {
                         if (s[j] == ' ') {
                                 spaces++;
                         } else {
@@ -514,7 +515,7 @@ std::vector<int> matrix::uni_multi(int i) {
 }
 
 int matrix::multi_uni(std::vector<int> vet) {
-        if (vet.size() != this->n_dim) {
+        if (static_cast<int>(vet.size()) != this->n_dim) {
                 error_print("Erro no numero de dimensões");
         }
         for (int i = 0; i < this->n_dim; i++) {
@@ -525,15 +526,16 @@ int matrix::multi_uni(std::vector<int> vet) {
         //  fazer um vetor com os "pesos" de cada dimensão, o quanto vai ter que pular
         //  basicamente a posição i vai ter a multiplicação dos numeros de i + 1 ate o final, o ultimo tendo peso de 1
         int index_tmp = 0;
-        for (int i = 0; i < vet.size(); i++) {
+        for (int i = 0; i < static_cast<int>(vet.size()); i++) {
                 index_tmp += (this->pesos_dim[i] * vet[i]);
         }
         return index_tmp;
 }
 
+
 int matrix::multi_uni(matrix &m, std::vector<int> i) { return m.multi_uni(i); }
 
-int matrix::multi_uni(matrix &m, std::initializer_list<int> i) { return this->multi_uni(m, std::vector(i)); }
+int matrix::multi_uni(matrix &m, std::initializer_list<int> i) { return this->multi_uni(m, std::vector<int>(i)); }
 
 std::vector<int> matrix::uni_multi(matrix &m, int i) {
         std::vector<int> tmp(m.n_dim);
@@ -593,7 +595,6 @@ std::vector<matrix> matrix::divide2d() {
         for (int i = 0; i < qtd_s; i++) {
                 std::vector<d_type> el(tam_2x2);
                 for (int j = 0; j < tam_2x2; j++) {
-                        int index = (i * tam_2x2) + j;
                         el[j] = this->elem[(i * tam_2x2) + j];
                 }
                 a[i] = matrix(final_shape, el);
