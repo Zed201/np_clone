@@ -1,21 +1,16 @@
 CC=g++
 DIR=./src
-FLAGS= -Wall -Wextra -Werror
 
 SRC = $(DIR)/aux.cpp $(DIR)/matrix.cpp
 OBJS = $(SRC:.cpp=.o)
-DEFINES = $(SRC:.cpp=.h)
 
-run: a.out
+all: a.out
 	./a.out
 
-a.out: $(OBJS) index.cpp 
-	$(CC) $(FLAGS) -o $@ $^
+a.out: index.cpp $(OBJS)
+	$(CC) -o $@ $^
 
-com: $(OBJS) index.cpp
-	$(CC) $(FLAGS) -o a.out $^
-
-%.o: %.cpp
+%.o: %.cpp %.h $(DIR)/defines.h 
 	$(CC) -c $< -o $@
 
 cls:

@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include "aux.h"
+#include "defines.h"
 
 std::ostream &operator<<(std::ostream &os, const matrix &m) {
         os << m.print();
@@ -214,8 +215,6 @@ matrix matrix::operator-(matrix &y) {
         return matrix(this->shape(), x);
 }
 
-//  TODO: Fazer para matrizes de mais dimensões, basicamente dividir elas em multiplas matrizes 2d e multiplicar elas 1
-//  por 1 depois juntar
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
@@ -249,10 +248,11 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                         error_print("Dimensões diferentes");
                 }
 
+                //  TODO: Optimizar isso daqui
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
-                std::vector<matrix> c(a.size());      //  dar um jeito nisso aqui
-                for (int i = 0; i < c.size(); i++) {  //  TODO: Optimizar isso aqui
+                std::vector<matrix> c(a.size());
+                for (int i = 0; i < c.size(); i++) {
                         for (int j : a[i].shape()) {
                                 std::cout << j << " ";
                         }
@@ -261,7 +261,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                                 std::cout << j << " ";
                         }
                         std::cout << std::endl;
-                        c[i] = (a[i] * b[i]);  //  talvez seja b * a
+                        c[i] = (a[i] * b[i]);
                 }
 
                 std::vector<d_type> el(this->el_qdt);
@@ -326,10 +326,7 @@ proxy<matrix> matrix::operator[](std::initializer_list<int> n) {
 
 proxy<matrix> matrix::operator[](std::vector<int> n) { return proxy<matrix>(this->get(n), *this); }
 
-matrix matrix::operator/(matrix &y) {  //     tem que ter
-                                       //     referencia se não ele
-                                       //     da erro nos
-                                       //     construtores
+matrix matrix::operator/(matrix &y) {
         if (this->shape() != y.shape()) {
                 error_print("Erro de formato");
         }
@@ -367,7 +364,7 @@ void matrix::rec_print(int c, int &c_el, std::string &str) const {
         str.append("]");
 }
 
-//     TODO:optimizar isso daqui
+//  TODO:optimizar isso daqui
 void matrix::format_print(std::string &str) const {
         str.append("\n");
         const struct search_replace *t;
@@ -425,6 +422,7 @@ std::string matrix::print() const {
         return buffer;
 }
 
+//  TODO: Optimizar isso daqui
 matrix matrix::transpose() {
         std::vector<int> d(this->n_dim);
         std::vector<d_type> e(this->el_qdt);
@@ -452,7 +450,8 @@ matrix matrix::transpose() {
                 } else {  //  se não ele cria uma nova matriz e inverte ela
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
                         std::vector<d_type> t(m_dim * m_dim);  //     cria um quadrado da maior dimensão
-                        matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
+                        //  matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
+                        matrix tmp_matrix({0});
                         for (int i = 0; i < this->el_qdt; i++) {
                                 int j = tmp_matrix.multi_uni(this->uni_multi(i));
                                 tmp_matrix[j] = this->operator[](i);
@@ -514,8 +513,6 @@ std::vector<int> matrix::uni_multi(int i) {
         return tmp;
 }
 
-//  TODO: Concertar
-//  retorna o index de um multidimensional para o unidimensional
 int matrix::multi_uni(std::vector<int> vet) {
         if (vet.size() != this->n_dim) {
                 error_print("Erro no numero de dimensões");
@@ -572,6 +569,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         }
         return false;
 }
+
 //  dividir em várias matrizes 2d
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {

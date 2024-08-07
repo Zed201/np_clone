@@ -13,7 +13,6 @@
 # instancias do vim
 *.swp
 *.log
-./src/setup.cpp
 # folders
 
 # gerada com o usa do npm

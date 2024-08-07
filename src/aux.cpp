@@ -1,4 +1,5 @@
 #include "aux.h"
+#include "defines.h"
 #include "matrix.h"
 
 void error_print(const char *text) {
@@ -27,10 +28,7 @@ float pow(float x, int y) {
         return tmp;
 }
 
-//     ajeitar formatação
 std::string print_(int x, int max_digs_space) {
-        //     fazer alguma conta de espaços e
-        //     formatação para o tamanho do buffer
         std::string tmp;
         int qtd = dig_qtd(x);
         for (int i = 0; i < (max_digs_space - qtd) + tab_size; i++) {
