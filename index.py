@@ -1,2 +1,0 @@
-import npc
-npc.test()

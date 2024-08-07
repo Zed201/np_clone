@@ -1,6 +1,18 @@
-PY=$(shell which python3 || which python)
-all:
-	$(PY) setup.py build_ext --inplace
+CC=g++
+DIR=./src
+FLAGS= -Wall -Wextra -Werror
 
-clean:
-	rm -rf ./build npc*
+SRC = $(DIR)/matrix.cpp $(DIR)/aux.cpp
+OBJS = $(SRC:.cpp=.o)
+
+run: a.out
+	./a.out
+
+a.out: $(OBJS) index.cpp
+	$(CC) $(FLAGS) -o $@ $^
+
+%.o: %.cpp
+	$(CC) -c %< -o $(DIR)/%@
+
+cls:
+	rm -f $(OBJS) a.out

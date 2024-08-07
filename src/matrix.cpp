@@ -366,7 +366,6 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         os << m.print();
         return os;
 }
-
 //     TODO:optimizar isso daqui
 void matrix::format_print(std::string &str) const {
         str.append("\n");

@@ -1,2 +1,0 @@
-Cython==3.0.10
-setuptools==70.2.0
