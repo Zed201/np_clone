@@ -7,7 +7,7 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         return os;
 }
 
-matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) {
+matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int) sh.size()), 1) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
         for (int i : sh) {
@@ -21,11 +21,11 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0) 
         this->n_dim = a;
         a = 0;
         this->el_qdt = tmp;
-        this->pesos_dim = (int *)malloc(sizeof(int) * a);
+        // this->pesos_dim = (int *)malloc(sizeof(int) * a);
         for (int i = 0; i < this->n_dim; i++) {
-                this->pesos_dim[i] = 1;
+                // this->pesos_dim[i] = 1;
                 for (int j = i + 1; j < this->n_dim; j++) {
-                        this->pesos_dim[i] *= sh[j];
+                        this->pesos_dim_[i] *= sh[j];
                 }
         }
         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
@@ -78,14 +78,19 @@ matrix::matrix(std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos)) {}
 
 matrix::~matrix() {
-        free(this->dim);
-        this->dim = nullptr;
-
-        free(this->pesos_dim);
-        this->pesos_dim = nullptr;
-
-        free(this->elem);
-        this->elem = nullptr;
+        if(this->dim != nullptr && this->dim != NULL){
+                free(this->dim);
+                this->dim = nullptr;
+        }
+        // problema no pesos dim, alguma coisa de free(ta dando um free a mais)
+        // if(this->pesos_dim != nullptr && this->pesos_dim != NULL){
+        //         free(this->pesos_dim);
+        //         this->pesos_dim = nullptr;
+        // }
+        if(this->elem != nullptr && this->elem != NULL){
+                free(this->elem);
+                this->elem = nullptr;
+        }
 }
 
 std::vector<int> matrix::shape() {
@@ -119,7 +124,12 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         }
 }
 
+// MEMORI FREE
 matrix &matrix::operator=(const matrix &n) {
+
+        // if (this->pesos_dim != nullptr) {
+        //         free(this->pesos_dim);
+        // }
 
         if (this->elem != nullptr) {
                 free(this->elem);
@@ -129,23 +139,33 @@ matrix &matrix::operator=(const matrix &n) {
                 free(this->dim);
         }
 
+        
+
         this->n_dim = n.n_dim;
         this->dim = (int *)malloc(sizeof(int) * n.n_dim);
+        for (int i = 0; i < n.n_dim; i++) {
+                this->dim[i] = n.dim[i];
+        }
+
+        // this->pesos_dim = (int *)malloc(sizeof(int) * this->n_dim);
+        for (int i = 0; i < this->n_dim; i++) {
+                this->pesos_dim_[i] = 1;
+                for (int j = i + 1; j < this->n_dim; j++) {
+                        this->pesos_dim_[i] *= this->dim[j];
+                }
+        }
 
         this->el_qdt = n.el_qdt;
         this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+        for (int i = 0; i < n.el_qdt; i++) {
+                this->elem[i] = n.elem[i];
+        }
 
         this->max = n.max;
         this->min = n.min;
         this->max_digs_space = n.max_digs_space;
 
-        for (int i = 0; i < n.n_dim; i++) {
-                this->dim[i] = n.dim[i];
-        }
 
-        for (int i = 0; i < n.el_qdt; i++) {
-                this->elem[i] = n.elem[i];
-        }
         return *this;
 }
 
@@ -214,7 +234,7 @@ matrix matrix::operator-(matrix &y) {
         }
         return matrix(this->shape(), x);
 }
-
+// MEMORI FREE
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
@@ -250,6 +270,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 }
 
                 //  TODO: Optimizar isso daqui
+                
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
@@ -527,7 +548,7 @@ int matrix::multi_uni(std::vector<int> vet) {
         //  basicamente a posição i vai ter a multiplicação dos numeros de i + 1 ate o final, o ultimo tendo peso de 1
         int index_tmp = 0;
         for (int i = 0; i < static_cast<int>(vet.size()); i++) {
-                index_tmp += (this->pesos_dim[i] * vet[i]);
+                index_tmp += (this->pesos_dim_[i] * vet[i]);
         }
         return index_tmp;
 }

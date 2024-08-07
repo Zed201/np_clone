@@ -35,6 +35,8 @@ class matrix {
         int n_dim, *dim, *pesos_dim, el_qdt, max_digs_space;
         d_type *elem, max, min;
 
+        std::vector<int> pesos_dim_;
+
         //  auxiliares para fazer as correspondências de indices, de n dimensional para unidimensional e vice versa
         std::vector<int> uni_multi(int i);
         std::vector<int> uni_multi(matrix &m, int i);

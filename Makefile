@@ -17,3 +17,6 @@ a.out: $(MAIN).cpp $(OBJS)
 
 cls:
 	rm -f $(OBJS) a.out
+
+dbg: a.out
+	valgrind ./a.out
