@@ -128,7 +128,6 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         }
 }
 
-//  MEMORI FREE
 matrix &matrix::operator=(const matrix &n) {
 
         //  if (this->pesos_dim != nullptr) {
@@ -149,7 +148,6 @@ matrix &matrix::operator=(const matrix &n) {
                 this->dim[i] = n.dim[i];
         }
 
-        //  this->pesos_dim = (int *)malloc(sizeof(int) * this->n_dim);
         for (int i = 0; i < this->n_dim; i++) {
                 this->pesos_dim_[i] = 1;
                 for (int j = i + 1; j < this->n_dim; j++) {
@@ -235,7 +233,7 @@ matrix matrix::operator-(matrix &y) {
         }
         return matrix(this->shape(), x);
 }
-//  MEMORI FREE
+
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
@@ -544,8 +542,8 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         }
         return false;
 }
-
-//  dividir em várias matrizes 2d
+//  TODO: Optimizar isso daqui
+//   dividir em várias matrizes 2d
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
                 std::vector<matrix> a(1);

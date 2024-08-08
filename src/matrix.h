@@ -32,7 +32,7 @@ template <class P> class proxy {
 class matrix {
     private:
         //  dados da matrix
-        int n_dim, *dim, *pesos_dim, el_qdt, max_digs_space;
+        int n_dim, *dim, el_qdt, max_digs_space;
         d_type *elem, max, min;
 
         std::vector<int> pesos_dim_;
