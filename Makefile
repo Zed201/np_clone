@@ -2,7 +2,7 @@ CC=g++
 DIR=./src
 MAIN=test
 
-CFLAGS=-Wall -Wfatal-errors -Wextra
+CFLAGS=-Wall -Wfatal-errors -Wextra -fopenmp
 SRC = $(DIR)/aux.cpp $(DIR)/matrix.cpp
 OBJS = $(SRC:.cpp=.o)
 

@@ -84,7 +84,11 @@ matrix::~matrix() {
         }
         // problema no pesos dim, alguma coisa de free(ta dando um free a mais)
         // if(this->pesos_dim != nullptr && this->pesos_dim != NULL){
-        //         free(this->pesos_dim);
+        //         free(this->pesos_dim); // com o exemplo do codigo de test.cpp ele 
+        //              ele vai nesse free 4 vezes, 1 para o a, 1 para o b, 1 para o pre a * b e 1 para o c
+        //              ja verifiquei os numeros(endereços) dos ponteiros e todos são diferentes
+        //              mas mesmo assim ele da erro de aparente double free, a mensagem(tem muitos significados)
+        //              mas no arch ela não tava dando erro, so aqui no ubuntu
         //         this->pesos_dim = nullptr;
         // }
         if(this->elem != nullptr && this->elem != NULL){
@@ -246,6 +250,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 sh[1] = y.dim[1];
                 std::vector<d_type> el(this->dim[0] * y.dim[1]);
                 matrix m(sh, el);
+                
                 for (int i = 0; i < this->dim[0]; i++) {
                         for (int j = 0; j < y.dim[1]; j++) {
                                 d_type soma = 0;
@@ -255,6 +260,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                                 m[{i, j}] = soma;
                         }
                 }
+                
                 return m;
 
         } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
@@ -270,19 +276,11 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 }
 
                 //  TODO: Optimizar isso daqui
-                
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
                 for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                        for (int j : a[i].shape()) {
-                                std::cout << j << " ";
-                        }
-                        std::cout << std::endl;
-                        for (int j : b[i].shape()) {
-                                std::cout << j << " ";
-                        }
-                        std::cout << std::endl;
+                        
                         c[i] = (a[i] * b[i]);
                 }
 
