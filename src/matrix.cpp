@@ -7,7 +7,7 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         return os;
 }
 
-matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int) sh.size()), 1) {
+matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int)sh.size()), 1) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
         for (int i : sh) {
@@ -21,9 +21,9 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0),
         this->n_dim = a;
         a = 0;
         this->el_qdt = tmp;
-        // this->pesos_dim = (int *)malloc(sizeof(int) * a);
+        //  this->pesos_dim = (int *)malloc(sizeof(int) * a);
         for (int i = 0; i < this->n_dim; i++) {
-                // this->pesos_dim[i] = 1;
+                //  this->pesos_dim[i] = 1;
                 for (int j = i + 1; j < this->n_dim; j++) {
                         this->pesos_dim_[i] *= sh[j];
                 }
@@ -78,20 +78,20 @@ matrix::matrix(std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos)) {}
 
 matrix::~matrix() {
-        if(this->dim != nullptr && this->dim != NULL){
+        if (this->dim != nullptr) {
                 free(this->dim);
                 this->dim = nullptr;
         }
-        // problema no pesos dim, alguma coisa de free(ta dando um free a mais)
-        // if(this->pesos_dim != nullptr && this->pesos_dim != NULL){
-        //         free(this->pesos_dim); // com o exemplo do codigo de test.cpp ele 
-        //              ele vai nesse free 4 vezes, 1 para o a, 1 para o b, 1 para o pre a * b e 1 para o c
-        //              ja verifiquei os numeros(endereços) dos ponteiros e todos são diferentes
-        //              mas mesmo assim ele da erro de aparente double free, a mensagem(tem muitos significados)
-        //              mas no arch ela não tava dando erro, so aqui no ubuntu
-        //         this->pesos_dim = nullptr;
-        // }
-        if(this->elem != nullptr && this->elem != NULL){
+        //  problema no pesos dim, alguma coisa de free(ta dando um free a mais)
+        //  if(this->pesos_dim != nullptr && this->pesos_dim != NULL){
+        //          free(this->pesos_dim); // com o exemplo do codigo de test.cpp ele
+        //               ele vai nesse free 4 vezes, 1 para o a, 1 para o b, 1 para o pre a * b e 1 para o c
+        //               ja verifiquei os numeros(endereços) dos ponteiros e todos são diferentes
+        //               mas mesmo assim ele da erro de aparente double free, a mensagem(tem muitos significados)
+        //               mas no arch ela não tava dando erro, so aqui no ubuntu
+        //          this->pesos_dim = nullptr;
+        //  }
+        if (this->elem != nullptr) {
                 free(this->elem);
                 this->elem = nullptr;
         }
@@ -128,12 +128,12 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         }
 }
 
-// MEMORI FREE
+//  MEMORI FREE
 matrix &matrix::operator=(const matrix &n) {
 
-        // if (this->pesos_dim != nullptr) {
-        //         free(this->pesos_dim);
-        // }
+        //  if (this->pesos_dim != nullptr) {
+        //          free(this->pesos_dim);
+        //  }
 
         if (this->elem != nullptr) {
                 free(this->elem);
@@ -143,15 +143,13 @@ matrix &matrix::operator=(const matrix &n) {
                 free(this->dim);
         }
 
-        
-
         this->n_dim = n.n_dim;
         this->dim = (int *)malloc(sizeof(int) * n.n_dim);
         for (int i = 0; i < n.n_dim; i++) {
                 this->dim[i] = n.dim[i];
         }
 
-        // this->pesos_dim = (int *)malloc(sizeof(int) * this->n_dim);
+        //  this->pesos_dim = (int *)malloc(sizeof(int) * this->n_dim);
         for (int i = 0; i < this->n_dim; i++) {
                 this->pesos_dim_[i] = 1;
                 for (int j = i + 1; j < this->n_dim; j++) {
@@ -168,7 +166,6 @@ matrix &matrix::operator=(const matrix &n) {
         this->max = n.max;
         this->min = n.min;
         this->max_digs_space = n.max_digs_space;
-
 
         return *this;
 }
@@ -238,7 +235,7 @@ matrix matrix::operator-(matrix &y) {
         }
         return matrix(this->shape(), x);
 }
-// MEMORI FREE
+//  MEMORI FREE
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
@@ -250,7 +247,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 sh[1] = y.dim[1];
                 std::vector<d_type> el(this->dim[0] * y.dim[1]);
                 matrix m(sh, el);
-                
+
                 for (int i = 0; i < this->dim[0]; i++) {
                         for (int j = 0; j < y.dim[1]; j++) {
                                 d_type soma = 0;
@@ -260,7 +257,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                                 m[{i, j}] = soma;
                         }
                 }
-                
+
                 return m;
 
         } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
@@ -280,7 +277,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
                 for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                        
+
                         c[i] = (a[i] * b[i]);
                 }
 
@@ -368,77 +365,34 @@ void matrix::rec_print(int c, int &c_el, std::string &str) const {
         if (c >= this->n_dim) {
                 return;
         }
+        //  reduz em muito o tempo do print, pois antes tava usando muito regex
+        int s = (int)str.size();
+        if (s > 0 && str[s - 1] == ']') {
+                //  cont a quantidade de colchetes e add isso menos a quantidade de dimensões, ou espaços
+                int c = s - 1;
+                while (str[c] == ']') {
+                        c--;
+                }
+                std::string a(this->n_dim - (s - c - 2), ' ');  //  talvez fazer prealocado
+                a[0] = '\n';
+                str.append(a);
+        }
         str.append("[");
 
         for (int i = 0; i < this->dim[c]; i++) {
-                if (c == this->n_dim - 1) {  //     dimensão
-                                             //     mais
-                                             //     interna
+                if (c == this->n_dim - 1) {  //  recursão para a dimensão mais interna da matrix
                         str.append(print_(this->elem[c_el++], this->max_digs_space));
-                } else {  //     recursao para
-                          //     dimensão mais
-                          //     interna
+                } else {  //     recursao para as outras dimensões
                         rec_print(c + 1, c_el, str);
                 }
         }
         str.append("]");
 }
 
-//  TODO:optimizar isso daqui
-void matrix::format_print(std::string &str) const {
-        str.append("\n");
-        const struct search_replace *t;
-        for (t = rep; t < rep + (sizeof(rep) / sizeof(*rep)); t++) {
-                str = std::regex_replace(str, t->pattern, t->sub_s);
-        }
-        std::regex pat("\n ");
-        std::string tmp = "\n";
-        for (int i = 0; i < this->n_dim - 1; i++) {
-                tmp += " ";
-        }
-        str = std::regex_replace(str, pat, tmp);
-        std::regex colchetes(" +\\[{2,}");
-        auto beg = std::sregex_iterator(str.begin(), str.end(), colchetes);
-        auto end = std::sregex_iterator();
-        std::string::const_iterator last_pos = str.begin();
-        std::string::const_iterator u = str.end();
-        std::string result = "";
-        for (std::sregex_iterator i = beg; i != end; ++i) {
-                std::smatch m = *i;
-                std::string s = m.str();
-                int spaces = 0, col = 0;
-                for (int j = 0; j < static_cast<int>(s.size()); j++) {
-                        if (s[j] == ' ') {
-                                spaces++;
-                        } else {
-                                col++;
-                        }
-                }
-                spaces = spaces - col + 1;
-                tmp = "";
-                //  reduz a quantidade de espaços para ficar alinhado
-                for (int j = 0; j < spaces; j++) {
-                        tmp += " ";
-                }
-                for (int j = 0; j < col; j++) {
-                        tmp += "[";
-                }
-
-                result.append(last_pos, m.prefix().second);
-
-                result.append(tmp);
-
-                last_pos = m.suffix().first;
-        }
-        result.append(last_pos, u);
-        str = result;
-}
-
 std::string matrix::print() const {
         int a = 0;
         std::string buffer;
         rec_print(0, a, buffer);
-        format_print(buffer);
         return buffer;
 }
 
@@ -550,7 +504,6 @@ int matrix::multi_uni(std::vector<int> vet) {
         }
         return index_tmp;
 }
-
 
 int matrix::multi_uni(matrix &m, std::vector<int> i) { return m.multi_uni(i); }
 

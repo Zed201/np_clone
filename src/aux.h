@@ -7,19 +7,8 @@
 #include <cmath>
 #include <initializer_list>
 #include <iostream>
-#include <regex>
 #include <string.h>
 #include <vector>
-
-//  usados para o print
-struct search_replace {
-        std::regex pattern;
-        std::string sub_s;
-};
-
-static const struct search_replace rep[] = {
-        {std::regex("\\]\\["), std::string("]\n [")},
-};
 
 //  auxiliares
 void error_print(const char *text);

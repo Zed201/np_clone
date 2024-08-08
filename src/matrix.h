@@ -54,7 +54,6 @@ class matrix {
 
         //  auxiliares para o print
         void rec_print(int c, int &c_el, std::string &str) const;
-        void format_print(std::string &str) const;
 
     public:
         //  construtores
