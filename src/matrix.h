@@ -53,7 +53,7 @@ class matrix {
         std::vector<matrix> divide2d();
 
         //  auxiliares para o print
-        void rec_print(int c, int &c_el, std::string &str) const;
+        void rec_print(int c, int &c_el, std::ostringstream &str) const;
 
     public:
         //  construtores

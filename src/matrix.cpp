@@ -361,39 +361,40 @@ matrix matrix::operator/(matrix &y) {
 //     const também, mas ele é de fora, ele
 //     deveria ser definido
 
-void matrix::rec_print(int c, int &c_el, std::string &str) const {
+void matrix::rec_print(int c, int &c_el, std::ostringstream &str) const {
         if (c >= this->n_dim) {
                 return;
         }
         //  reduz em muito o tempo do print, pois antes tava usando muito regex
-        int s = (int)str.size();
-        if (s > 0 && str[s - 1] == ']') {
+        std::streamsize s = str.tellp();  //  retorna a posição de memoria basicamente o tamanho
+        //  nao da para acessar o tamanho de um stringstream, entao tem que fazer isso
+        std::string p = str.str();
+        if (s > 0 && p[s - 1] == ']') {
                 //  cont a quantidade de colchetes e add isso menos a quantidade de dimensões, ou espaços
-                int c = s - 1;
-                while (str[c] == ']') {
-                        c--;
-                }
+                int c = s;
+                while (p[--c] == ']')
+                        ;
                 std::string a(this->n_dim - (s - c - 2), ' ');  //  talvez fazer prealocado
                 a[0] = '\n';
-                str.append(a);
+                str << a;
         }
-        str.append("[");
+        str << "[";
 
         for (int i = 0; i < this->dim[c]; i++) {
                 if (c == this->n_dim - 1) {  //  recursão para a dimensão mais interna da matrix
-                        str.append(print_(this->elem[c_el++], this->max_digs_space));
+                        str << print_(this->elem[c_el++], this->max_digs_space);
                 } else {  //     recursao para as outras dimensões
                         rec_print(c + 1, c_el, str);
                 }
         }
-        str.append("]");
+        str << "]";
 }
 
 std::string matrix::print() const {
         int a = 0;
-        std::string buffer;
+        std::ostringstream buffer;
         rec_print(0, a, buffer);
-        return buffer;
+        return std::string(buffer.str());
 }
 
 //  TODO: Optimizar isso daqui
