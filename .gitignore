@@ -35,4 +35,6 @@ CMakeCache.txt
 cmake_install.cmake
 CTestTestfile.cmake
 
+test
+
 # para arquivos sem extensão(inclui makefile então ficar atento)

@@ -1,6 +1,6 @@
 CC=g++
 DIR=./src
-MAIN=test
+MAIN=index
 
 CFLAGS=-Wall -Wfatal-errors -Wextra
 SRC = $(DIR)/aux.cpp $(DIR)/matrix.cpp
@@ -15,8 +15,12 @@ a.out: $(MAIN).cpp $(OBJS)
 %.o: %.cpp %.h $(DIR)/defines.h 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-cls:
+cl:
 	rm -f $(OBJS) a.out
 
 dbg: a.out
 	valgrind ./a.out
+
+test: test.cpp $(SRC) 
+	$(CC) $(CFLAGS) test.cpp $(SRC) -o test
+	./test 50
