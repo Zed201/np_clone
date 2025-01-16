@@ -23,4 +23,3 @@ dbg: a.out
 
 test: test.cpp $(SRC) 
 	$(CC) $(CFLAGS) test.cpp $(SRC) -o test
-	./test 50

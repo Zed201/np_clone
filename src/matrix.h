@@ -8,6 +8,7 @@
 #include <iostream>
 #include <regex>
 #include <string.h>
+#include <thread>
 #include <vector>
 
 //  Proxy para conseguir detectar quando um dado dentro da matrix

@@ -90,28 +90,28 @@ int dig_qtd(int x) {
         if (x == 0) {
                 return 1;
         }
-        return static_cast<int>(log10(abs(x))) + 1 + (x > 0 ? 0 : 1);
+        return static_cast<int>(log10(std::abs(x))) + 1 + (x > 0 ? 0 : 1);
 }
 
 int dig_qtd(float x) {
         if (x == 0) {
                 return 1 + f_precision;
         }
-        return static_cast<int>(log10(static_cast<int>(abs(x)))) + 1 + f_precision + (x > 0 ? 0 : 1);
+        return static_cast<int>(log10(static_cast<int>(std::abs(x)))) + 1 + f_precision + (x > 0 ? 0 : 1);
 }
 
 int dig_qtd(double x) {
         if (x == 0) {
                 return 1 + f_precision;
         }
-        return static_cast<int>(log10(static_cast<int>(abs(x)))) + 1 + f_precision + (x > 0 ? 0 : 1);
+        return static_cast<int>(log10(static_cast<int>(std::abs(x)))) + 1 + f_precision + (x > 0 ? 0 : 1);
 }
 
 int dig_qtd(long x) {
         if (x == 0) {
                 return 1;
         }
-        return static_cast<int>(log10(abs(x))) + 1 + (x > 0 ? 0 : 1);
+        return static_cast<int>(log10(std::abs(x))) + 1 + (x > 0 ? 0 : 1);
 }
 
 matrix full(std::vector<int> shape, d_type n) {

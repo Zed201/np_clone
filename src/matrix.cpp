@@ -274,10 +274,18 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
+                //  std::vector<std::thread> h;
+                //  auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
                 for (int i = 0; i < static_cast<int>(c.size()); i++) {
-
+                        //  std::cout << i << "\n" << std::endl;
+                        //  std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
                         c[i] = (a[i] * b[i]);
+                        //  h.push_back(std::move(th));
                 }
+
+                //  for (int i = 0; i < static_cast<int>(c.size()); i++) {
+                //          h[i].join();
+                //  }
 
                 std::vector<d_type> el(this->el_qdt);
                 std::vector<int> sh(this->shape());
