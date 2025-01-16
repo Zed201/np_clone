@@ -50,6 +50,7 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0),
 }
 //  construtor padrão sem nd
 matrix::matrix() : matrix({0}) {}
+
 matrix::matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)) {}
 
@@ -128,18 +129,21 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         }
 }
 
+//  TODO: Problema do valgrind aqui
 matrix &matrix::operator=(const matrix &n) {
 
-        //  if (this->pesos_dim != nullptr) {
-        //          free(this->pesos_dim);
-        //  }
+        this->max = n.max;
+        this->min = n.min;
+        this->max_digs_space = n.max_digs_space;
 
         if (this->elem != nullptr) {
                 free(this->elem);
+                this->elem = nullptr;
         }
 
         if (this->dim != nullptr) {
                 free(this->dim);
+                this->dim = nullptr;
         }
 
         this->n_dim = n.n_dim;
@@ -148,6 +152,9 @@ matrix &matrix::operator=(const matrix &n) {
                 this->dim[i] = n.dim[i];
         }
 
+        //  estava dando erro no valgrind por nao ter isso, mesmo nao mostrando erro em outro lugar
+        this->pesos_dim_ = std::vector<int>(this->n_dim);
+
         for (int i = 0; i < this->n_dim; i++) {
                 this->pesos_dim_[i] = 1;
                 for (int j = i + 1; j < this->n_dim; j++) {
@@ -155,15 +162,10 @@ matrix &matrix::operator=(const matrix &n) {
                 }
         }
 
-        this->el_qdt = n.el_qdt;
         this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
         for (int i = 0; i < n.el_qdt; i++) {
                 this->elem[i] = n.elem[i];
         }
-
-        this->max = n.max;
-        this->min = n.min;
-        this->max_digs_space = n.max_digs_space;
 
         return *this;
 }
@@ -270,22 +272,24 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                         error_print("Dimensões diferentes");
                 }
 
-                //  TODO: Optimizar isso daqui
+                //  A multiplicacao faz por matrizes quadradas separadas
+                //  separo as matrizes pelo divide2d e multiplico 1 a 1, em threads diferentes
+
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
-                //  std::vector<std::thread> h;
-                //  auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
+                std::vector<std::thread> h;
+
+                auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
                 for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                        //  std::cout << i << "\n" << std::endl;
-                        //  std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
-                        c[i] = (a[i] * b[i]);
-                        //  h.push_back(std::move(th));
+                        std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
+                        //  c[i] = (a[i] * b[i]);
+                        h.push_back(std::move(th));
                 }
 
-                //  for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                //          h[i].join();
-                //  }
+                for (int i = 0; i < static_cast<int>(c.size()); i++) {
+                        h[i].join();
+                }
 
                 std::vector<d_type> el(this->el_qdt);
                 std::vector<int> sh(this->shape());
@@ -403,7 +407,6 @@ std::string matrix::print() const {
         return std::string(buffer.str());
 }
 
-//  TODO: Optimizar isso daqui
 matrix matrix::transpose() {
         std::vector<int> d(this->n_dim);
         std::vector<d_type> e(this->el_qdt);
@@ -494,6 +497,7 @@ std::vector<int> matrix::uni_multi(int i) {
         return tmp;
 }
 
+//  TODO: Erro de read aqui pelo valgrind
 int matrix::multi_uni(std::vector<int> vet) {
         if (static_cast<int>(vet.size()) != this->n_dim) {
                 error_print("Erro no numero de dimensões");
@@ -550,8 +554,6 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         }
         return false;
 }
-//  TODO: Optimizar isso daqui
-//   dividir em várias matrizes 2d
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
                 std::vector<matrix> a(1);
