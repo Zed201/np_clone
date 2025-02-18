@@ -7,6 +7,10 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         return os;
 }
 
+bool operator==(const matrix &A, const matrix &B){
+        return false;
+}
+
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int)sh.size()), 1) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
@@ -240,7 +244,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
         }
-
+        // TODO: Fazer caso de matrizes 1x1
         if (this->n_dim == 2 && this->dim[1] == y.dim[0]) {  //  matrizes 2d normais
                 std::vector<int> sh(2);
                 sh[0] = this->dim[0];
@@ -582,5 +586,11 @@ std::vector<matrix> matrix::divide2d() {
         }
         return a;
 }
+
+d_type matrix::det(){
+        return 1000000;
+}
+
+
 
 // TODO: Implementar a igualdade entre matrizes, para fazer os testes funcionarem

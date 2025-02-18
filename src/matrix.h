@@ -111,6 +111,8 @@ class matrix {
         void update();
         matrix slice(std::initializer_list<int> n);
         matrix slice(std::vector<int> n);
+
+        d_type det();
 };
 
 //  overload para printar a matriz
