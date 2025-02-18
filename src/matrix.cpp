@@ -582,3 +582,5 @@ std::vector<matrix> matrix::divide2d() {
         }
         return a;
 }
+
+// TODO: Implementar a igualdade entre matrizes, para fazer os testes funcionarem
