@@ -11,17 +11,8 @@
 #include <vector>
 
 //  auxiliares
-// TODO: Ajeitar para os erros
-void error_print(std::string text) {
-        std::cerr << text << std::endl;
-        #ifndef TESTS
-                exit(1);
-        #endif
-}
-void error_print(const char *text) {
-        error_print(std::string(text));
-}
-
+void error_print(std::string text);
+void error_print(const char *text);
 int pow(int x, int y);
 float pow(float x, int y);
 

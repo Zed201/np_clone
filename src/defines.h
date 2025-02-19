@@ -1,7 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define d_type          int
+#define d_type          double
 #define f_precision     3   //  precisão quando for usar float ou double
 #define tab_size        1   //  tab de distancia
 #define string_lizer(x) #x  //  auxiliar para usar os defines no meio de uma string

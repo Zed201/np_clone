@@ -5,17 +5,17 @@
         Usando o gtest https://zwarrior.medium.com/install-google-test-framework-gtest-on-ubuntu-20-04-368eb6951b12
         Tutorial https://www.tutorialspoint.com/gtest/index.htm#gtest_features
 */
-// TEST(DETERMINANTES, N1){
-//         FAIL();
-// }
-// TEST(DETERMINANTES, N2){
-//         matrix m1({2,2}, {1,2,3,4}); // det -2
-//         EXPECT_EQ(m1.det(), -2.0);
-// }
-// TEST(DETERMINANTES, N3){
-//         matrix m1({3,3}, {1,2,3,4,5,6,7,8,9}); // det 0
-//         EXPECT_EQ(m1.det(), 0.0);
-// }
+TEST(DETERMINANTES, N1){
+        FAIL();
+}
+TEST(DETERMINANTES, N2){
+        matrix m1({2,2}, {1,2,3,4}); // det -2
+        EXPECT_EQ(m1.det(), -2.0);
+}
+TEST(DETERMINANTES, N3){
+        matrix m1({3,3}, {1,2,3,4,5,6,7,8,9}); // det 0
+        EXPECT_EQ(m1.det(), 0.0);
+}
 
 TEST(MULTI, N1){
         matrix m1({1});
@@ -28,25 +28,33 @@ TEST(MULTI, N2){
         matrix m1({2,2}, {1,2,3,4});
         matrix m2({2,2}, {5,6,7,8});                
         matrix p = m1 * m2; // {19, 22, 43, 50}
-	FAIL();
+	matrix r({2,2}, {19, 22, 43, 50});
+	ASSERT_TRUE(p == r);
 }
-// TEST(MULTI, N3){
-//         // matrix m1({3,3}, {1,2,3,4,5,6,7,8,9});
-// //         // matrix m2({3,3}, {10,11,12,13,14,15,16,17,18});                
-// //         // matrix p = m1 * m2; // {84, 90, 96, 201, 216, 231, 318, 342, 366}
-// 	FAIL();
-// }
-// TEST(MULTI, NN){
-//         // fazer algum teste igual oque estava antes de matrizes quadimensionais
-// 	FAIL();
-// } // dimensões maiores
+TEST(MULTI, N3){
+        matrix m1({3,3}, {1,2,3,4,5,6,7,8,9});
+        matrix m2({3,3}, {10,11,12,13,14,15,16,17,18});                
+        matrix p = m1 * m2; // {84, 90, 96, 201, 216, 231, 318, 342, 366}
+        matrix r({3,3}, {84, 90, 96, 201, 216, 231, 318, 342, 366});
+	ASSERT_TRUE(p == r);
+}
+// erro de multiplicação
+TEST(MULTI, NN){
+        matrix m1({2,2,2}, {1,2,3,4,5,6,7,8,});
+        matrix m2({2,2,2}, {1,2,3,4,5,6,7,8,});              
+        matrix p = m1 * m2; // {7,10,15,22,67,78,91,106}
+        matrix r({2,2,2}, {7,10,15,22,67,78,91,106});
+        // std::cout << m1 << std::endl;
+	ASSERT_TRUE(p == r);
+} // dimensões maiores
 
-// TEST(INVERT, N1){
-// 	FAIL();
-// }
-// TEST(INVERT, N2){
-// 	FAIL();
-// }
+TEST(INVERT, N2){
+        matrix m({2,2}, {1,2,3,4});
+        matrix r({2,2}, {-2, 1, 1.5, -0.5});
+        matrix a = m.invert();
+        ASSERT_TRUE(r == a);
+	
+}
 // TEST(INVERT, N3){
 // 	FAIL();
 // }

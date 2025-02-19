@@ -244,6 +244,10 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
         }
+        if (this->n_dim == 1){
+                // TODO: multiplicação apenas de numeros
+                return matrix({0});
+        }
         // TODO: Fazer caso de matrizes 1x1
         if (this->n_dim == 2 && this->dim[1] == y.dim[0]) {  //  matrizes 2d normais
                 std::vector<int> sh(2);
@@ -589,6 +593,10 @@ std::vector<matrix> matrix::divide2d() {
 
 d_type matrix::det(){
         return 1000000;
+}
+
+matrix matrix::invert(){
+        return matrix({0});
 }
 
 

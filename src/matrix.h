@@ -112,7 +112,9 @@ class matrix {
         matrix slice(std::initializer_list<int> n);
         matrix slice(std::vector<int> n);
 
+        // TODO: A implementar
         d_type det();
+        matrix invert();
 };
 
 //  overload para printar a matriz
