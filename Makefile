@@ -16,8 +16,8 @@ a.out: $(MAIN).cpp $(OBJS)
 %.o: %.cpp %.h $(DIR)/defines.h 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-cls:
-	rm -f $(OBJS) a.out
+clean:
+	rm -f $(OBJS) a.out test tests
 
 dbg: a.out
 	valgrind ./a.out
@@ -31,4 +31,4 @@ tests: tests.cpp $(OBJS)
 
 test: test.cpp $(OBJS)
 	$(CC) test.cpp $(OBJS) $(CFLAGS) -o test
-	./test
+	./test || valgrind ./test
