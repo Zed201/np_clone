@@ -10,6 +10,7 @@
 #include <string.h>
 #include <thread>
 #include <vector>
+#include <set>
 
 //  Proxy para conseguir detectar quando um dado dentro da matrix
 template <class P> class proxy {
@@ -48,10 +49,6 @@ class matrix {
 
         //  auxiliar para o operator[]
         d_type &get(std::vector<int> loc);
-
-        //  auxiliar para a multiplicação de matrizes com dimensões maior que 2, usando a lógica do numpy, de dividir
-        //  elas em matrizes de 2 dimensões e multiplicar 1 a 1
-        std::vector<matrix> divide2d();
 
         //  auxiliares para o print
         void rec_print(int c, int &c_el, std::ostringstream &str) const;
@@ -112,9 +109,20 @@ class matrix {
         matrix slice(std::initializer_list<int> n);
         matrix slice(std::vector<int> n);
 
+        //  auxiliar para a multiplicação de matrizes com dimensões maior que 2, usando a lógica do numpy, de dividir
+        //  elas em matrizes de 2 dimensões e multiplicar 1 a 1
+        std::vector<matrix> divide2d();
+
         // TODO: A implementar
         d_type det();
         matrix invert();
+        matrix normalize();
+
+        std::set<d_type> autovalores();
+        std::set<matrix> autovetores();
+
+        bool operator<(const matrix &A) const;
+        // implementar os outros operadores, de == para ele funcionar no set
 };
 
 //  overload para printar a matriz

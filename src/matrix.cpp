@@ -7,9 +7,13 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         return os;
 }
 
+// TODO: Implementar
 bool operator==(const matrix &A, const matrix &B){
         return false;
 }
+
+// Só para o std::set funcionar, talvez tirar depois, ou implementar normal
+
 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int)sh.size()), 1) {
         int tmp = 1, a = 0;
@@ -240,6 +244,8 @@ matrix matrix::operator-(matrix &y) {
         return matrix(this->shape(), x);
 }
 
+#define THREAD_MULTI 0
+
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
@@ -248,7 +254,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 // TODO: multiplicação apenas de numeros
                 return matrix({0});
         }
-        // TODO: Fazer caso de matrizes 1x1
+        
         if (this->n_dim == 2 && this->dim[1] == y.dim[0]) {  //  matrizes 2d normais
                 std::vector<int> sh(2);
                 sh[0] = this->dim[0];
@@ -267,7 +273,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 }
 
                 return m;
-
+        // TODO: Erro nas multiplicações de mais dimensões
         } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
                 //  verificar se as dimensões batem
                 bool tmp = true;
@@ -286,18 +292,24 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
-                std::vector<std::thread> h;
-
-                auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
-                for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                        std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
-                        //  c[i] = (a[i] * b[i]);
-                        h.push_back(std::move(th));
-                }
+                #if THREAD_MULTI == 1
+                        std::vector<std::thread> h;
+                        auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
+                #endif
 
                 for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                        h[i].join();
+                        #if THREAD_MULTI == 1
+                                std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
+                                h.push_back(std::move(th));
+                        #else
+                                c[i] = (a[i] * b[i]);
+                        #endif
                 }
+                #if THREAD_MULTI == 1
+                        for (int i = 0; i < static_cast<int>(c.size()); i++) {
+                                h[i].join();
+                        }
+                #endif
 
                 std::vector<d_type> el(this->el_qdt);
                 std::vector<int> sh(this->shape());
@@ -562,6 +574,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         }
         return false;
 }
+// TODO: Erro de segfault aqui
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
                 std::vector<matrix> a(1);
@@ -591,6 +604,7 @@ std::vector<matrix> matrix::divide2d() {
         return a;
 }
 
+// TODO: Implementar
 d_type matrix::det(){
         return 1000000;
 }
@@ -599,6 +613,23 @@ matrix matrix::invert(){
         return matrix({0});
 }
 
+// a'_ij = (a_ij - a_min)/(a_max - a_min)
+matrix matrix::normalize(){
+        return matrix({0});
+}
 
+std::set<d_type> autovalores(){
+        std::set<d_type> i;
+        i.insert(1);
+        return i;
+}
+std::set<matrix> autovetores(){
+        std::set<matrix> i;
+        i.insert(matrix({1}));
+        return i;
+}
 
-// TODO: Implementar a igualdade entre matrizes, para fazer os testes funcionarem
+bool matrix::operator<(const matrix &A) const {
+        return this->elem[0] < A.elem[0];
+}
+

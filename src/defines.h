@@ -1,6 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+// TODO: redefinir isso para um template, (fazer conversão também)
 #define d_type          double
 #define f_precision     3   //  precisão quando for usar float ou double
 #define tab_size        1   //  tab de distancia
