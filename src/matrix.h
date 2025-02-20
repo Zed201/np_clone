@@ -54,6 +54,7 @@ class matrix {
         void rec_print(int c, int &c_el, std::ostringstream &str) const;
 
     public:
+
         //  construtores
         matrix();
         ~matrix();
@@ -73,6 +74,7 @@ class matrix {
         //  muda o shape da matriz
         void reshape(std::initializer_list<int> n_shape);
 
+        friend bool operator==(const matrix& A, const matrix& B);
         //  overload de operações com inteiros apenas
         matrix operator+(int y);
         matrix operator-(int y);
@@ -118,8 +120,8 @@ class matrix {
         matrix invert();
         matrix normalize();
 
-        std::set<d_type> autovalores();
-        std::set<matrix> autovetores();
+        std::vector<d_type> autovalores();
+        std::vector<matrix> autovetores();
 
         bool operator<(const matrix &A) const;
         // implementar os outros operadores, de == para ele funcionar no set

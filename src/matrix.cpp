@@ -9,10 +9,12 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
 
 // TODO: Implementar
 bool operator==(const matrix &A, const matrix &B){
-        return false;
+        return
+                A.n_dim == B.n_dim &&
+                A.el_qdt == B.el_qdt &&
+                eqOrderPointer(A.dim, B.dim) &&
+                eqOrderPointer(A.elem, B.elem);
 }
-
-// Só para o std::set funcionar, talvez tirar depois, ou implementar normal
 
 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int)sh.size()), 1) {
@@ -574,6 +576,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         }
         return false;
 }
+
 // TODO: Erro de segfault aqui
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
@@ -618,14 +621,14 @@ matrix matrix::normalize(){
         return matrix({0});
 }
 
-std::set<d_type> autovalores(){
-        std::set<d_type> i;
-        i.insert(1);
+std::vector<d_type> matrix::autovalores(){
+        std::vector<d_type> i;
+        i.push_back(1);
         return i;
 }
-std::set<matrix> autovetores(){
-        std::set<matrix> i;
-        i.insert(matrix({1}));
+std::vector<matrix> matrix::autovetores(){
+        std::vector<matrix> i;
+        i.emplace_back(matrix({1}));
         return i;
 }
 

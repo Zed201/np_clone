@@ -1,102 +1,19 @@
 #include "src/aux.h"
 #include "src/matrix.h"
-#include <gtest/gtest.h>
-/*
-        Usando o gtest https://zwarrior.medium.com/install-google-test-framework-gtest-on-ubuntu-20-04-368eb6951b12
-        Tutorial https://www.tutorialspoint.com/gtest/index.htm#gtest_features
-*/
-TEST(DETERMINANTES, N1){
-        FAIL();
-}
-TEST(DETERMINANTES, N2){
-        matrix m1({2,2}, {1,2,3,4}); // det -2
-        EXPECT_EQ(m1.det(), -2.0);
-}
-TEST(DETERMINANTES, N3){
-        matrix m1({3,3}, {1,2,3,4,5,6,7,8,9}); // det 0
-        EXPECT_EQ(m1.det(), 0.0);
-}
+#include <iostream>
+#include <stdlib.h>
 
-TEST(MULTI, N1){
-        matrix m1({1});
-        matrix m2({2}); 
-        matrix p = m1 * m2; // {2}
-        matrix r({2});
-	ASSERT_TRUE(p == r);
-}
-TEST(MULTI, N2){
-        matrix m1({2,2}, {1,2,3,4});
-        matrix m2({2,2}, {5,6,7,8});                
-        matrix p = m1 * m2; // {19, 22, 43, 50}
-	matrix r({2,2}, {19, 22, 43, 50});
-	ASSERT_TRUE(p == r);
-}
-TEST(MULTI, N3){
-        matrix m1({3,3}, {1,2,3,4,5,6,7,8,9});
-        matrix m2({3,3}, {10,11,12,13,14,15,16,17,18});                
-        matrix p = m1 * m2; // {84, 90, 96, 201, 216, 231, 318, 342, 366}
-        matrix r({3,3}, {84, 90, 96, 201, 216, 231, 318, 342, 366});
-	ASSERT_TRUE(p == r);
-}
+int main(){
+        int* p = (int*)malloc(sizeof(int) * 3);
+        int* a = (int*)malloc(sizeof(int) * 3);
+        p[0] = 2;
+        p[1] = 1;
+        p[2] = 3;
 
-// TODO: Erro de segfault no divide2d
-TEST(MULTI, NN){
-        matrix m1({2,2,2}, {1,2,3,4,5,6,7,8,});
-        matrix m2({2,2,2}, {1,2,3,4,5,6,7,8,});              
-        matrix p = m1 * m2; // {7,10,15,22,67,78,91,106}
-        matrix r({2,2,2}, {7,10,15,22,67,78,91,106});
-        // std::cout << m1 << std::endl;
-	ASSERT_TRUE(p == r);
-} // dimensões maiores
+        a[0] = 1;
+        a[1] = 2;
+        a[2] = 3;
 
-TEST(INVERT, N2){
-        matrix m({2,2}, {1,2,3,4});
-        matrix r({2,2}, {-2, 1, 1.5, -0.5});
-        matrix a = m.invert();
-        ASSERT_TRUE(r == a);
-	
-}
-TEST(INVERT, N3){
-        matrix m({3,3}, {2, -1, 0, -1, 2, -1, 0, -1, 2});
-        matrix r({3,3}, {0.75, 0.5, 0.25, 0.5, 1, 0.5, 0.25, 0.5, 0.75});
-        matrix a = m.invert();
-        ASSERT_TRUE(r == a);
-}
-
-TEST(NORMALIZE, N3){
-        matrix m({3,3}, {1,2,3,4,5,6,7,8,9});
-        matrix r({3,3}, {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1});
-        matrix a = m.normalize();
-        ASSERT_TRUE(r == a);
-}
-
-TEST(AUTOVALORES, N2){
-        matrix m({2,2}, {2,1,2,1});
-        std::set<d_type> r1 = {1,3};
-        std::set<d_type> a = m.autovalores();
-        ASSERT_TRUE(a == r1);
-}
-
-TEST(AUTOVALORES, N3){
-        matrix m({3,3}, {2,0,0,0,3,4,0,4,9});
-        // talvez trocar para um set
-        std::set<d_type> r1 = {1,2,11};
-        std::set<d_type> a = m.autovalores();
-        ASSERT_TRUE(a == r1);
-}
-
-TEST(AUTOVETORES, N2){
-        matrix m({2,2}, {2,1,2,1});
-        // talvez trocar para um set
-        std::set<matrix> r1 = {matrix({2,1}, {-1,1}), matrix({2,1}, {1,1}),};
-        std::set<matrix> a = m.autovetores();
-        ASSERT_TRUE(a == r1);
-}
-
-TEST(AUTOVETORES, N3){
-        matrix m({3,3}, {2,0,0,0,3,4,0,4,9});
-        // talvez trocar para um set
-        std::set<matrix> r1 = {matrix({3,1}, {0,-2,1}), matrix({3,1}, {1,0,0}), matrix({3,1}, {0,0.5,1})};
-        std::set<matrix> a = m.autovetores();
-        ASSERT_TRUE(a == r1);
+        std::cout << eqNorderPointer(p, a);
+        return 0;
 }
