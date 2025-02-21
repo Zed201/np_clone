@@ -3,7 +3,7 @@
 
 int main() {
 
-         para trocar o tipo de dado para float, int, double ou long vai no defines.h e so troca o define
+        // para trocar o tipo de dado para float, int, double ou long vai no defines.h e so troca o define
         std::cout << "Full de 1" << std::endl;
         matrix uns = full({3, 3}, 1);
 

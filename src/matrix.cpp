@@ -10,10 +10,8 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
 // TODO: Implementar
 bool operator==(const matrix &A, const matrix &B){
         return
-                A.n_dim == B.n_dim &&
-                A.el_qdt == B.el_qdt &&
-                eqOrderPointer(A.dim, B.dim) &&
-                eqOrderPointer(A.elem, B.elem);
+                eqOrderPointer(A.dim, A.n_dim, B.dim, B.n_dim) && // se as dimensões são iguais
+                eqOrderPointer(A.elem, A.el_qdt, B.elem, A.el_qdt); // se os elementos são todos iguais
 }
 
 
@@ -404,8 +402,8 @@ void matrix::rec_print(int c, int &c_el, std::ostringstream &str) const {
         if (s > 0 && p[s - 1] == ']') {
                 //  cont a quantidade de colchetes e add isso menos a quantidade de dimensões, ou espaços
                 int c = s;
-                while (p[--c] == ']')
-                        ;
+                while (c >= 0 && p[--c] == ']');
+
                 std::string a(this->n_dim - (s - c - 2), ' ');  //  talvez fazer prealocado
                 a[0] = '\n';
                 str << a;

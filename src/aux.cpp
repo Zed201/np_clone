@@ -32,7 +32,7 @@ std::string print_(int x, int max_digs_space) {
         for (int i = 0; i < (max_digs_space - qtd) + tab_size; i++) {
                 tmp.push_back(' ');
         }
-        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        char *buffer = (char *)malloc(sizeof(char) * (qtd + 2));
         snprintf(buffer, qtd + 2, "%d,", x);
 
         tmp.append(buffer);
@@ -47,7 +47,7 @@ std::string print_(float x, int max_digs_space) {
                 tmp.push_back(' ');
         }
 
-        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        char *buffer = (char *)malloc(sizeof(char) * (f_precision + qtd + 1));
         snprintf(buffer, f_precision + qtd + 1, df_str, x);
         tmp.append(buffer);
         free(buffer);
@@ -61,7 +61,7 @@ std::string print_(double x, int max_digs_space) {
                 tmp.push_back(' ');
         }
 
-        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        char *buffer = (char *)malloc(sizeof(char) * (f_precision + qtd + 1));
         snprintf(buffer, f_precision + qtd + 1, df_str, x);
 
         tmp.append(buffer);
@@ -76,7 +76,7 @@ std::string print_(long x, int max_digs_space) {
                 tmp.push_back(' ');
         }
 
-        char *buffer = (char *)malloc(sizeof(char) * qtd);
+        char *buffer = (char *)malloc(sizeof(char) * (qtd + 2));
         snprintf(buffer, qtd + 2, "%ld,", x);
 
         tmp.append(buffer);

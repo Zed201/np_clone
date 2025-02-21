@@ -64,11 +64,11 @@ template <typename T, typename t> T min_(T x, t y) { return (x < y) ? x : y; }
 #endif
 
 template<typename T>
-bool eqOrderPointer(T* A, T* B) { // igualdade de ponteiros com ordem valendo
-        if (sizeof(A) != sizeof(B)) {
+bool eqOrderPointer(T* A, size_t sizeA, T* B, size_t sizeB) { // igualdade de ponteiros com ordem valendo
+        if (sizeA != sizeB) {
                 return false;
         }
-        for (int i = 0; i < sizeof(A)/sizeof(T); i++) {
+        for (int i = 0; i < (int)sizeA; i++) {
                 if (A[i] != B[i]) {
                         return false;
                 }
@@ -77,14 +77,14 @@ bool eqOrderPointer(T* A, T* B) { // igualdade de ponteiros com ordem valendo
 }
 
 template<typename T>
-bool eqNorderPointer(T* A, T* B) {
-        if (sizeof(A) != sizeof(B)) {
+bool eqNorderPointer(T* A, size_t sizeA, T* B, size_t sizeB) {
+        if (sizeA != sizeB) {
                 return false;
         }
         // nao eficiente mas funcional
-        for (int i = 0; i < sizeof(A)/sizeof(T); i++) {
+        for (int i = 0; i < (int)sizeA; i++) {
                 bool p = false;
-                for (int j = 0; j < sizeof(B)/sizeof(T); j++) {
+                for (int j = 0; j < (int)sizeB; j++) {
                         if (A[i] == B[j]) {
                                 p = true;
                         }
