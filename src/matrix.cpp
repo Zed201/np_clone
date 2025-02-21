@@ -81,6 +81,7 @@ matrix::matrix(const matrix &n) {
         for (int i = 0; i < n.el_qdt; i++) {
                 this->elem[i] = n.elem[i];
         }
+        this->pesos_dim_ = std::vector(n.pesos_dim_);
 }
 
 matrix::matrix(std::initializer_list<d_type> elementos)

@@ -17,10 +17,17 @@ int pow(int x, int y);
 float pow(float x, int y);
 
 //  auxiliar que print vetor
-template <typename T> void print_vec(std::vector<T> n) {
+template <typename T> 
+void print_vec(std::vector<T> n) {
         std::cout << "[ ";
-        for (T i : n) {
-                std::cout << i << ", ";
+        // for (const matrix &i : n){
+        //         std::cout << i << std::endl << std::endl;
+        // }
+        // for(int i = 0; i < n.size(); i++){
+        //         std::cout << n[i] << ",";
+        // }
+        for(T &i: n){
+                std::cout << i << ",";
         }
         std::cout << "]" << std::endl;
 }

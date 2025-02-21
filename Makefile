@@ -31,4 +31,4 @@ tests: tests.cpp $(OBJS)
 
 test: test.cpp $(OBJS)
 	$(CC) test.cpp $(OBJS) $(CFLAGS) -o test
-	./test || valgrind ./test
+	valgrind ./test
