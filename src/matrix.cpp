@@ -251,9 +251,8 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
         }
-        if (this->n_dim == 1){
-                // TODO: multiplicação apenas de numeros
-                return matrix({0});
+        if (this->n_dim == 1 && y.el_qdt == 1 && this->el_qdt == 1){ // multiplicacao de matrizes 1x1
+                return matrix({this->elem[0] * y.elem[0]});
         }
         
         if (this->n_dim == 2 && this->dim[1] == y.dim[0]) {  //  matrizes 2d normais
