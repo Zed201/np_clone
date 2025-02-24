@@ -3,8 +3,9 @@ Basicamente um clone do numpy criando a classe matrix e algumas funções auxili
 
 ### TODO:
 - [X] Corrigir os write invalid que mostra no valgrind
-- [ ] Corrigir a função dividi2d
+- [X] Corrigir a função dividi2d
 - [ ] Implementar normalizaçãp
 - [ ] Implementar determinante
 - [ ] Implementar inversão de matrizes
 - [ ] Implementar autovetores e autovalores
+- [ ] Erro na divisão

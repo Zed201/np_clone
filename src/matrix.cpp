@@ -203,7 +203,9 @@ matrix matrix::operator*(int y) {
         return matrix(this->shape(), x);
 }
 
-matrix matrix::operator/(int y) {
+template <typename T>
+matrix matrix::operator/(T y) {
+        std::cout << "divisao" << this->el_qdt << std::endl;
         std::vector<d_type> x(this->el_qdt);
         for (int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->operator[](i) / y;
@@ -613,8 +615,9 @@ matrix matrix::invert(){
 }
 
 // a'_ij = (a_ij - a_min)/(a_max - a_min)
-matrix matrix::normalize(){
-        return matrix({0});
+matrix matrix::normalize(){ 
+        matrix m1 = *this;
+        return m1/2;
 }
 
 std::vector<d_type> matrix::autovalores(){

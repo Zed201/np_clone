@@ -79,7 +79,8 @@ class matrix {
         matrix operator+(int y);
         matrix operator-(int y);
         matrix operator*(int y);
-        matrix operator/(int y);
+        template<typename T> // colocar template 
+        matrix operator/(T y);
 
         //  overload de operações com outras matrizes
         matrix &operator=(const matrix &n);

@@ -7,10 +7,9 @@ using namespace std;
 
 int main(){
         matrix m1({1,2,3,4,5,6,7,8,});
-        matrix m2({1,2,3,4,5,6,7,8,});   
-        matrix p = m1 * m2; // {7,10,15,22,67,78,91,106}
-        matrix r({2,2,2}, {7,10,15,22,67,78,91,106});
-        std::cout << p << std::endl << std::endl;
-        std::cout << r << std::endl;
+        
+        matrix m2 = m1/1;
+        std::cout << m2;
+        
         return 0;
 }
