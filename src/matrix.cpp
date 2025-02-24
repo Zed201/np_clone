@@ -7,7 +7,6 @@ std::ostream &operator<<(std::ostream &os, const matrix &m) {
         return os;
 }
 
-// TODO: Implementar
 bool operator==(const matrix &A, const matrix &B){
         return
                 eqOrderPointer(A.dim, A.n_dim, B.dim, B.n_dim) && // se as dimensões são iguais
@@ -74,13 +73,14 @@ matrix::matrix(const matrix &n) {
         this->el_qdt = n.el_qdt;
         this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
 
+        for (int i = 0; i < n.el_qdt; i++) {
+                this->elem[i] = n.elem[i];
+        }
+
         this->max = n.max;
         this->min = n.min;
         this->max_digs_space = n.max_digs_space;
 
-        for (int i = 0; i < n.el_qdt; i++) {
-                this->elem[i] = n.elem[i];
-        }
         this->pesos_dim_ = std::vector(n.pesos_dim_);
 }
 
@@ -138,8 +138,7 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         }
 }
 
-//  TODO: Problema do valgrind aqui
-matrix &matrix::operator=(const matrix &n) {
+matrix& matrix::operator=(const matrix &n) {
 
         this->max = n.max;
         this->min = n.min;
@@ -172,6 +171,7 @@ matrix &matrix::operator=(const matrix &n) {
         }
 
         this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+        this->el_qdt = n.el_qdt;
         for (int i = 0; i < n.el_qdt; i++) {
                 this->elem[i] = n.elem[i];
         }
@@ -245,7 +245,7 @@ matrix matrix::operator-(matrix &y) {
         return matrix(this->shape(), x);
 }
 
-#define THREAD_MULTI 0
+#define THREAD_MULTI 1
 
 matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se não da erro nos destrutores
         if (this->n_dim != y.n_dim) {
@@ -272,9 +272,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                                 m[{i, j}] = soma;
                         }
                 }
-
                 return m;
-        // TODO: Erro nas multiplicações de mais dimensões
         } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
                 //  verificar se as dimensões batem
                 bool tmp = true;
@@ -311,14 +309,14 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                                 h[i].join();
                         }
                 #endif
-
+                // agora só unir as matrizes do vector
                 std::vector<d_type> el(this->el_qdt);
                 std::vector<int> sh(this->shape());
 
                 int i = 0;
-                for (matrix j : c) {
-                        for (int k = 0; k < j.el_qdt; k++) {
-                                el[i++] = j[k];
+                for(size_t j = 0; j < c.size(); j++){
+                        for (int k = 0; k < c[j].el_qdt; k++) {
+                                el[i++] = c[j].elem[k];
                         }
                 }
                 return matrix(sh, el);

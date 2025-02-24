@@ -40,7 +40,6 @@ TEST(MULTI, N3){
 	ASSERT_TRUE(p == r);
 }
 
-// TODO: Erro de segfault no divide2d
 TEST(MULTI, NN){
         matrix m1({2,2,2}, {1,2,3,4,5,6,7,8,});
         matrix m2({2,2,2}, {1,2,3,4,5,6,7,8,});              
