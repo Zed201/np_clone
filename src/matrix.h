@@ -31,6 +31,7 @@ template <class P> class proxy {
         void operator=(proxy &i) { i.ref = this->ref; }
 };
 
+
 class matrix {
     private:
         //  dados da matrix

@@ -615,8 +615,7 @@ matrix matrix::invert(){
 
 // a'_ij = (a_ij - a_min)/(a_max - a_min)
 matrix matrix::normalize(){ 
-        matrix m1 = *this;
-        return m1/2;
+        return (*this - this->min)/(this->max - this->min);
 }
 
 std::vector<d_type> matrix::autovalores(){
