@@ -17,6 +17,7 @@ bool operator==(const matrix &A, const matrix &B){
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int)sh.size()), 1) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
+        
         for (int i : sh) {
                 this->dim[a++] = i;
                 tmp *= i;
@@ -28,15 +29,14 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0),
         this->n_dim = a;
         a = 0;
         this->el_qdt = tmp;
-        //  this->pesos_dim = (int *)malloc(sizeof(int) * a);
+        
         for (int i = 0; i < this->n_dim; i++) {
-                //  this->pesos_dim[i] = 1;
                 for (int j = i + 1; j < this->n_dim; j++) {
                         this->pesos_dim_[i] *= sh[j];
                 }
         }
         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
-
+        
         this->max = el[0];
         this->min = el[0];
 
@@ -205,7 +205,6 @@ matrix matrix::operator*(int y) {
 
 template <typename T>
 matrix matrix::operator/(T y) {
-        std::cout << "divisao" << this->el_qdt << std::endl;
         std::vector<d_type> x(this->el_qdt);
         for (int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->operator[](i) / y;
