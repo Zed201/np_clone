@@ -21,7 +21,8 @@ int main() {
         std::cout << m1.transpose() << std::endl;
 
         std::cout << "Flatten:" << std::endl;
-        print_vec(m1.flatten());
+        std::vector<d_type> f = m1.flatten();
+        print_vec(f);
 
         m1[{2, 2}] = -10000;
         //  testando troca de dados para atualizar o print

@@ -7,15 +7,21 @@
         Tutorial https://www.tutorialspoint.com/gtest/index.htm#gtest_features
 */
 TEST(DETERMINANTES, N1){
-        FAIL();
+        matrix m1({3});
+        EXPECT_EQ(m1.det(), 3);
 }
 TEST(DETERMINANTES, N2){
         matrix m1({2,2}, {1,2,3,4}); // det -2
-        EXPECT_EQ(m1.det(), -2.0);
+        EXPECT_EQ(m1.det(), -2);
 }
 TEST(DETERMINANTES, N3){
         matrix m1({3,3}, {1,2,3,4,5,6,7,8,9}); // det 0
-        EXPECT_EQ(m1.det(), 0.0);
+        EXPECT_EQ(m1.det(), 0);
+}
+
+TEST(DETERMINANTES, N4){
+        matrix m1({4,4}, {2,1,3,1,1,0,1,1,0,2,1,0,0,1,2,3});
+        EXPECT_EQ(m1.det(), 6);
 }
 
 TEST(MULTI, N1){

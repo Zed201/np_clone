@@ -8,4 +8,5 @@ Basicamente um clone do numpy criando a classe matrix e algumas funções auxili
 - [ ] Implementar determinante
 - [ ] Implementar inversão de matrizes
 - [ ] Implementar autovetores e autovalores
-- [ ] Erro na divisão
+- [X] Erro na divisão
+- [ ] Implementar templates(do jeito que esta organizado não da pois gera erro de ld, o compilador não gera as funções necessárias)

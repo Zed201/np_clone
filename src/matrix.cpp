@@ -606,7 +606,37 @@ std::vector<matrix> matrix::divide2d() {
 
 // TODO: Implementar
 d_type matrix::det(){
-        return 1000000;
+        if (this->n_dim > 2 || (this->dim[0] != this->dim[1] && this->n_dim != 1)) {
+                error_print("Erro de dimensão");
+        }
+        if (this->dim[0] == 1 && this->n_dim == 1) {
+                return this->elem[0];
+        }
+
+        if (this->dim[0] == 2) {
+                return (this->elem[0] * this->elem[3]) - (this->elem[1] * this->elem[2]);
+        }
+
+        if (this->dim[0] == 3){
+                return (
+                        (this->elem[0] * this->elem[4] * this->elem[8]) +
+                        (this->elem[1] * this->elem[5] * this->elem[6]) +
+                        (this->elem[2] * this->elem[3] * this->elem[7]) 
+                ) - (
+                        (this->elem[1] * this->elem[3] * this->elem[8]) +
+                        (this->elem[0] * this->elem[5] * this->elem[7]) +
+                        (this->elem[2] * this->elem[4] * this->elem[6]) 
+                );
+        }
+
+        d_type det = 0;
+        /*
+        Tem basicamente as formas de laplace(cofatores com optimzações de n=2 e n=3),
+        
+
+        
+        */
+        return det;
 }
 
 matrix matrix::invert(){
