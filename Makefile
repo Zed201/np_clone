@@ -26,9 +26,9 @@ dbg: a.out
 GTESTS_FLAGS = -Lgoogletest/build/lib -lgtest -lgtest_main -pthread
 
 tests: tests.cpp $(OBJS)
-	$(CC) tests.cpp $(OBJS) $(CFLAGS) $(GTESTS_FLAGS) -o tests
-	./tests
+	$(CC) tests.cpp $(OBJS) $(CFLAGS) $(GTESTS_FLAGS) -o tests.o
+	./tests.o
 
 test: test.cpp $(OBJS)
-	$(CC) test.cpp $(OBJS) $(CFLAGS) -o test
-	valgrind ./test
+	$(CC) test.cpp $(OBJS) $(CFLAGS) -o test.o
+	valgrind ./test.o
