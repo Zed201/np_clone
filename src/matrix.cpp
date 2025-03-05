@@ -1,23 +1,22 @@
 #include "matrix.h"
 #include "aux.h"
 #include "defines.h"
+#include <ostream>
 
 std::ostream &operator<<(std::ostream &os, const matrix &m) {
         os << m.print();
         return os;
 }
 
-bool operator==(const matrix &A, const matrix &B){
-        return
-                eqOrderPointer(A.dim, A.n_dim, B.dim, B.n_dim) && // se as dimensões são iguais
-                eqOrderPointer(A.elem, A.el_qdt, B.elem, A.el_qdt); // se os elementos são todos iguais
+bool operator==(const matrix &A, const matrix &B) {
+        return eqOrderPointer(A.dim, A.n_dim, B.dim, B.n_dim) &&     //  se as dimensões são iguais
+                eqOrderPointer(A.elem, A.el_qdt, B.elem, A.el_qdt);  //  se os elementos são todos iguais
 }
-
 
 matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0), pesos_dim_(((int)sh.size()), 1) {
         int tmp = 1, a = 0;
         this->dim = (int *)malloc(sizeof(int) * sh.size());
-        
+
         for (int i : sh) {
                 this->dim[a++] = i;
                 tmp *= i;
@@ -29,14 +28,14 @@ matrix::matrix(std::vector<int> sh, std::vector<d_type> el) : max_digs_space(0),
         this->n_dim = a;
         a = 0;
         this->el_qdt = tmp;
-        
+
         for (int i = 0; i < this->n_dim; i++) {
                 for (int j = i + 1; j < this->n_dim; j++) {
                         this->pesos_dim_[i] *= sh[j];
                 }
         }
         this->elem = (d_type *)malloc(sizeof(d_type) * tmp);
-        
+
         this->max = el[0];
         this->min = el[0];
 
@@ -138,7 +137,7 @@ void matrix::reshape(std::initializer_list<int> n_shape) {
         }
 }
 
-matrix& matrix::operator=(const matrix &n) {
+matrix &matrix::operator=(const matrix &n) {
 
         this->max = n.max;
         this->min = n.min;
@@ -203,8 +202,7 @@ matrix matrix::operator*(int y) {
         return matrix(this->shape(), x);
 }
 
-template <typename T>
-matrix matrix::operator/(T y) {
+template <typename T> matrix matrix::operator/(T y) {
         std::vector<d_type> x(this->el_qdt);
         for (int i = 0; i < this->el_qdt; i++) {
                 x[i] = this->operator[](i) / y;
@@ -252,10 +250,10 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
         if (this->n_dim != y.n_dim) {
                 error_print("Erro de dimensões");
         }
-        if (this->n_dim == 1 && y.el_qdt == 1 && this->el_qdt == 1){ // multiplicacao de matrizes 1x1
+        if (this->n_dim == 1 && y.el_qdt == 1 && this->el_qdt == 1) {  //  multiplicacao de matrizes 1x1
                 return matrix({this->elem[0] * y.elem[0]});
         }
-        
+
         if (this->n_dim == 2 && this->dim[1] == y.dim[0]) {  //  matrizes 2d normais
                 std::vector<int> sh(2);
                 sh[0] = this->dim[0];
@@ -291,30 +289,30 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 std::vector<matrix> a = this->divide2d();
                 std::vector<matrix> b = y.divide2d();
                 std::vector<matrix> c(a.size());
-                #if THREAD_MULTI == 1
-                        std::vector<std::thread> h;
-                        auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
-                #endif
+#if THREAD_MULTI == 1
+                std::vector<std::thread> h;
+                auto m = [&](matrix &a, matrix &b, matrix &c) { c = (a * b); };
+#endif
 
                 for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                        #if THREAD_MULTI == 1
-                                std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
-                                h.push_back(std::move(th));
-                        #else
-                                c[i] = (a[i] * b[i]);
-                        #endif
+#if THREAD_MULTI == 1
+                        std::thread th([&m, i, &a, &b, &c]() { m(a[i], b[i], c[i]); });
+                        h.push_back(std::move(th));
+#else
+                        c[i] = (a[i] * b[i]);
+#endif
                 }
-                #if THREAD_MULTI == 1
-                        for (int i = 0; i < static_cast<int>(c.size()); i++) {
-                                h[i].join();
-                        }
-                #endif
-                // agora só unir as matrizes do vector
+#if THREAD_MULTI == 1
+                for (int i = 0; i < static_cast<int>(c.size()); i++) {
+                        h[i].join();
+                }
+#endif
+                //  agora só unir as matrizes do vector
                 std::vector<d_type> el(this->el_qdt);
                 std::vector<int> sh(this->shape());
 
                 int i = 0;
-                for(size_t j = 0; j < c.size(); j++){
+                for (size_t j = 0; j < c.size(); j++) {
                         for (int k = 0; k < c[j].el_qdt; k++) {
                                 el[i++] = c[j].elem[k];
                         }
@@ -401,7 +399,8 @@ void matrix::rec_print(int c, int &c_el, std::ostringstream &str) const {
         if (s > 0 && p[s - 1] == ']') {
                 //  cont a quantidade de colchetes e add isso menos a quantidade de dimensões, ou espaços
                 int c = s;
-                while (c >= 0 && p[--c] == ']');
+                while (c >= 0 && p[--c] == ']')
+                        ;
 
                 std::string a(this->n_dim - (s - c - 2), ' ');  //  talvez fazer prealocado
                 a[0] = '\n';
@@ -574,7 +573,7 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         return false;
 }
 
-// TODO: Erro de segfault aqui
+//  TODO: Erro de segfault aqui
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
                 std::vector<matrix> a(1);
@@ -604,8 +603,8 @@ std::vector<matrix> matrix::divide2d() {
         return a;
 }
 
-// TODO: Implementar
-d_type matrix::det(){
+//  TODO: Implementar
+d_type matrix::det() {
         if (this->n_dim > 2 || (this->dim[0] != this->dim[1] && this->n_dim != 1)) {
                 error_print("Erro de dimensão");
         }
@@ -617,49 +616,61 @@ d_type matrix::det(){
                 return (this->elem[0] * this->elem[3]) - (this->elem[1] * this->elem[2]);
         }
 
-        if (this->dim[0] == 3){
-                return (
-                        (this->elem[0] * this->elem[4] * this->elem[8]) +
-                        (this->elem[1] * this->elem[5] * this->elem[6]) +
-                        (this->elem[2] * this->elem[3] * this->elem[7]) 
-                ) - (
-                        (this->elem[1] * this->elem[3] * this->elem[8]) +
-                        (this->elem[0] * this->elem[5] * this->elem[7]) +
-                        (this->elem[2] * this->elem[4] * this->elem[6]) 
-                );
-        }
+        /*if (this->dim[0] == 3) {*
+        /*        return ((this->elem[0] * this->elem[4] * this->elem[8]) +*/
+        /*                (this->elem[1] * this->elem[5] * this->elem[6]) +*/
+        /*                (this->elem[2] * this->elem[3] * this->elem[7])) -*/
+        /*                ((this->elem[1] * this->elem[3] * this->elem[8]) +*/
+        /*                 (this->elem[0] * this->elem[5] * this->elem[7]) +*/
+        /*                 (this->elem[2] * tis->elem[4] * this->elem[6]));*/
+        /*}*/
 
         d_type det = 0;
         /*
-        Tem basicamente as formas de laplace(cofatores com optimzações de n=2 e n=3),
-        
+        Tem basicamente as formas de laplace dos cofatores com optimzações de n=2 e n=3,
+        basicamente pegar uma linha/coluna e multiplicar pelos cofatores,
+        basicamente C_ij = (-1)^{i * j} det(A_ij), onde A_ij e a matrix original sem o ij
+        */
 
-        
+        //  usar primeiro a abordagem de criar matrizes recursivamente, depois fazer melhor em questao de memoria
+
+        for (int i = 0, j = 0; i < this->dim[0] * (this->dim[0] - 1); i += this->dim[0], j++) {
+                //  for percorrenod a primeira coluna
+                matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
+                for (int el = 0, pos = 0; el < this->el_qdt; el++) {  //  TODO: melhorar a soma desse for
+                        if (el % this->dim[0] != 0 && !(el >= i && el <= (this->dim[0] + i - 1))) {
+                                //  primeira condicao diz respeito a nao estar na mesma linha
+                                //  segunda diz respeito a nao estar na mesma
+                                //  coluna
+                                tmp.elem[pos++] = el;
+                        }
+                }
+                std::cout << tmp << std::endl;
+        }
+
+        /* todo:
+        a outra forma e a de decomposicao lu, em que devemos decompor
+        uma matriz em triangular sup e triangular up
+        a = l * u =, adicionando a ideia de uma matriz de permutacao inicial,
+        para deixar o metodo numericamernte mais estaval (implementar mais tarde)
         */
         return det;
 }
 
-matrix matrix::invert(){
-        return matrix({0});
-}
+matrix matrix::invert() { return matrix({0}); }
 
-// a'_ij = (a_ij - a_min)/(a_max - a_min)
-matrix matrix::normalize(){ 
-        return (*this - this->min)/(this->max - this->min);
-}
+//  a'_ij = (a_ij - a_min)/(a_max - a_min)
+matrix matrix::normalize() { return (*this - this->min) / (this->max - this->min); }
 
-std::vector<d_type> matrix::autovalores(){
+std::vector<d_type> matrix::autovalores() {
         std::vector<d_type> i;
         i.push_back(1);
         return i;
 }
-std::vector<matrix> matrix::autovetores(){
+std::vector<matrix> matrix::autovetores() {
         std::vector<matrix> i;
         i.emplace_back(matrix({1}));
         return i;
 }
 
-bool matrix::operator<(const matrix &A) const {
-        return this->elem[0] < A.elem[0];
-}
-
+bool matrix::operator<(const matrix &A) const { return this->elem[0] < A.elem[0]; }
