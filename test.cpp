@@ -7,7 +7,8 @@
 using namespace std;
 
 int main() {
-        matrix m1({3, 3}, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+        matrix m1({4, 4}, {1, 4, 5, 7, 8, 9, 4, 5, 4, 5, 6, 7, 1, 10, 5, 6});
         d_type a = m1.det();
+        std::cout << a;
         return 0;
 }

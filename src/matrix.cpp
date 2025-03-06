@@ -1,6 +1,7 @@
 #include "matrix.h"
 #include "aux.h"
 #include "defines.h"
+#include <cmath>
 #include <ostream>
 
 std::ostream &operator<<(std::ostream &os, const matrix &m) {
@@ -634,18 +635,17 @@ d_type matrix::det() {
 
         //  usar primeiro a abordagem de criar matrizes recursivamente, depois fazer melhor em questao de memoria
 
-        for (int i = 0, j = 0; i < this->dim[0] * (this->dim[0] - 1); i += this->dim[0], j++) {
+        for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
                 //  for percorrenod a primeira coluna
                 matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
                 for (int el = 0, pos = 0; el < this->el_qdt; el++) {  //  TODO: melhorar a soma desse for
-                        if (el % this->dim[0] != 0 && !(el >= i && el <= (this->dim[0] + i - 1))) {
-                                //  primeira condicao diz respeito a nao estar na mesma linha
-                                //  segunda diz respeito a nao estar na mesma
-                                //  coluna
-                                tmp.elem[pos++] = el;
+                        if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
+                                //  primeira condicao diz respeito a nao estar na mesma coluna
+                                //  segunda diz respeito a nao estar na mesma linha
+                                tmp.elem[pos++] = this->elem[el];
                         }
                 }
-                std::cout << tmp << std::endl;
+                det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
         }
 
         /* todo:
