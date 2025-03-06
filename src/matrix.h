@@ -7,10 +7,10 @@
 #include <initializer_list>
 #include <iostream>
 #include <regex>
+#include <set>
 #include <string.h>
 #include <thread>
 #include <vector>
-#include <set>
 
 //  Proxy para conseguir detectar quando um dado dentro da matrix
 template <class P> class proxy {
@@ -30,7 +30,6 @@ template <class P> class proxy {
 
         void operator=(proxy &i) { i.ref = this->ref; }
 };
-
 
 class matrix {
     private:
@@ -55,7 +54,6 @@ class matrix {
         void rec_print(int c, int &c_el, std::ostringstream &str) const;
 
     public:
-
         //  construtores
         matrix();
         ~matrix();
@@ -75,12 +73,12 @@ class matrix {
         //  muda o shape da matriz
         void reshape(std::initializer_list<int> n_shape);
 
-        friend bool operator==(const matrix& A, const matrix& B);
+        friend bool operator==(const matrix &A, const matrix &B);
         //  overload de operações com inteiros apenas
         matrix operator+(int y);
         matrix operator-(int y);
         matrix operator*(int y);
-        template<typename T> // colocar template 
+        template <typename T>  //  colocar template
         matrix operator/(T y);
 
         //  overload de operações com outras matrizes
@@ -117,16 +115,18 @@ class matrix {
         //  elas em matrizes de 2 dimensões e multiplicar 1 a 1
         std::vector<matrix> divide2d();
 
-        // TODO: A implementar
+        //  TODO: A implementar
         d_type det();
         matrix invert();
+        matrix cofatores();
+        matrix adjunta();
         matrix normalize();
 
         std::vector<d_type> autovalores();
         std::vector<matrix> autovetores();
 
         bool operator<(const matrix &A) const;
-        // implementar os outros operadores, de == para ele funcionar no set
+        //  implementar os outros operadores, de == para ele funcionar no set
 };
 
 //  overload para printar a matriz

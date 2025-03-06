@@ -3,6 +3,7 @@
 #include "defines.h"
 #include <cmath>
 #include <ostream>
+#include <vector>
 
 std::ostream &operator<<(std::ostream &os, const matrix &m) {
         os << m.print();
@@ -507,6 +508,7 @@ void matrix::update() {
         }
 }
 
+//  Retornam com os indices comecamdo em 0
 std::vector<int> matrix::uni_multi(int i) {
         std::vector<int> tmp(this->n_dim);
         for (int j = this->n_dim - 1; j >= 0; j--) {
@@ -604,7 +606,6 @@ std::vector<matrix> matrix::divide2d() {
         return a;
 }
 
-//  TODO: Implementar
 d_type matrix::det() {
         if (this->n_dim > 2 || (this->dim[0] != this->dim[1] && this->n_dim != 1)) {
                 error_print("Erro de dimensão");
@@ -617,14 +618,14 @@ d_type matrix::det() {
                 return (this->elem[0] * this->elem[3]) - (this->elem[1] * this->elem[2]);
         }
 
-        /*if (this->dim[0] == 3) {*
-        /*        return ((this->elem[0] * this->elem[4] * this->elem[8]) +*/
-        /*                (this->elem[1] * this->elem[5] * this->elem[6]) +*/
-        /*                (this->elem[2] * this->elem[3] * this->elem[7])) -*/
-        /*                ((this->elem[1] * this->elem[3] * this->elem[8]) +*/
-        /*                 (this->elem[0] * this->elem[5] * this->elem[7]) +*/
-        /*                 (this->elem[2] * tis->elem[4] * this->elem[6]));*/
-        /*}*/
+        if (this->dim[0] == 3) {
+                return ((this->elem[0] * this->elem[4] * this->elem[8]) +
+                        (this->elem[1] * this->elem[5] * this->elem[6]) +
+                        (this->elem[2] * this->elem[3] * this->elem[7])) -
+                        ((this->elem[1] * this->elem[3] * this->elem[8]) +
+                         (this->elem[0] * this->elem[5] * this->elem[7]) +
+                         (this->elem[2] * this->elem[4] * this->elem[6]));
+        }
 
         d_type det = 0;
         /*
@@ -657,7 +658,47 @@ d_type matrix::det() {
         return det;
 }
 
-matrix matrix::invert() { return matrix({0}); }
+//  TODO: Implementar
+matrix matrix::cofatores() {
+        if (this->n_dim != 2 || this->dim[0] != this->dim[1]) {
+                return matrix({0});
+        }
+        matrix tmp = full(this->shape(), 0);
+        for (int idx = 0; idx < this->el_qdt; idx++) {
+                std::vector<int> loc = this->uni_multi(idx);
+                //  loc[0] -> linha, loc[1] -> coluna
+                int it, jt, pos = 0;
+                matrix m = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
+                for (int el = 0; el < this->el_qdt; el++) {
+                        //  fazer tudo
+                        if (jt != loc[1] && it != loc[0]) {
+                                m.elem[pos++] = this->elem[el];
+                                std::cout << this->elem[el];
+                        }
+                        jt = (jt + 1) % this->dim[0];
+                        it = (jt ? it : it + 1) % this->dim[0];  //  quando o jt chega a 0 ele atualiza a linha
+                }
+                tmp.elem[idx] = (std::pow(-1, loc[1] * loc[0]) * m.det() * this->elem[idx]);
+                std::cout << std::endl;
+        }
+        return tmp;
+}
+
+//  a adjunta e a transposta da de cofatores
+matrix matrix::adjunta() { return matrix({0}); }
+
+matrix matrix::invert() {
+        /*
+         * Podemos fazer pela solução analitica A^-1 = 1/det(A) * (Matrix de cofatores)
+         *
+         * Ou pelo método de Eliminacao de Gaus Jordan
+         * */
+        d_type det = this->det();
+        if (det == 0) {
+                return matrix({0});
+        }
+        return (this->cofatores() / det);
+}
 
 //  a'_ij = (a_ij - a_min)/(a_max - a_min)
 matrix matrix::normalize() { return (*this - this->min) / (this->max - this->min); }
