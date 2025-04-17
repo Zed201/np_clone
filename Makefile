@@ -23,11 +23,11 @@ dbg: a.out
 	valgrind ./a.out
 
 
-GTESTS_FLAGS = -Lgoogletest/build/lib -lgtest -lgtest_main -pthread
+GTESTS_FLAGS = -Lgoogletest/build/lib -lgtest -lgtest_main -pthread 
 
 tests: tests.cpp $(OBJS)
 	$(CC) tests.cpp $(OBJS) $(CFLAGS) $(GTESTS_FLAGS) -o tests.o
-	./tests.o
+	./tests.o --gtest_color=yes
 
 test: test.cpp $(OBJS)
 	$(CC) test.cpp $(OBJS) $(CFLAGS) -o test.o

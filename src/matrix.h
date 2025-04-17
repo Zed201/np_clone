@@ -121,6 +121,8 @@ class matrix {
         matrix cofatores();
         matrix adjunta();
         matrix normalize();
+        //  apenas para matrizes 2d, basicamente eliminar a linha e coluna do idx passado, começando em 0
+        matrix idx_el(int i, int j);
 
         std::vector<d_type> autovalores();
         std::vector<matrix> autovetores();

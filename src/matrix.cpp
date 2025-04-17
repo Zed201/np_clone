@@ -274,7 +274,7 @@ matrix matrix::operator*(matrix &y) {  //     tem que ter referencia pois se nã
                 }
                 return m;
         } else if (this->n_dim > 2) {  //  dividr as matrizes em 2d e multiplicar 1 x 1
-                //  verificar se as dimensões batem
+                                       //  verificar se as dimensões batem
                 bool tmp = true;
                 for (int i = 0; i < this->n_dim; i++) {
                         if (y.dim[i] != this->dim[i]) {
@@ -396,7 +396,7 @@ void matrix::rec_print(int c, int &c_el, std::ostringstream &str) const {
         }
         //  reduz em muito o tempo do print, pois antes tava usando muito regex
         std::streamsize s = str.tellp();  //  retorna a posição de memoria basicamente o tamanho
-        //  nao da para acessar o tamanho de um stringstream, entao tem que fazer isso
+                                          //  nao da para acessar o tamanho de um stringstream, entao tem que fazer isso
         std::string p = str.str();
         if (s > 0 && p[s - 1] == ']') {
                 //  cont a quantidade de colchetes e add isso menos a quantidade de dimensões, ou espaços
@@ -453,8 +453,9 @@ matrix matrix::transpose() {
                         }
                 } else {  //  se não ele cria uma nova matriz e inverte ela
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
-                        std::vector<d_type> t(m_dim * m_dim);  //     cria um quadrado da maior dimensão
-                        //  matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
+                        std::vector<d_type> t(m_dim *
+                                              m_dim);  //     cria um quadrado da maior dimensão
+                                                       //  matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
                         matrix tmp_matrix({0});
                         for (int i = 0; i < this->el_qdt; i++) {
                                 int j = tmp_matrix.multi_uni(this->uni_multi(i));
@@ -607,6 +608,9 @@ std::vector<matrix> matrix::divide2d() {
 }
 
 d_type matrix::det() {
+        if (this->el_qdt == 1) {
+                return this->elem[0];
+        }
         if (this->n_dim > 2 || (this->dim[0] != this->dim[1] && this->n_dim != 1)) {
                 error_print("Erro de dimensão");
         }
@@ -629,10 +633,10 @@ d_type matrix::det() {
 
         d_type det = 0;
         /*
-        Tem basicamente as formas de laplace dos cofatores com optimzações de n=2 e n=3,
-        basicamente pegar uma linha/coluna e multiplicar pelos cofatores,
-        basicamente C_ij = (-1)^{i * j} det(A_ij), onde A_ij e a matrix original sem o ij
-        */
+           Tem basicamente as formas de laplace dos cofatores com optimzações de n=2 e n=3,
+           basicamente pegar uma linha/coluna e multiplicar pelos cofatores,
+           basicamente C_ij = (-1)^{i * j} det(A_ij), onde A_ij e a matrix original sem o ij
+           */
 
         //  usar primeiro a abordagem de criar matrizes recursivamente, depois fazer melhor em questao de memoria
 
@@ -650,37 +654,54 @@ d_type matrix::det() {
         }
 
         /* todo:
-        a outra forma e a de decomposicao lu, em que devemos decompor
-        uma matriz em triangular sup e triangular up
-        a = l * u =, adicionando a ideia de uma matriz de permutacao inicial,
-        para deixar o metodo numericamernte mais estaval (implementar mais tarde)
-        */
+           a outra forma e a de decomposicao lu, em que devemos decompor
+           uma matriz em triangular sup e triangular up
+           a = l * u =, adicionando a ideia de uma matriz de permutacao inicial,
+           para deixar o metodo numericamernte mais estaval (implementar mais tarde)
+           */
         return det;
 }
 
 //  TODO: Implementar
 matrix matrix::cofatores() {
-        if (this->n_dim != 2 || this->dim[0] != this->dim[1]) {
+        if (this->n_dim != 2 || this->dim[0] != this->dim[1]) {  //  apenas para matriz quadrada
                 return matrix({0});
         }
-        matrix tmp = full(this->shape(), 0);
+        std::vector<d_type> ell;
         for (int idx = 0; idx < this->el_qdt; idx++) {
                 std::vector<int> loc = this->uni_multi(idx);
-                //  loc[0] -> linha, loc[1] -> coluna
-                int it, jt, pos = 0;
-                matrix m = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
-                for (int el = 0; el < this->el_qdt; el++) {
-                        //  fazer tudo
-                        if (jt != loc[1] && it != loc[0]) {
-                                m.elem[pos++] = this->elem[el];
-                                std::cout << this->elem[el];
-                        }
-                        jt = (jt + 1) % this->dim[0];
-                        it = (jt ? it : it + 1) % this->dim[0];  //  quando o jt chega a 0 ele atualiza a linha
+                //  loc[0]->i linha, loc[1]->j coluna
+                d_type d = this->idx_el(loc[0], loc[1]).det();
+                if (!d) {  //  TODO: algo no print tava colocando -0.000, nao achei o pq ainda
+                        ell.emplace_back(d);
+                        continue;
                 }
-                tmp.elem[idx] = (std::pow(-1, loc[1] * loc[0]) * m.det() * this->elem[idx]);
-                std::cout << std::endl;
+                ell.emplace_back(((loc[0] + loc[1]) % 2 ? -1 : 1) * d);
         }
+        if (!ell.size()) {
+                return matrix({0});
+        }
+        matrix tmp(this->shape(), ell);
+        return tmp;
+}
+
+matrix matrix::idx_el(int i, int j) {
+        if (this->n_dim > 2) {
+                return matrix({0});
+        }
+        std::vector<int> d = this->shape();
+        for (int &i : d) {
+                i -= 1;
+        }
+        std::vector<d_type> els;
+        for (int idx = 0; idx < this->el_qdt; idx++) {
+                std::vector<int> pos = this->uni_multi(idx);
+                //  pos[0] -> linha , pos[1] -> coluna
+                if (i != pos[0] && j != pos[1]) {
+                        els.emplace_back(this->elem[idx]);
+                }
+        }
+        matrix tmp(d, els);
         return tmp;
 }
 
