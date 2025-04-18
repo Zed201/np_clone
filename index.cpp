@@ -3,7 +3,7 @@
 
 int main() {
 
-        // para trocar o tipo de dado para float, int, double ou long vai no defines.h e so troca o define
+        //  para trocar o tipo de dado para float, int, double ou long vai no defines.h e so troca o define
         std::cout << "Full de 1" << std::endl;
         matrix uns = full({3, 3}, 1);
 
@@ -34,6 +34,11 @@ int main() {
         std::cout << "Pegando apenas o " << y << " indice" << std::endl;
         std::cout << m1.slice({y}) << std::endl;
 
+        std::cout << "Inversão de matrizes" << std::endl;
+        std::cout << m1.invert() << std::endl;
+        std::cout << "Matriz indentidade pela inversa" << std::endl;
+        std::cout << m1.invert() * m1 << std::endl;
+
         std::cout << "Multiplicação de martizes" << std::endl;
 
         std::cout << "a:" << std::endl;
@@ -44,5 +49,6 @@ int main() {
         std::cout << b << std::endl;
         std::cout << "=" << std::endl;
         std::cout << a * b << std::endl;
+
         return 0;
 }

@@ -7,9 +7,7 @@
 using namespace std;
 
 int main() {
-        matrix m({2, 2}, {1, 2, 3, 4});
-        std::cout << m.det() << std::endl;
-        std::cout << m.cofatores() << std::endl;
-        std::cout << m.invert();
+        matrix m1({4, 4}, {2, 1, 3, 1, 1, 0, 1, 1, 0, 2, 1, 0, 0, 1, 2, 3});
+        std::cout << m1.det();
         return 0;
 }

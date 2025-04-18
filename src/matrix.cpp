@@ -519,7 +519,6 @@ std::vector<int> matrix::uni_multi(int i) {
         return tmp;
 }
 
-//  TODO: Erro de read aqui pelo valgrind
 int matrix::multi_uni(std::vector<int> vet) {
         if (static_cast<int>(vet.size()) != this->n_dim) {
                 error_print("Erro no numero de dimensões");
@@ -577,7 +576,6 @@ bool matrix::diagonal_pri(std::vector<int> i) {
         return false;
 }
 
-//  TODO: Erro de segfault aqui
 std::vector<matrix> matrix::divide2d() {
         if (this->n_dim <= 2) {
                 std::vector<matrix> a(1);
@@ -639,19 +637,41 @@ d_type matrix::det() {
            */
 
         //  usar primeiro a abordagem de criar matrizes recursivamente, depois fazer melhor em questao de memoria
+        //  2
+        //  for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
+        //         //  for percorrenod a primeira coluna, so precia escolher 1 entao o masi facil e assim
+        //         //  substituido pelo idx_el, onde ele calcula a matriz de cofator daquele elemento
+        //
+        //         matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
+        //         for (int el = 0, pos = 0; el < this->el_qdt; el++) {  //  TODO: melhorar a soma desse for
+        //                 if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
+        //                         //  primeira condicao diz respeito a nao estar na mesma coluna
+        //                         //  segunda diz respeito a nao estar na mesma linha
+        //                         tmp.elem[pos++] = this->elem[el];
+        //                 }
+        //         }
+        //         det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
+        //  }
 
-        for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
-                //  for percorrenod a primeira coluna
-                matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
-                for (int el = 0, pos = 0; el < this->el_qdt; el++) {  //  TODO: melhorar a soma desse for
-                        if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
-                                //  primeira condicao diz respeito a nao estar na mesma coluna
-                                //  segunda diz respeito a nao estar na mesma linha
-                                tmp.elem[pos++] = this->elem[el];
-                        }
-                }
-                det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
+        //  1
+        for (int i = 0; i < this->dim[0]; i++) {
+                //  vai so avncando no index da linha, sempre coluna 0
+                //  pode trocar mas tem que trocar o index do elemento tambem
+                //  mas uma melhora de memoria provavelmente
+                //  so teria se ficasse usando apenas referencia, calcular
+                //  determinante dessas submatrizes sem criar uma nova, no caso a tmp
+                matrix tmp = this->idx_el(i, 0);
+                det += (tmp.det() * this->operator[]({i, 0}) * (i % 2 ? -1 : 1));
         }
+
+        //  Comparacao dos resultados do valgrind e hyperfine(tempo de execucao e um det 4x4), sem O1... no compilador:
+        //  1:
+        //  total heap usage: 135 allocs, 135 frees, 77,656 bytes allocated
+        //  1.5ms +- 0.7ms, min 0.9ms -> max 5.9ms
+        //
+        //  2:
+        //  total heap usage: 35 allocs, 35 frees, 76,024 bytes allocated
+        //  1.8ms +- 0.8ms, min 1.2ms -> max 6.0ms
 
         /* todo:
            a outra forma e a de decomposicao lu, em que devemos decompor
@@ -662,7 +682,6 @@ d_type matrix::det() {
         return det;
 }
 
-//  TODO: Implementar
 matrix matrix::cofatores() {
         if (this->n_dim != 2 || this->dim[0] != this->dim[1]) {  //  apenas para matriz quadrada
                 return matrix({0});
