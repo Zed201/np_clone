@@ -17,10 +17,9 @@ int pow(int x, int y);
 float pow(float x, int y);
 
 //  auxiliar que print vetor
-template <typename T> 
-void print_vec(std::vector<T> &n) {
+template <typename T> void print_vec(std::vector<T> &n) {
         std::cout << "[ ";
-        for(T &i: n){
+        for (T &i : n) {
                 std::cout << i << ",";
         }
         std::cout << "]" << std::endl;
@@ -64,8 +63,8 @@ template <typename T, typename t> T max_(T x, t y) { return (x > y) ? x : y; }
 template <typename T, typename t> T min_(T x, t y) { return (x < y) ? x : y; }
 #endif
 
-template<typename T>
-bool eqOrderPointer(T* A, size_t sizeA, T* B, size_t sizeB) { // igualdade de ponteiros com ordem valendo
+template <typename T>
+bool eqOrderPointer(T *A, size_t sizeA, T *B, size_t sizeB) {  //  igualdade de ponteiros com ordem valendo
         if (sizeA != sizeB) {
                 return false;
         }
@@ -77,12 +76,11 @@ bool eqOrderPointer(T* A, size_t sizeA, T* B, size_t sizeB) { // igualdade de po
         return true;
 }
 
-template<typename T>
-bool eqNorderPointer(T* A, size_t sizeA, T* B, size_t sizeB) {
+template <typename T> bool eqNorderPointer(T *A, size_t sizeA, T *B, size_t sizeB) {
         if (sizeA != sizeB) {
                 return false;
         }
-        // nao eficiente mas funcional
+        //  nao eficiente mas funcional
         for (int i = 0; i < (int)sizeA; i++) {
                 bool p = false;
                 for (int j = 0; j < (int)sizeB; j++) {

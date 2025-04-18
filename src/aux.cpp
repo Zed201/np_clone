@@ -6,9 +6,7 @@ void error_print(std::string text) {
         std::cerr << text << std::endl;
         exit(1);
 }
-void error_print(const char *text) {
-        error_print(std::string(text));
-}
+void error_print(const char *text) { error_print(std::string(text)); }
 
 int pow(int x, int y) {
         int tmp = 1;
@@ -57,7 +55,7 @@ std::string print_(float x, int max_digs_space) {
 std::string print_(double x, int max_digs_space) {
         std::string tmp;
         int qtd = dig_qtd(x);
-        
+
         for (int i = 0; i < (max_digs_space - qtd) + tab_size; i++) {
                 tmp.push_back(' ');
         }
@@ -93,7 +91,7 @@ int dig_qtd(int x) {
 
 int dig_qtd(float x) {
         if (x == 0) {
-                return 1 + f_precision; 
+                return 1 + f_precision;
         }
 
         int signDigits = (x < 0) ? 1 : 0;
@@ -104,21 +102,21 @@ int dig_qtd(float x) {
         return integerDigits + signDigits + f_precision;
 }
 
-// antes estava no formtato parecido com os outros(long e int), 
-// mas erros de range de valor, principalmente envolvendo o log10
-// se x fosse [0,1) ele retornava um numero negativo, 
-// para tipos nao flutuantes nao precisa dessa mudanca
+//  antes estava no formtato parecido com os outros(long e int),
+//  mas erros de range de valor, principalmente envolvendo o log10
+//  se x fosse [0,1) ele retornava um numero negativo,
+//  para tipos nao flutuantes nao precisa dessa mudanca
 int dig_qtd(double x) {
-    if (x == 0) {
-        return 1 + f_precision;
-    }
+        if (x == 0) {
+                return 1 + f_precision;
+        }
 
-    int signDigits = (x < 0) ? 1 : 0;
-    x = std::abs(x);
+        int signDigits = (x < 0) ? 1 : 0;
+        x = std::abs(x);
 
-    int integerDigits = (x >= 1) ? static_cast<int>(log10(x)) + 1 : 1;
+        int integerDigits = (x >= 1) ? static_cast<int>(log10(x)) + 1 : 1;
 
-    return integerDigits + signDigits + f_precision;
+        return integerDigits + signDigits + f_precision;
 }
 
 int dig_qtd(long x) {
