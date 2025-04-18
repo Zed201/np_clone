@@ -706,7 +706,7 @@ matrix matrix::idx_el(int i, int j) {
 }
 
 //  a adjunta e a transposta da de cofatores
-matrix matrix::adjunta() { return matrix({0}); }
+matrix matrix::adjunta() { return this->cofatores().transpose(); }
 
 matrix matrix::invert() {
         /*
@@ -718,7 +718,7 @@ matrix matrix::invert() {
         if (det == 0) {
                 return matrix({0});
         }
-        return (this->cofatores() / det);
+        return (this->adjunta() / det);
 }
 
 //  a'_ij = (a_ij - a_min)/(a_max - a_min)

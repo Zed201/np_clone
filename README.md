@@ -6,11 +6,10 @@ Basicamente um clone do numpy criando a classe matrix e algumas funções auxili
 
 - [X] Corrigir os write invalid que mostra no valgrind
 - [X] Corrigir a função dividi2d
-- [ ] Implementar normalizaçãp
+- [X] Implementar normalizaçãp
 - [X] Implementar determinante de Laplace
 - [ ] Implementar determinante decomposição LU
-- [ ] Implementar inversão de matrizes
+- [X] Implementar inversão de matrizes
 - [ ] Implementar autovetores e autovalores
 - [X] Erro na divisão
 - [ ] Implementar templates(do jeito que esta organizado não da pois gera erro de ld, o compilador não gera as funções necessárias)
-
