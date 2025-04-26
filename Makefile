@@ -17,7 +17,7 @@ a.out: $(MAIN).cpp $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) a.out test tests
+	rm -f $(OBJS) a.out test.o tests.o
 
 dbg: a.out
 	valgrind ./a.out

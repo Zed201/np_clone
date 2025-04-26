@@ -62,51 +62,51 @@ matrix::matrix() : matrix({0}) {}
 matrix::matrix(std::initializer_list<int> shapes, std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>(shapes), std::vector<d_type>(elementos)) {}
 
-//  construtor de copia
-matrix::matrix(const matrix &n) {
-        this->n_dim = n.n_dim;
-        this->dim = (int *)malloc(sizeof(int) * n.n_dim);
+        //  construtor de copia
+        matrix::matrix(const matrix &n) {
+                this->n_dim = n.n_dim;
+                this->dim = (int *)malloc(sizeof(int) * n.n_dim);
 
-        for (int i = 0; i < n.n_dim; i++) {
-                this->dim[i] = n.dim[i];
+                for (int i = 0; i < n.n_dim; i++) {
+                        this->dim[i] = n.dim[i];
+                }
+
+                this->el_qdt = n.el_qdt;
+                this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
+
+                for (int i = 0; i < n.el_qdt; i++) {
+                        this->elem[i] = n.elem[i];
+                }
+
+                this->max = n.max;
+                this->min = n.min;
+                this->max_digs_space = n.max_digs_space;
+
+                this->pesos_dim_ = std::vector(n.pesos_dim_);
         }
-
-        this->el_qdt = n.el_qdt;
-        this->elem = (d_type *)malloc(sizeof(d_type) * n.el_qdt);
-
-        for (int i = 0; i < n.el_qdt; i++) {
-                this->elem[i] = n.elem[i];
-        }
-
-        this->max = n.max;
-        this->min = n.min;
-        this->max_digs_space = n.max_digs_space;
-
-        this->pesos_dim_ = std::vector(n.pesos_dim_);
-}
 
 matrix::matrix(std::initializer_list<d_type> elementos)
         : matrix(std::vector<int>({((int)elementos.size())}), std::vector<d_type>(elementos)) {}
 
-matrix::~matrix() {
-        if (this->dim != nullptr) {
-                free(this->dim);
-                this->dim = nullptr;
+        matrix::~matrix() {
+                if (this->dim != nullptr) {
+                        free(this->dim);
+                        this->dim = nullptr;
+                }
+                //  problema no pesos dim, alguma coisa de free(ta dando um free a mais)
+                //  if(this->pesos_dim != nullptr && this->pesos_dim != NULL){
+                //          free(this->pesos_dim); // com o exemplo do codigo de test.cpp ele
+                //               ele vai nesse free 4 vezes, 1 para o a, 1 para o b, 1 para o pre a * b e 1 para o c
+                //               ja verifiquei os numeros(endereços) dos ponteiros e todos são diferentes
+                //               mas mesmo assim ele da erro de aparente double free, a mensagem(tem muitos significados)
+                //               mas no arch ela não tava dando erro, so aqui no ubuntu
+                //          this->pesos_dim = nullptr;
+                //  }
+                if (this->elem != nullptr) {
+                        free(this->elem);
+                        this->elem = nullptr;
+                }
         }
-        //  problema no pesos dim, alguma coisa de free(ta dando um free a mais)
-        //  if(this->pesos_dim != nullptr && this->pesos_dim != NULL){
-        //          free(this->pesos_dim); // com o exemplo do codigo de test.cpp ele
-        //               ele vai nesse free 4 vezes, 1 para o a, 1 para o b, 1 para o pre a * b e 1 para o c
-        //               ja verifiquei os numeros(endereços) dos ponteiros e todos são diferentes
-        //               mas mesmo assim ele da erro de aparente double free, a mensagem(tem muitos significados)
-        //               mas no arch ela não tava dando erro, so aqui no ubuntu
-        //          this->pesos_dim = nullptr;
-        //  }
-        if (this->elem != nullptr) {
-                free(this->elem);
-                this->elem = nullptr;
-        }
-}
 
 std::vector<int> matrix::shape() {
         std::vector<int> tmp(this->n_dim);
@@ -454,8 +454,8 @@ matrix matrix::transpose() {
                 } else {  //  se não ele cria uma nova matriz e inverte ela
                         int m_dim = max_<int>(this->dim[0], this->dim[1]);
                         std::vector<d_type> t(m_dim *
-                                              m_dim);  //     cria um quadrado da maior dimensão
-                                                       //  matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
+                                        m_dim);  //     cria um quadrado da maior dimensão
+                                                 //  matrix tmp_matrix = full({m_dim, m_dim}, this->min - 1);
                         matrix tmp_matrix({0});
                         for (int i = 0; i < this->el_qdt; i++) {
                                 int j = tmp_matrix.multi_uni(this->uni_multi(i));
@@ -474,8 +474,8 @@ matrix matrix::transpose() {
 
         } else {
                 error_print("Número de dimensões "
-                            "maior que 2, não "
-                            "suportado");
+                                "maior que 2, não "
+                                "suportado");
         }
         return matrix(d, e);
 }
@@ -553,8 +553,8 @@ std::vector<int> matrix::uni_multi(matrix &m, int i) {
 bool matrix::is_upper_tri(std::vector<int> i) {
         if (this->n_dim > 2) {
                 error_print("Erro de dimensão, só "
-                            "pode ser chamado para "
-                            "matrizes 2D");
+                                "pode ser chamado para "
+                                "matrizes 2D");
         }
         if (this->multi_uni(i) > this->multi_uni({i[0], i[0]})) {
                 return true;
@@ -567,8 +567,8 @@ bool matrix::is_lower_tri(std::vector<int> i) { return !this->is_upper_tri(i); }
 bool matrix::diagonal_pri(std::vector<int> i) {
         if (this->n_dim > 2) {
                 error_print("Erro de dimensão, só "
-                            "pode ser chamado para "
-                            "matrizes 2D");
+                                "pode ser chamado para "
+                                "matrizes 2D");
         }
         if (i[0] == i[1]) {
                 return true;
@@ -622,8 +622,8 @@ d_type matrix::det() {
 
         if (this->dim[0] == 3) {
                 return ((this->elem[0] * this->elem[4] * this->elem[8]) +
-                        (this->elem[1] * this->elem[5] * this->elem[6]) +
-                        (this->elem[2] * this->elem[3] * this->elem[7])) -
+                                (this->elem[1] * this->elem[5] * this->elem[6]) +
+                                (this->elem[2] * this->elem[3] * this->elem[7])) -
                         ((this->elem[1] * this->elem[3] * this->elem[8]) +
                          (this->elem[0] * this->elem[5] * this->elem[7]) +
                          (this->elem[2] * this->elem[4] * this->elem[6]));
@@ -638,31 +638,31 @@ d_type matrix::det() {
 
         //  usar primeiro a abordagem de criar matrizes recursivamente, depois fazer melhor em questao de memoria
         //  2
-        //  for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
-        //         //  for percorrenod a primeira coluna, so precia escolher 1 entao o masi facil e assim
-        //         //  substituido pelo idx_el, onde ele calcula a matriz de cofator daquele elemento
-        //
-        //         matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
-        //         for (int el = 0, pos = 0; el < this->el_qdt; el++) {  //  TODO: melhorar a soma desse for
-        //                 if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
-        //                         //  primeira condicao diz respeito a nao estar na mesma coluna
-        //                         //  segunda diz respeito a nao estar na mesma linha
-        //                         tmp.elem[pos++] = this->elem[el];
-        //                 }
-        //         }
-        //         det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
-        //  }
+        for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
+                //  for percorrenod a primeira coluna, so precia escolher 1 entao o masi facil e assim
+                //  substituido pelo idx_el, onde ele calcula a matriz de cofator daquele elemento
+
+                matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
+                for (int el = 0, pos = 0; el < this->el_qdt; el++) {  
+                        if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
+                                //  primeira condicao diz respeito a nao estar na mesma coluna
+                                //  segunda diz respeito a nao estar na mesma linha
+                                tmp.elem[pos++] = this->elem[el];
+                        }
+                }
+                det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
+        }
 
         //  1
-        for (int i = 0; i < this->dim[0]; i++) {
-                //  vai so avncando no index da linha, sempre coluna 0
-                //  pode trocar mas tem que trocar o index do elemento tambem
-                //  mas uma melhora de memoria provavelmente
-                //  so teria se ficasse usando apenas referencia, calcular
-                //  determinante dessas submatrizes sem criar uma nova, no caso a tmp
-                matrix tmp = this->idx_el(i, 0);
-                det += (tmp.det() * this->operator[]({i, 0}) * (i % 2 ? -1 : 1));
-        }
+        // for (int i = 0; i < this->dim[0]; i++) {
+        //         //  vai so avncando no index da linha, sempre coluna 0
+        //         //  pode trocar mas tem que trocar o index do elemento tambem
+        //         //  mas uma melhora de memoria provavelmente
+        //         //  so teria se ficasse usando apenas referencia, calcular
+        //         //  determinante dessas submatrizes sem criar uma nova, no caso a tmp
+        //         matrix tmp = this->idx_el(i, 0);
+        //         det += (tmp.det() * this->operator[]({i, 0}) * (i % 2 ? -1 : 1));
+        // }
 
         //  Comparacao dos resultados do valgrind e hyperfine(tempo de execucao e um det 4x4), sem O1... no compilador:
         //  1:
@@ -675,10 +675,12 @@ d_type matrix::det() {
 
         /* todo:
            a outra forma e a de decomposicao lu, em que devemos decompor
-           uma matriz em triangular sup e triangular up
+           uma matriz em triangular inf(onde a diagonal é toda 1) e triangular up
            a = l * u =, adicionando a ideia de uma matriz de permutacao inicial,
            para deixar o metodo numericamernte mais estaval (implementar mais tarde)
+           a det(a) = u_11 * u_22 *... *u_nn, ou no caso o produto dos determinantes de l e u
            */
+         
         return det;
 }
 
@@ -691,7 +693,7 @@ matrix matrix::cofatores() {
                 std::vector<int> loc = this->uni_multi(idx);
                 //  loc[0]->i linha, loc[1]->j coluna
                 d_type d = this->idx_el(loc[0], loc[1]).det();
-                if (!d) {  //  TODO: algo no print tava colocando -0.000, nao achei o pq ainda
+                if (!d) { 
                         ell.emplace_back(d);
                         continue;
                 }

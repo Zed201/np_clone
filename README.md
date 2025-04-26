@@ -10,6 +10,6 @@ Basicamente um clone do numpy criando a classe matrix e algumas funções auxili
 - [X] Implementar determinante de Laplace
 - [ ] Implementar determinante decomposição LU
 - [X] Implementar inversão de matrizes
-- [ ] Implementar autovetores e autovalores
+- [ ] Implementar autovetores e autovalores por decomposição QR talvez
 - [X] Erro na divisão
 - [ ] Implementar templates(do jeito que esta organizado não da pois gera erro de ld, o compilador não gera as funções necessárias)
