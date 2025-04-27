@@ -30,6 +30,6 @@ tests: tests.cpp $(OBJS)
 	./tests.o --gtest_color=yes
 
 test: test.cpp $(OBJS)
-	$(CC) test.cpp $(OBJS) $(CFLAGS) -o test.o
+	$(CC) test.cpp $(OBJS) $(CFLAGS) -O3 -o test.o
 	# valgrind ./test.o
 	./test.o
