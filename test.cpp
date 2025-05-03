@@ -11,14 +11,10 @@
 using namespace std;
 
 int main() {
-        std::chrono::time_point<std::chrono::system_clock> start, end;
-        int t = 10;
-        matrix T({t, t}, range(0, t * t));
-        start = std::chrono::system_clock::now();
-        double det = T.det();
-        end = std::chrono::system_clock::now();
-        std::cout << det;
-        std::chrono::duration<double> elapsed_seconds = end - start;
-        std::cout << "tempo chrono " << elapsed_seconds.count() << "s\n";
+        //  teste de decomoposcao qr
+        //  Q = matriz ortogonal(inversa = transposta) e R = matriz triangular superior
+        //  o mais estável é o algoritmo de triangulação
+        //  ortogonal que emprega os refletores de householder
+        int a = 1;
         return 0;
 }

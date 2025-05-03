@@ -8,7 +8,7 @@ Basicamente um clone do numpy criando a classe matrix e algumas funções auxili
 - [X] Corrigir a função dividi2d
 - [X] Implementar normalizaçãp
 - [X] Implementar determinante de Laplace
-- [ ] Implementar determinante decomposição LU
+- [X] Implementar determinante decomposição LU
 - [X] Implementar inversão de matrizes
 - [ ] Implementar autovetores e autovalores por decomposição QR talvez
 - [X] Erro na divisão

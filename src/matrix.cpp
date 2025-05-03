@@ -636,20 +636,20 @@ d_type matrix::det() {
         //  basicamente C_ij = (-1)^{i * j} det(A_ij), onde A_ij e a matrix original sem o ij
 
         //  1
-        for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
-                //  for percorrenod a primeira coluna, so precia escolher 1 entao o masi facil e assim
-                //  substituido pelo idx_el, onde ele calcula a matriz de cofator daquele elemento
-
-                matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
-                for (int el = 0, pos = 0; el < this->el_qdt; el++) {
-                        if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
-                                //  primeira condicao diz respeito a nao estar na mesma coluna
-                                //  segunda diz respeito a nao estar na mesma linha
-                                tmp.elem[pos++] = this->elem[el];
-                        }
-                }
-                det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
-        }
+        //  for (int idx = 0, i = 0; idx < this->dim[0] * this->dim[0] - 1; idx += this->dim[0], i++) {
+        //         //  for percorrenod a primeira coluna, so precia escolher 1 entao o masi facil e assim
+        //         //  substituido pelo idx_el, onde ele calcula a matriz de cofator daquele elemento
+        //
+        //         matrix tmp = full({this->dim[0] - 1, this->dim[0] - 1}, 0);
+        //         for (int el = 0, pos = 0; el < this->el_qdt; el++) {
+        //                 if (el % this->dim[0] != 0 && !(el >= idx && el <= (this->dim[0] + idx - 1))) {
+        //                         //  primeira condicao diz respeito a nao estar na mesma coluna
+        //                         //  segunda diz respeito a nao estar na mesma linha
+        //                         tmp.elem[pos++] = this->elem[el];
+        //                 }
+        //         }
+        //         det += (std::pow(-1, i) * tmp.det() * this->elem[idx]);
+        //  }
 
         //  2
         //  for (int i = 0; i < this->dim[0]; i++) {
@@ -670,34 +670,34 @@ d_type matrix::det() {
         //   a det(a) = u_11 * u_22 *... *u_nn, ou no caso o produto dos determinantes de l e u
 
         //  implementacao do algoritmo de dolitte
-        //  std::vector<int> shape = this->shape();
-        //  matrix LU = full(shape, 0);
-        //  for (int i = 0; i < shape[0]; i++) {
-        //         for (int j = i; j < shape[0]; j++) {
-        //                 double sum = 0;
-        //                 for (int k = 0; k < i; k++) {
-        //                         sum += LU[{i, k}] * LU[{k, j}];
-        //                 }
-        //                 LU[{i, j}] = this->operator[]({i, j}) - sum;
-        //         }
-        //         //  se for 0 ou muito proximo de zero o determinante vai ser 0
-        //         if (fabs(LU[{i, i}]) < 1e-10) {
-        //                 //  det = 0
-        //                  return 0;
-        //         }
-        //         for (int j = i + 1; j < shape[0]; j++) {
-        //                 double sum = 0;
-        //                 for (int k = 0; k < i; k++) {
-        //                         sum += LU[{j, k}] * LU[{k, i}];
-        //                 }
-        //
-        //                 LU[{j, i}] = (this->operator[]({j, i}) - sum) / LU[{i, i}];
-        //         }
-        //  }
-        //  det = 1;
-        //  for (int i = 0; i < shape[0]; i++) {
-        //         det *= LU[{i, i}];
-        //  }
+        std::vector<int> shape = this->shape();
+        matrix LU = full(shape, 0);
+        for (int i = 0; i < shape[0]; i++) {
+                for (int j = i; j < shape[0]; j++) {
+                        double sum = 0;
+                        for (int k = 0; k < i; k++) {
+                                sum += LU[{i, k}] * LU[{k, j}];
+                        }
+                        LU[{i, j}] = this->operator[]({i, j}) - sum;
+                }
+                //  se for 0 ou muito proximo de zero o determinante vai ser 0
+                if (fabs(LU[{i, i}]) < 1e-10) {
+                        //  det = 0
+                        return 0;
+                }
+                for (int j = i + 1; j < shape[0]; j++) {
+                        double sum = 0;
+                        for (int k = 0; k < i; k++) {
+                                sum += LU[{j, k}] * LU[{k, i}];
+                        }
+
+                        LU[{j, i}] = (this->operator[]({j, i}) - sum) / LU[{i, i}];
+                }
+        }
+        det = 1;
+        for (int i = 0; i < shape[0]; i++) {
+                det *= LU[{i, i}];
+        }
 
         //            matriz 10x10, com determinante igual a 0
         //  1:
@@ -734,12 +734,6 @@ d_type matrix::det() {
         //
         //  valgrind:
         //  1,363,729 allocs, 1,363,729 frees, 11,566,552 bytes allocated
-        //
-        //
-        //
-        //
-        //
-
         return det;
 }
 
