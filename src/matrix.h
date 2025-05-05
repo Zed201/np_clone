@@ -129,6 +129,9 @@ class matrix {
 
         bool operator<(const matrix &A) const;
         //  implementar os outros operadores, de == para ele funcionar no set
+
+        matrix get_row(int i);
+        matrix get_col(int j);
 };
 
 //  overload para printar a matriz

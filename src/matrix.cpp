@@ -810,3 +810,26 @@ std::vector<matrix> matrix::autovetores() {
 }
 
 bool matrix::operator<(const matrix &A) const { return this->elem[0] < A.elem[0]; }
+
+// only for 2D
+matrix matrix::get_row(int i){
+        std::vector s = this->shape();
+        std::vector<d_type> el(0, 0);
+        for (int j = 0; j < s[1]; j++)
+        {
+                el.emplace_back(this->elem[i * s[0] + j]);
+        }
+        
+        return matrix({s[0]}, el);
+}
+
+matrix matrix::get_col(int j){
+        std::vector s = this->shape();
+        std::vector<d_type> el(0, 0);
+        for (int i = 0; i < s[0]; i++)
+        {
+                el.emplace_back(this->elem[i * s[0] + j]);
+        }
+        
+        return matrix({s[0], 1}, el);
+}
